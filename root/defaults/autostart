@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# -----------------------------------------------------------------------------
+# Automation Script Launcher
+# -----------------------------------------------------------------------------
+# Launch passleader automation script in its own terminal window if it exists.
+# Rename passleader_v3.sh.disabled to passleader_v3.sh to activate.
+# This allows users to see the automation output and stop it with Ctrl+C.
+if [ -f /config/emulator/passleader_v3.sh ]; then
+    echo "Launching passleader automation script in separate terminal..."
+    xterm -title "Passleader Automation" -geometry 120x30 -e bash /config/emulator/passleader_v3.sh &
+fi
+# -----------------------------------------------------------------------------
+
+# Run xemu
+xterm -e /opt/xemu/AppRun

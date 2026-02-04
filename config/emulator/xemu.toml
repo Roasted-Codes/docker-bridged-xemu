@@ -1,0 +1,52 @@
+[general]
+show_welcome = false
+skip_boot_anim = true
+last_viewed_menu_index = 1
+
+[general.snapshots.shortcuts]
+f6 = 'Auto-Host-Lobby'
+
+[input]
+background_input_capture = true
+
+[input.bindings]
+port1_driver = 'usb-xbox-gamepad'
+port1 = 'keyboard'
+port2_driver = 'usb-xbox-gamepad'
+port3_driver = 'usb-xbox-gamepad'
+port4_driver = 'usb-xbox-gamepad'
+
+[display.window]
+startup_size = '640x480'
+last_width = 1920
+last_height = 1057
+
+[display.ui]
+hide_cursor = false
+use_animations = false
+fit = 'center'
+
+[display.debug.video]
+x_pos = -73
+y_pos = 116
+
+[audio]
+volume_limit = 0.0471957
+
+[net]
+enable = true
+backend = 'pcap'
+
+[net.pcap]
+netif = 'eth0'
+
+[net.udp]
+bind_addr = '0.0.0.0:9968'
+remote_addr = 'localhost:34523'
+
+[sys.files]
+bootrom_path = '/config/emulator/mcpx_1.0.bin'
+flashrom_path = '/config/emulator/CerbiosDebug_old.bin'
+eeprom_path = '/config/emulator/iguana-eeprom.bin'
+hdd_path = '/config/emulator/iguana-dev.qcow2'
+

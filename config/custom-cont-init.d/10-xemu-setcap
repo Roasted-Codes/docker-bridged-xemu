@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# =============================================================================
+# Grant xemu network capabilities for pcap/bridged networking
+# =============================================================================
+# This script runs as root during container init (before xemu starts).
+# It grants xemu the ability to open raw sockets on network interfaces,
+# which is required for the pcap backend in bridged networking mode.
+#
+# Why here and not in autostart?
+#   autostart runs as user 'abc' (uid 1000), which lacks CAP_SETFCAP.
+#   custom-cont-init.d scripts run as root during s6-overlay init.
+#
+# Why register libraries with ld.so.conf?
+#   setcap causes Linux to strip LD_LIBRARY_PATH (same as setuid binaries).
+#   The AppImage's bundled libraries must be registered system-wide via
+#   ldconfig so the dynamic linker can find them without LD_LIBRARY_PATH.
+# =============================================================================
+
+set -euo pipefail
+
+XEMU_BIN="/opt/xemu/usr/bin/xemu"
+XEMU_LIB="/opt/xemu/usr/lib"
+
+if [ -f "$XEMU_BIN" ]; then
+    # Register AppImage libraries with the system linker
+    # This is required because setcap strips LD_LIBRARY_PATH
+    echo "[10-xemu-setcap] Registering xemu libraries with system linker..."
+    echo "$XEMU_LIB" > /etc/ld.so.conf.d/xemu.conf
+    ldconfig
+
+    # Grant network capabilities for pcap/bridged networking
+    echo "[10-xemu-setcap] Setting network capabilities on xemu binary..."
+    setcap cap_net_raw,cap_net_admin+eip "$XEMU_BIN"
+    echo "[10-xemu-setcap] Done: $(getcap "$XEMU_BIN")"
+
+    # Preserve LD_PRELOAD libraries for the setcap binary.
+    # setcap triggers secure execution mode (AT_SECURE), which strips the
+    # LD_PRELOAD env var. Selkies relies on LD_PRELOAD to inject its joystick
+    # interposer into applications for browser-based gamepad/input support.
+    # /etc/ld.so.preload is always honored regardless of secure execution mode,
+    # so we write the interposer paths there to restore input functionality.
+    INTERPOSER="/usr/lib/selkies_joystick_interposer.so"
+    FAKE_UDEV="/opt/lib/libudev.so.1.0.0-fake"
+    if [ -f "$INTERPOSER" ]; then
+        printf "%s\n%s\n" "$INTERPOSER" "$FAKE_UDEV" > /etc/ld.so.preload
+        echo "[10-xemu-setcap] Wrote ld.so.preload for setcap compatibility"
+    fi
+else
+    echo "[10-xemu-setcap] WARNING: xemu binary not found at $XEMU_BIN"
+fi

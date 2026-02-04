@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# =============================================================================
+# Install custom autostart and configure xemu symlinks
+# =============================================================================
+# Runs as root during s6-overlay init (before desktop session starts).
+#
+# Purpose:
+#   1. Ensure the custom autostart replaces any stale copy from a previous run.
+#      The base image only copies /defaults/autostart on FIRST container start.
+#      For existing containers with a persisted /config volume, this script
+#      force-updates the autostart so our custom version is always used.
+#
+#   2. Set up the xemu config symlink. Xemu hardcodes its config location to
+#      ~/.local/share/xemu/xemu/xemu.toml. We symlink it to our managed
+#      location at /config/emulator/xemu.toml for a single source of truth.
+#      This requires root for chown, which is why it runs here instead of
+#      in autostart (which runs as user 'abc').
+# =============================================================================
+
+set -euo pipefail
+
+# --- Autostart sync ---
+AUTOSTART_SRC="/defaults/autostart"
+AUTOSTART_DST="/config/.config/openbox/autostart"
+
+if [ -f "$AUTOSTART_SRC" ]; then
+    mkdir -p "$(dirname "$AUTOSTART_DST")"
+    cp -f "$AUTOSTART_SRC" "$AUTOSTART_DST"
+    chown abc:abc "$AUTOSTART_DST"
+    chmod +x "$AUTOSTART_DST"
+    echo "[01-install-autostart] Synced autostart to $AUTOSTART_DST"
+fi
+
+# --- Xemu config symlink ---
+XEMU_CONFIG_DIR="/config/.local/share/xemu/xemu"
+mkdir -p "$XEMU_CONFIG_DIR"
+chown -R abc:abc "/config/.local/share/xemu"
+
+if [ -f /config/emulator/xemu.toml ]; then
+    chown abc:abc /config/emulator/xemu.toml
+    rm -f "$XEMU_CONFIG_DIR/xemu.toml"
+    ln -sf /config/emulator/xemu.toml "$XEMU_CONFIG_DIR/xemu.toml"
+    echo "[01-install-autostart] Symlinked xemu.toml -> /config/emulator/xemu.toml"
+fi

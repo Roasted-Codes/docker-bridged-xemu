@@ -1,0 +1,304 @@
+#!/bin/bash
+
+# =============================================================================
+# Xemu Passleader - Combined Launcher and Automation Script
+# =============================================================================
+# This script waits for Xemu to start, then automatically presses B and A
+# in a loop to automate gameplay. Designed to be foolproof and robust.
+# =============================================================================
+
+set -euo pipefail  # Exit on any error, undefined variable, or pipe failure
+
+# Debug logging function
+debug_log() {
+    mkdir -p /home/docker/.cursor 2>/dev/null || true
+    echo "{\"timestamp\":$(date +%s),\"location\":\"$0:${BASH_LINENO[0]}\",\"message\":\"$1\",\"data\":$2,\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"$3\"}" >> /home/docker/.cursor/debug.log 2>/dev/null || true
+}
+
+# Color codes for pretty output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# Function to print colored messages
+print_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
+print_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
+print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
+print_error() { echo -e "${RED}[ERROR]${NC} $1"; }
+
+# Function to cleanup on exit
+cleanup() {
+    print_info "Cleaning up and exiting..."
+    exit 0
+}
+
+# Set up signal handlers
+trap cleanup SIGINT SIGTERM
+
+# =============================================================================
+# DEPENDENCY CHECKS
+# =============================================================================
+
+print_info "Checking required dependencies..."
+
+# Required tools (essential for core functionality)
+REQUIRED_TOOLS=("wmctrl" "xdotool")
+# Optional tools (script will work without these, but some features disabled)
+OPTIONAL_TOOLS=("konsole")
+
+MISSING_REQUIRED=()
+MISSING_OPTIONAL=()
+
+debug_log "Starting dependency checks" "{\"required_tools\":\"${REQUIRED_TOOLS[*]}\",\"optional_tools\":\"${OPTIONAL_TOOLS[*]}\",\"display\":\"${DISPLAY:-not_set}\"}" "E"
+
+# Check required tools
+for tool in "${REQUIRED_TOOLS[@]}"; do
+    if ! command -v "$tool" &> /dev/null; then
+        MISSING_REQUIRED+=("$tool")
+        debug_log "Required dependency missing" "{\"tool\":\"$tool\",\"found\":false}" "E"
+    else
+        TOOL_PATH=$(command -v "$tool")
+        debug_log "Required dependency found" "{\"tool\":\"$tool\",\"path\":\"$TOOL_PATH\",\"found\":true}" "E"
+    fi
+done
+
+# Check optional tools
+for tool in "${OPTIONAL_TOOLS[@]}"; do
+    if ! command -v "$tool" &> /dev/null; then
+        MISSING_OPTIONAL+=("$tool")
+        debug_log "Optional dependency missing" "{\"tool\":\"$tool\",\"found\":false}" "E"
+    else
+        TOOL_PATH=$(command -v "$tool")
+        debug_log "Optional dependency found" "{\"tool\":\"$tool\",\"path\":\"$TOOL_PATH\",\"found\":true}" "E"
+    fi
+done
+
+# Fail if required tools are missing
+if [ ${#MISSING_REQUIRED[@]} -ne 0 ]; then
+    print_error "Missing required tools: ${MISSING_REQUIRED[*]}"
+    print_error "Please install them with: sudo apt install wmctrl xdotool"
+    exit 1
+fi
+
+# Warn about optional tools but continue
+if [ ${#MISSING_OPTIONAL[@]} -ne 0 ]; then
+    print_warning "Optional tools not found: ${MISSING_OPTIONAL[*]}"
+    print_warning "Some features will be disabled (terminal relaunch)"
+fi
+
+print_success "All required dependencies found!"
+
+# =============================================================================
+# TERMINAL CHECK AND RELAUNCH
+# =============================================================================
+
+# Debug: Log terminal detection state
+TERM_TYPE="${TERM:-unknown}"
+TTY_CHECK="$(test -t 0 && echo 'true' || echo 'false')"
+SCRIPT_PATH="$0"
+SCRIPT_EXISTS="$(test -f "$0" && echo 'true' || echo 'false')"
+SCRIPT_EXECUTABLE="$(test -x "$0" && echo 'true' || echo 'false')"
+debug_log "Terminal detection check" "{\"TERM\":\"$TERM_TYPE\",\"is_tty\":\"$TTY_CHECK\",\"script_path\":\"$SCRIPT_PATH\",\"script_exists\":\"$SCRIPT_EXISTS\",\"script_executable\":\"$SCRIPT_EXECUTABLE\",\"calling_user\":\"$(whoami)\",\"pwd\":\"$(pwd)\"}" "A,B,D"
+
+# Check if we're running in a terminal
+if [ ! -t 0 ]; then
+    debug_log "Terminal check failed, attempting terminal launch" "{\"script_path\":\"$0\",\"args\":\"$@\"}" "B,C"
+    print_info "Not running in terminal, attempting to launch in terminal..."
+    if command -v konsole &> /dev/null; then
+        debug_log "Konsole found, launching" "{\"full_command\":\"konsole --noclose -e $0 $@\"}" "C"
+        konsole --noclose -e "$0" "$@"
+        KONSOLE_EXIT=$?
+        debug_log "Konsole launch result" "{\"exit_code\":\"$KONSOLE_EXIT\"}" "C"
+        exit 0
+    elif command -v xterm &> /dev/null; then
+        debug_log "xterm found, launching" "{\"full_command\":\"xterm -e $0 $@\"}" "C"
+        xterm -e "$0" "$@"
+        XTERM_EXIT=$?
+        debug_log "xterm launch result" "{\"exit_code\":\"$XTERM_EXIT\"}" "C"
+        exit 0
+    else
+        debug_log "No terminal emulator found, continuing anyway" "{\"warning\":\"no_terminal_emulator\"}" "C"
+        print_warning "No terminal emulator (konsole/xterm) found!"
+        print_warning "Continuing anyway, but output may not display correctly."
+        print_warning "Consider running this script directly in a terminal for best results."
+    fi
+else
+    debug_log "Terminal check passed, continuing execution" "{\"terminal_type\":\"$TERM_TYPE\"}" "A"
+fi
+
+# =============================================================================
+# PROCESS CHECKS
+# =============================================================================
+
+# Function to check if xemu is running
+check_xemu() {
+    WMCTRL_OUTPUT=$(wmctrl -l 2>&1)
+    WMCTRL_EXIT=$?
+    XEMU_FOUND=$(echo "$WMCTRL_OUTPUT" | grep -q "xemu | v" && echo "true" || echo "false")
+    debug_log "Xemu window check" "{\"wmctrl_exit\":\"$WMCTRL_EXIT\",\"xemu_found\":\"$XEMU_FOUND\",\"window_count\":\"$(echo \"$WMCTRL_OUTPUT\" | wc -l)\"}" "E"
+    if echo "$WMCTRL_OUTPUT" | grep -q "xemu | v"; then
+        return 0
+    fi
+    return 1
+}
+
+# Process detection removed - it was too aggressive and blocked legitimate runs
+print_success "Process checks passed."
+
+# =============================================================================
+# WAIT FOR XEMU
+# =============================================================================
+
+print_info "Waiting for Xemu window to appear..."
+print_warning "Make sure Xemu is starting up or already running!"
+
+TIMEOUT=60  # Increased timeout for slower systems
+COUNTDOWN=$TIMEOUT
+
+while [ $COUNTDOWN -gt 0 ]; do
+    if check_xemu; then
+        print_success "Xemu window detected!"
+        break
+    fi
+    
+    # Show countdown every 5 seconds to avoid spam
+    if [ $((COUNTDOWN % 5)) -eq 0 ] || [ $COUNTDOWN -le 10 ]; then
+        print_info "Still waiting for Xemu... (${COUNTDOWN} seconds remaining)"
+    fi
+    
+    sleep 1
+    ((COUNTDOWN--))
+done
+
+if [ $COUNTDOWN -eq 0 ]; then
+    print_error "Timeout waiting for Xemu to start!"
+    print_error "Please ensure:"
+    print_error "  1. Xemu is installed and working"
+    print_error "  2. Xemu window title contains 'xemu | v'"
+    print_error "  3. No firewall is blocking Xemu"
+    exit 1
+fi
+
+# =============================================================================
+# XEMU WINDOW SETUP
+# =============================================================================
+
+print_info "Getting Xemu window information..."
+
+# Get Xemu window ID with better error handling
+WINDOW_ID=$(wmctrl -l 2>/dev/null | grep "xemu | v" | head -n1 | cut -d' ' -f1)
+
+if [ -z "$WINDOW_ID" ]; then
+    print_error "Could not get Xemu window ID!"
+    print_error "The Xemu window might have closed or changed its title."
+    exit 1
+fi
+
+print_success "Found Xemu window (ID: $WINDOW_ID)"
+
+# Give Xemu additional time to fully initialize
+print_info "Giving Xemu time to fully initialize..."
+for i in {5..1}; do
+    echo -ne "\r${BLUE}[INFO]${NC} Starting in $i seconds...   "
+    sleep 1
+done
+echo  # New line
+
+# =============================================================================
+# INITIAL SETUP
+# =============================================================================
+
+print_info "Performing initial setup..."
+
+# Function to safely press a key
+safe_keypress() {
+    local key="$1"
+    local description="$2"
+
+    if ! wmctrl -l 2>/dev/null | grep -q "$WINDOW_ID"; then
+        print_error "Xemu window disappeared! Exiting..."
+        exit 1
+    fi
+
+    print_info "$description"
+
+    # Activate window first, then send keypress to active window
+    wmctrl -i -a "$WINDOW_ID" 2>/dev/null || true
+    sleep 0.3
+
+    if ! xdotool keydown "$key" 2>/dev/null; then
+        print_error "Failed to send keydown to Xemu window!"
+        return 1
+    fi
+
+    sleep 0.1  # 100ms hold time
+
+    if ! xdotool keyup "$key" 2>/dev/null; then
+        print_error "Failed to send keyup to Xemu window!"
+        return 1
+    fi
+
+    print_success "Key '$key' pressed successfully"
+    return 0
+}
+
+# Press F6 to load snapshot
+if safe_keypress "F6" "Pressing F6 to load snapshot..."; then
+    print_success "Initial snapshot load completed"
+else
+    print_error "Failed to press F6, but continuing anyway..."
+fi
+
+sleep 2  # Brief pause after F6
+
+# =============================================================================
+# MAIN AUTOMATION LOOP
+# =============================================================================
+
+print_success "Starting B -> A automation loop"
+print_info "Press Ctrl+C to stop the automation at any time"
+echo
+
+SEQUENCE_COUNT=1
+
+while true; do
+    print_info "=== Sequence #$SEQUENCE_COUNT ==="
+    
+    # Verify Xemu window still exists
+    if ! wmctrl -l 2>/dev/null | grep -q "$WINDOW_ID"; then
+        print_error "Xemu window no longer exists! Exiting..."
+        exit 1
+    fi
+    
+    # Press B
+    if ! safe_keypress "b" "Pressing B button..."; then
+        print_warning "Failed to press B, but continuing..."
+    fi
+    
+    # Wait 3 seconds
+    print_info "Waiting 3 seconds..."
+    sleep 3
+    
+    # Press A
+    if ! safe_keypress "a" "Pressing A button..."; then
+        print_warning "Failed to press A, but continuing..."
+    fi
+    
+    # 8 second countdown with dynamic display
+    print_info "Countdown to next sequence:"
+    for i in {8..1}; do
+        echo -ne "\r${CYAN}[COUNTDOWN]${NC} Next sequence starts in $i seconds...   "
+        sleep 1
+    done
+    echo  # New line
+    
+    ((SEQUENCE_COUNT++))
+    
+    # Optional: Add a safety break after many sequences
+    if [ $((SEQUENCE_COUNT % 100)) -eq 0 ]; then
+        print_warning "Completed $SEQUENCE_COUNT sequences. Still running smoothly!"
+    fi
+done 

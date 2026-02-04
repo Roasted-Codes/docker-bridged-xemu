@@ -1,0 +1,26 @@
+.jenkins-external
+
+# Large files - distributed separately
+*.qcow2
+*.iso
+*.img
+
+# Runtime-generated container files (created by LinuxServer base image)
+config/.cache/
+config/.local/
+config/.dbus/
+config/.XDG/
+config/.Xresources
+config/.xsettingsd
+config/.bash_history
+config/.bashrc
+config/.config/pulse/
+config/.config/openbox/
+config/.config/gtk-3.0/
+config/.config/glib-2.0/
+config/.config/xfce4/
+config/ssl/
+config/Desktop/
+
+# XLink Kai runtime data
+config/xlinkkai/

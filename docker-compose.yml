@@ -1,0 +1,95 @@
+---
+# ============================================================================
+# Roasted-Codes xemu + XLink Kai Docker Compose Configuration
+# ============================================================================
+# This configuration provides:
+#   - xemu emulator with custom config management and automation
+#   - XLink Kai for LAN gaming over the internet
+#
+# Features:
+#   - CPU-only rendering (no GPU required)
+#   - Automatic config symlinking to /config/emulator/xemu.toml
+#   - Optional passleader automation script (auto-runs if present)
+#   - XLink Kai for system link gaming over internet
+#
+# Based on: LinuxServer.io docker-xemu
+# See CHANGELOG.md for all modifications
+# ============================================================================
+
+# Virtual LAN for xemu + XLink Kai communication
+# Both containers share this bridge for layer 2 broadcast traffic
+networks:
+  xemu_lan:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+          gateway: 172.20.0.1
+
+services:
+  xemu:
+    build: .
+    image: xemu-bridged:latest
+    container_name: xemu-halo2-server
+    privileged: true  # Required for packet capture (pcap) in bridged mode
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - NET_ADMIN    # Required for bridged networking (TAP device)
+    devices:
+      - /dev/net/tun:/dev/net/tun  # Required for bridged networking
+      - /dev/uinput:/dev/uinput    # Required for Selkies virtual gamepad
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      # CPU-only rendering settings (no GPU required)
+      - DISABLE_ZINK=true
+      - DISABLE_DRI3=true
+      # Enable Selkies gamepad passthrough
+      - SELKIES_GAMEPAD_ENABLED=true
+    volumes:
+      - ./config:/config
+      - ./config/custom-cont-init.d:/custom-cont-init.d  # Run setcap as root at init
+    ports:
+      - 3000:3000   # HTTP interface
+      - 3001:3001   # HTTPS interface (default, self-signed cert)
+    networks:
+      xemu_lan:
+        ipv4_address: 172.20.0.10
+    shm_size: "1gb"
+    restart: unless-stopped
+
+  xlinkkai:
+    image: ich777/xlinkkaievolution
+    container_name: xlinkkai
+    environment:
+      - INTERFACE_NAME=eth0  # Use container's bridge interface
+      - UMASK=000
+      - UID=99
+      - GID=100
+    volumes:
+      - ./config/xlinkkai:/xlinkkaievolution
+    ports:
+      - 34522:34522      # XLink Kai web interface
+      - 30000:30000/udp  # P2P connections to orbital
+      - 34523:34523/udp  # XLink Kai game tunneling
+    networks:
+      xemu_lan:
+        ipv4_address: 172.20.0.20
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+
+  dhcp:
+    image: drpsychick/dnsmasq
+    container_name: xemu-dhcp
+    cap_add:
+      - NET_ADMIN    # Required for DHCP server
+    networks:
+      xemu_lan:
+        ipv4_address: 172.20.0.2
+    volumes:
+      - ./config/dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf:ro
+    restart: unless-stopped
