@@ -141,6 +141,20 @@ xemu's pcap backend is completely broken for *receiving* packets on modern Linux
 - This is needed so the container's NIC accepts unicast frames addressed to the Xbox's emulated MAC (which differs from the container's own MAC)
 - xemu's libpcap also sets per-socket promiscuous via `PACKET_MR_PROMISC`, but interface-level promisc provides defense in depth
 
+## TCP Checksum Offloading Fix
+
+Inbound TCP connections to the emulated Xbox (FTP, XBDM, etc.) silently fail while ICMP ping works fine. This is a separate issue from the pcap immediate mode bug.
+
+**Root cause:**
+- The host kernel uses TCP checksum offloading — it writes a partial/placeholder checksum and expects NIC hardware to complete it
+- Packets to pcap-injected Xbox IPs (172.20.0.50/51) traverse a software bridge, not real hardware — no hardware ever fills in the correct checksum
+- The Xbox's TCP/IP stack validates checksums and silently drops packets with bad checksums
+- ICMP works because the kernel computes ICMP checksums in software, not via offloading
+
+**Symptoms:** `ping 172.20.0.50` works, `nc 172.20.0.50 21` times out. tcpdump shows `cksum incorrect` on SYN packets.
+
+**The fix:** `10-xemu-setcap` disables TX checksum offloading on eth0 with `ethtool -K eth0 tx off`, forcing the kernel to compute correct checksums in software.
+
 ## Key Files
 
 | File | Purpose |

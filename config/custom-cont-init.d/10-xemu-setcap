@@ -26,6 +26,15 @@ XEMU_LIB="/opt/xemu/usr/lib"
 echo "[10-xemu-setcap] Enabling promiscuous mode on eth0..."
 ip link set eth0 promisc on
 
+# Disable TX checksum offloading on eth0. The host kernel uses checksum
+# offloading (leaves partial checksums for NIC hardware to complete), but
+# packets to pcap-injected Xbox IPs traverse a software bridge — no hardware
+# ever fills in the checksum. The Xbox's TCP stack silently drops packets
+# with bad checksums, breaking all inbound TCP connections (FTP, XBDM, etc.)
+# while ICMP ping still works (kernel computes ICMP checksums in software).
+echo "[10-xemu-setcap] Disabling TX checksum offloading on eth0..."
+ethtool -K eth0 tx off 2>/dev/null || true
+
 if [ -f "$XEMU_BIN" ]; then
     # Register AppImage libraries with the system linker
     # This is required because setcap strips LD_LIBRARY_PATH
