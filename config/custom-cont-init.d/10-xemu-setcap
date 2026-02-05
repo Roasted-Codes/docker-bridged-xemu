@@ -21,6 +21,11 @@ set -euo pipefail
 XEMU_BIN="/opt/xemu/usr/bin/xemu"
 XEMU_LIB="/opt/xemu/usr/lib"
 
+# Enable promiscuous mode on eth0 so pcap can receive unicast frames
+# addressed to the Xbox's emulated MAC (not the container's MAC)
+echo "[10-xemu-setcap] Enabling promiscuous mode on eth0..."
+ip link set eth0 promisc on
+
 if [ -f "$XEMU_BIN" ]; then
     # Register AppImage libraries with the system linker
     # This is required because setcap strips LD_LIBRARY_PATH
@@ -41,8 +46,15 @@ if [ -f "$XEMU_BIN" ]; then
     # so we write the interposer paths there to restore input functionality.
     INTERPOSER="/usr/lib/selkies_joystick_interposer.so"
     FAKE_UDEV="/opt/lib/libudev.so.1.0.0-fake"
+    PCAP_IMMEDIATE="/config/emulator/pcap_immediate.so"
     if [ -f "$INTERPOSER" ]; then
         printf "%s\n%s\n" "$INTERPOSER" "$FAKE_UDEV" > /etc/ld.so.preload
+        # Fix pcap receive: libpcap 1.9+ with TPACKET_V3 requires immediate
+        # mode or the selectable fd never becomes readable. xemu doesn't set
+        # this, so we shim pcap_activate to inject pcap_set_immediate_mode.
+        if [ -f "$PCAP_IMMEDIATE" ]; then
+            echo "$PCAP_IMMEDIATE" >> /etc/ld.so.preload
+        fi
         echo "[10-xemu-setcap] Wrote ld.so.preload for setcap compatibility"
     fi
 else

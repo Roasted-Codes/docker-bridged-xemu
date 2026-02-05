@@ -8,6 +8,8 @@ Docker-based Xbox emulator (xemu) deployment with XLink Kai multiplayer networki
 
 The GitHub repo is [`Roasted-Codes/docker-bridged-xemu`](https://github.com/Roasted-Codes/docker-bridged-xemu). Upstream changes come through the base image tag, not git merges.
 
+**Main project location:** `docker-bridged-xemu/`
+
 ## Common Commands
 
 ```bash
@@ -81,9 +83,10 @@ Xemu hardcodes its config to `~/.local/share/xemu/xemu/xemu.toml`. The `01-insta
    - Fixes file permissions (`chown abc:abc`)
 
 2. **s6-overlay runs `custom-cont-init.d/10-xemu-setcap`** (as root):
+   - Enables promiscuous mode on eth0 for receiving Xbox-addressed unicast frames
    - Registers AppImage libraries with system linker (`ldconfig`) so they can be found without `LD_LIBRARY_PATH`
    - Applies `setcap cap_net_raw,cap_net_admin+eip` to the xemu binary for pcap networking
-   - Writes Selkies interposer libraries to `/etc/ld.so.preload` (see "Setcap and Input Compatibility" below)
+   - Writes to `/etc/ld.so.preload`: Selkies interposer + fake udev + pcap immediate mode shim (see "Setcap and Input Compatibility" and "Pcap Immediate Mode Fix" below)
 
 3. **Desktop session starts, runs `autostart`** (as user `abc`):
    - Launches passleader automation in a separate xterm window (only if `/config/emulator/passleader_v3.sh` exists -- rename from `.sh.disabled` to activate)
@@ -106,6 +109,38 @@ This is a critical interaction between pcap networking and Selkies browser input
 
 **`setcap` also strips `LD_LIBRARY_PATH`**, which would prevent xemu from finding its bundled AppImage libraries. This is handled separately by `10-xemu-setcap` registering the AppImage lib directory (`/opt/xemu/usr/lib`) with `ldconfig`.
 
+## Pcap Immediate Mode Fix
+
+xemu's pcap backend is completely broken for *receiving* packets on modern Linux. Sending works fine, but the emulated Xbox can never receive any network traffic. This section documents the root cause and fix.
+
+**Root cause:**
+- xemu calls `pcap_open_live()` to open the network interface, which does NOT call `pcap_set_immediate_mode()`
+- On libpcap >= 1.9 with Linux's TPACKET_V3 (the default since kernel 3.2), the file descriptor returned by `pcap_get_selectable_fd()` never becomes readable unless immediate mode is enabled
+- xemu's QEMU event loop polls this fd waiting for `POLLIN`, which never fires
+- Result: xemu can inject packets via `pcap_sendpacket()` (bypasses the fd) but never reads incoming packets
+
+**Why a simple shim doesn't work:**
+- First attempt: intercept `pcap_activate()` via LD_PRELOAD to add `pcap_set_immediate_mode()` before activation
+- This fails because xemu bundles its own libpcap at `/opt/xemu/usr/lib/libpcap.so.0.8`
+- Internal calls from `pcap_open_live()` → `pcap_activate()` within the same shared library bypass the PLT (Procedure Linkage Table)
+- LD_PRELOAD can only intercept cross-library calls that go through the PLT
+
+**The fix (`pcap_immediate.c`):**
+- Intercept `pcap_open_live()` instead — this IS a cross-library call (xemu binary → bundled libpcap) so it goes through the PLT
+- The shim replaces `pcap_open_live()` with the equivalent `pcap_create` / `pcap_set_immediate_mode(1)` / `pcap_activate` sequence
+- Uses `dlsym(RTLD_NEXT, ...)` to call the real functions from whatever libpcap is loaded
+- Compiled as a shared library: `gcc -shared -fPIC -o pcap_immediate.so pcap_immediate.c -ldl`
+- Loaded via `/etc/ld.so.preload` (not `LD_PRELOAD` env var, because `setcap` triggers `AT_SECURE` which strips `LD_PRELOAD`)
+
+**Files:**
+- `config/emulator/pcap_immediate.c` — shim source code
+- `config/emulator/pcap_immediate.so` — compiled shim (built inside container, not in git)
+
+**Promiscuous mode:**
+- `10-xemu-setcap` also runs `ip link set eth0 promisc on` at the interface level
+- This is needed so the container's NIC accepts unicast frames addressed to the Xbox's emulated MAC (which differs from the container's own MAC)
+- xemu's libpcap also sets per-socket promiscuous via `PACKET_MR_PROMISC`, but interface-level promisc provides defense in depth
+
 ## Key Files
 
 | File | Purpose |
@@ -117,6 +152,7 @@ This is a critical interaction between pcap networking and Selkies browser input
 | `config/custom-cont-init.d/10-xemu-setcap` | Root init: ldconfig + setcap + `/etc/ld.so.preload` for input compat |
 | `config/emulator/xemu.toml` | Main xemu configuration (TOML format, auto-saved by xemu via symlink) |
 | `config/emulator/*.bin` | BIOS/EEPROM files (mcpx, flashrom, eeprom) |
+| `config/emulator/pcap_immediate.c` | LD_PRELOAD shim source: fixes pcap receive on libpcap >= 1.9 (see "Pcap Immediate Mode Fix") |
 | `config/emulator/passleader_v3.sh.disabled` | Gameplay automation script (rename to `.sh` to activate) |
 | `config/dnsmasq/dnsmasq.conf` | DHCP/DNS config for bridge network |
 
@@ -147,6 +183,7 @@ This is a critical interaction between pcap networking and Selkies browser input
 - **Always pair `setcap` with `ldconfig`**. The AppImage libraries must be registered system-wide or xemu will fail to start (missing shared libraries).
 - **The `custom-cont-init.d` mount must go to `/custom-cont-init.d`** (root), not `/config/custom-cont-init.d`. LinuxServer's s6-overlay only scans the root path.
 - **`01-install-autostart` must force-copy autostart every start**. The base image only copies `/defaults/autostart` on first run. Without force-sync, existing containers would use a stale autostart after image updates.
+- **`pcap_immediate.so` must be in `/etc/ld.so.preload`**. Without this shim, xemu's pcap backend cannot receive any packets on libpcap >= 1.9 (TPACKET_V3). The shim intercepts `pcap_open_live()` and injects `pcap_set_immediate_mode(1)`. It must intercept `pcap_open_live` (not `pcap_activate`) because xemu's bundled libpcap makes internal calls that bypass the PLT.
 
 ## Required Downloads (Not in Git)
 

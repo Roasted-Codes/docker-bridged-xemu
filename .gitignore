@@ -5,6 +5,9 @@
 *.iso
 *.img
 
+# Compiled shared libraries (built inside container)
+*.so
+
 # Runtime-generated container files (created by LinuxServer base image)
 config/.cache/
 config/.local/
