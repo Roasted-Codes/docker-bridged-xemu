@@ -10,6 +10,36 @@ The GitHub repo is [`Roasted-Codes/docker-bridged-xemu`](https://github.com/Roas
 
 **Main project location:** `docker-bridged-xemu/`
 
+## Project Structure
+
+This is a Docker overlay project that extends linuxserver base images. The base image is `linuxserver/docker-xemu` (not `baseimage-selkies` or other variants). Always check Dockerfile `FROM` lines before suggesting base image changes. The overlay only adds packages and config on top of the upstream image -- it does not modify or rebuild upstream components.
+
+## Repository Layout
+
+The project root contains the Docker build files and overlay directories. Do not search parent directories or unrelated paths for project files.
+
+```
+docker-bridged-xemu/
+├── Dockerfile                          # Overlay: FROM linuxserver/xemu, adds wmctrl + custom autostart
+├── docker-compose.yml                  # 4-service stack (xemu, xlinkkai, xbdm-relay, dhcp)
+├── root/defaults/autostart             # Desktop session entrypoint (copied into image at build)
+├── config/
+│   ├── custom-cont-init.d/
+│   │   ├── 01-install-autostart        # Root init: autostart sync + xemu.toml symlink
+│   │   └── 10-xemu-setcap             # Root init: promisc + checksum fix + ldconfig + setcap + ld.so.preload
+│   ├── emulator/
+│   │   ├── xemu.toml                   # Main xemu config (symlinked into xemu's default location)
+│   │   ├── pcap_immediate.c            # LD_PRELOAD shim source for pcap receive fix
+│   │   ├── *.bin                       # BIOS/EEPROM files (mcpx, flashrom, eeprom)
+│   │   └── passleader_v3.sh.disabled   # Gameplay automation (rename to .sh to activate)
+│   ├── dnsmasq/dnsmasq.conf            # DHCP/DNS config for bridge network
+│   └── games/                          # Game ISOs (not in git)
+├── CLAUDE.md                           # This file
+├── FTP-Fix.md                          # FTP access guide (lftp, FileZilla, WinSCP via SOCKS)
+├── CHANGELOG.md                        # Change history
+└── README.md                           # Project overview
+```
+
 ## Common Commands
 
 ```bash
@@ -232,6 +262,13 @@ The emulated Xbox's XBDM service listens on `172.20.0.51:731` — a pcap-injecte
 ### Configuration
 - TOML format for xemu settings
 - Use absolute paths in configuration files (e.g., `/config/emulator/mcpx_1.0.bin`)
+
+## Docker Conventions
+
+- When modifying capabilities (e.g., `setcap`), verify that `LD_PRELOAD` and other environment-based library injection mechanisms still work. `setcap` triggers secure execution mode (`AT_SECURE`) which silently strips both `LD_PRELOAD` and `LD_LIBRARY_PATH`.
+- Always test controller/input device passthrough after changing permissions or capabilities in containers. The Selkies joystick interposer depends on being loaded into the xemu process.
+- Never apply `setcap` without also updating `/etc/ld.so.preload` (for Selkies input) and running `ldconfig` (for AppImage libraries). These three operations are a unit.
+- The xbdm-relay container must be a separate container (not socat inside xemu) due to bridge hairpin mode being disabled by default.
 
 ## Important Constraints
 
