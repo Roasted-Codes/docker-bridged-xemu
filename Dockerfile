@@ -9,7 +9,8 @@ LABEL maintainer="Roasted-Codes"
 RUN \
   apt-get update && \
   apt-get install -y --no-install-recommends \
-    wmctrl && \
+    wmctrl \
+    ethtool && \
   apt-get autoclean && \
   rm -rf \
     /var/lib/apt/lists/* \

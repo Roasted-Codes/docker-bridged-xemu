@@ -26,6 +26,9 @@ networks:
         - subnet: 172.20.0.0/24
           gateway: 172.20.0.1
 
+volumes:
+  tailscale-state:  # Persists Tailscale auth across container restarts
+
 services:
   xemu:
     build: .
@@ -82,24 +85,45 @@ services:
       - NET_ADMIN
     restart: unless-stopped
 
-  xbdm-relay:
-    image: alpine/socat
-    container_name: xbdm-relay
-    entrypoint: /bin/sh
-    command: >
-      -c "apk add --no-cache ethtool > /dev/null 2>&1;
-          ethtool -K eth0 tx off 2>/dev/null || true;
-          exec socat TCP-LISTEN:731,reuseaddr,fork TCP:172.20.0.51:731"
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: xemu-tailscale
+    hostname: xemu-vps
     cap_add:
-      - NET_ADMIN    # Required for ethtool to disable TX checksum offloading
+      - NET_ADMIN
+      - NET_RAW
+    sysctls:
+      - net.ipv4.ip_forward=1
+    environment:
+      - TS_EXTRA_ARGS=--advertise-routes=172.20.0.0/24 --accept-dns=false
+      - TS_STATE_DIR=/var/lib/tailscale
+    volumes:
+      - tailscale-state:/var/lib/tailscale
     ports:
-      - 127.0.0.1:731:731  # XBDM relay (localhost only, use SSH tunnel to access)
+      - 41641:41641/udp  # WireGuard port for direct connections
     networks:
       xemu_lan:
-        ipv4_address: 172.20.0.3
-    depends_on:
-      - xemu
+        ipv4_address: 172.20.0.4
     restart: unless-stopped
+
+  # xbdm-relay:  # Disabled in favor of Tailscale direct access (uncomment if Tailscale not used)
+  #   image: alpine/socat
+  #   container_name: xbdm-relay
+  #   entrypoint: /bin/sh
+  #   command: >
+  #     -c "apk add --no-cache ethtool > /dev/null 2>&1;
+  #         ethtool -K eth0 tx off 2>/dev/null || true;
+  #         exec socat TCP-LISTEN:731,reuseaddr,fork TCP:172.20.0.51:731"
+  #   cap_add:
+  #     - NET_ADMIN    # Required for ethtool to disable TX checksum offloading
+  #   ports:
+  #     - 127.0.0.1:731:731  # XBDM relay (localhost only, use SSH tunnel to access)
+  #   networks:
+  #     xemu_lan:
+  #       ipv4_address: 172.20.0.3
+  #   depends_on:
+  #     - xemu
+  #   restart: unless-stopped
 
   dhcp:
     image: drpsychick/dnsmasq
