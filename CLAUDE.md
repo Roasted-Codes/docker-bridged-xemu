@@ -48,6 +48,7 @@ This project solves **three critical bugs** that prevent xemu from working with 
 
 **Critical rules for AI agents working with this codebase:**
 
+- **🚨 NEVER push to GitHub without explicit user confirmation first.** Git push is a hard-to-reverse action that affects shared state. Always ask the user before running `git push`. This is non-negotiable - even after committing changes, ALWAYS confirm before pushing.
 - **Never apply `setcap` at build time** in the Dockerfile. The xemu binary comes from the base image and changes when upstream updates. `setcap` must be applied at runtime via `10-xemu-setcap` to always target the current binary.
 - **Always pair `setcap` with `/etc/ld.so.preload`**. If you apply `setcap` to xemu, you must also write the Selkies interposer to `/etc/ld.so.preload` or browser input will silently break.
 - **Always pair `setcap` with `ldconfig`**. The AppImage libraries must be registered system-wide or xemu will fail to start (missing shared libraries).
@@ -582,6 +583,8 @@ Script launches in separate xterm window. Press Ctrl+C in automation terminal to
 
 ### Push to GitHub
 
+**🚨 CRITICAL: Always ask for user confirmation before pushing to GitHub!**
+
 **Working directory:** `/home/docker/bridged-xemu/`
 
 ```bash
@@ -590,10 +593,13 @@ git add .
 git commit -m "Your commit message
 
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
-git push origin main
+# STOP HERE - ask user before proceeding
+git push origin main  # Only run after explicit user confirmation
 ```
 
 **Note:** Verify git remote with `git remote -v` before pushing. The origin should point to `Roasted-Codes/docker-bridged-xemu`.
+
+**AI Agent Rule:** Never execute `git push` without first asking the user "Ready to push to GitHub?" and receiving explicit confirmation. This applies to ALL branches, not just main.
 
 ### Test After Changes
 
