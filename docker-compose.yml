@@ -82,6 +82,25 @@ services:
       - NET_ADMIN
     restart: unless-stopped
 
+  xbdm-relay:
+    image: alpine/socat
+    container_name: xbdm-relay
+    entrypoint: /bin/sh
+    command: >
+      -c "apk add --no-cache ethtool > /dev/null 2>&1;
+          ethtool -K eth0 tx off 2>/dev/null || true;
+          exec socat TCP-LISTEN:731,reuseaddr,fork TCP:172.20.0.51:731"
+    cap_add:
+      - NET_ADMIN    # Required for ethtool to disable TX checksum offloading
+    ports:
+      - 127.0.0.1:731:731  # XBDM relay (localhost only, use SSH tunnel to access)
+    networks:
+      xemu_lan:
+        ipv4_address: 172.20.0.3
+    depends_on:
+      - xemu
+    restart: unless-stopped
+
   dhcp:
     image: drpsychick/dnsmasq
     container_name: xemu-dhcp

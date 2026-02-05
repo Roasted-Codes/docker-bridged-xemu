@@ -44,12 +44,13 @@ There is no `Dockerfile.aarch64`. Multi-arch support is handled automatically by
 
 ### Services
 
-Three containers on a shared Docker bridge network (`172.20.0.0/24`):
+Four containers on a shared Docker bridge network (`172.20.0.0/24`):
 
 | Service | Container Name | IP | Ports | Purpose |
 |---------|---------------|-----|-------|---------|
 | xemu | xemu-halo2-server | 172.20.0.10 | 3000 (HTTP), 3001 (HTTPS) | Xbox emulator with Selkies web interface |
 | xlinkkai | xlinkkai | 172.20.0.20 | 34522 (web UI), 30000/udp, 34523/udp | XLink Kai for LAN gaming over internet |
+| xbdm-relay | xbdm-relay | 172.20.0.3 | 127.0.0.1:731 | socat relay: forwards port 731 to Xbox XBDM |
 | dhcp | xemu-dhcp | 172.20.0.2 | -- | dnsmasq DHCP/DNS for the bridge network |
 
 ### Bridge Network
@@ -156,12 +157,40 @@ Inbound TCP connections to the emulated Xbox (FTP, XBDM, etc.) silently fail whi
 
 **The fix:** `10-xemu-setcap` disables TX checksum offloading on eth0 with `ethtool -K eth0 tx off`, forcing the kernel to compute correct checksums in software.
 
+## Remote Access to the Emulated Xbox
+
+The emulated Xbox's services (FTP on port 21, XBDM on port 731) live on pcap-injected IPs (`172.20.0.50`/`.51`) inside the Docker bridge network. These IPs are reachable from the VPS host but not from the internet. Remote access from a user's PC requires SSH tunneling.
+
+### XBDM / Assembly (Port 731)
+
+[Assembly](https://github.com/XboxChaos/Assembly) connects to Xbox XBDM on port 731 using plain TCP (simple request/response, no reverse connections). A single SSH local port forward is all that's needed.
+
+A **separate socat relay container** (`xbdm-relay`) forwards port 731 to the Xbox's pcap-injected IP (`172.20.0.51:731`). Docker maps `127.0.0.1:731` on the host to the relay container. An SSH local port forward completes the chain.
+
+The relay must be a separate container (not inside the xemu container) because Linux bridge hairpin mode is disabled by default — a container cannot send traffic out its own bridge port and have it reflected back in. A separate container on a different bridge port avoids this entirely. The relay container also disables TX checksum offloading on its own eth0 (same bug as the xemu container).
+
+**SSH config on Windows PC** (`C:\Users\<you>\.ssh\config`):
+```
+Host 45.76.230.237
+  HostName 45.76.230.237
+  User root
+  LocalForward 731 localhost:731
+```
+
+Then set the Xbox IP in Assembly to `127.0.0.1`. The full path: Assembly → `localhost:731` → SSH tunnel → VPS `localhost:731` → Docker → container socat → Xbox `172.20.0.51:731`.
+
+**Prerequisites:** Xbox must be booted to a dashboard with XBDM running. Verify from VPS terminal: `nc -zv 172.20.0.51 731`.
+
+### FTP (Port 21)
+
+FTP requires a SOCKS proxy (not a simple port forward) because FTP passive mode opens random data ports. See `FTP-Fix.md` for lftp, FileZilla, and WinSCP instructions.
+
 ## Key Files
 
 | File | Purpose |
 |------|---------|
 | `Dockerfile` | Overlay image: `FROM lscr.io/linuxserver/xemu:latest`, installs `wmctrl`, copies custom autostart |
-| `docker-compose.yml` | 3-service stack with bridge network (xemu, xlinkkai, dhcp) |
+| `docker-compose.yml` | 4-service stack with bridge network (xemu, xlinkkai, xbdm-relay, dhcp) |
 | `root/defaults/autostart` | Desktop session entrypoint: optional passleader launcher + xemu launch |
 | `config/custom-cont-init.d/01-install-autostart` | Root init: autostart sync + xemu.toml symlink + permissions |
 | `config/custom-cont-init.d/10-xemu-setcap` | Root init: ldconfig + setcap + `/etc/ld.so.preload` for input compat |
@@ -171,6 +200,18 @@ Inbound TCP connections to the emulated Xbox (FTP, XBDM, etc.) silently fail whi
 | `config/emulator/passleader_v3.sh.disabled` | Gameplay automation script (rename to `.sh` to activate) |
 | `config/dnsmasq/dnsmasq.conf` | DHCP/DNS config for bridge network |
 | `FTP-Fix.md` | Guide for FTP access to the emulated Xbox (lftp, FileZilla, WinSCP via SOCKS proxy) |
+
+### XBDM Relay Container (Why It Exists)
+
+The emulated Xbox's XBDM service listens on `172.20.0.51:731` — a pcap-injected IP that Docker port mapping cannot reach. To make XBDM accessible from outside the VPS, a lightweight `alpine/socat` container (`xbdm-relay`) acts as a bridge:
+
+1. socat inside the relay listens on port 731
+2. Docker maps `127.0.0.1:731` on the VPS host to the relay container
+3. socat forwards connections to `172.20.0.51:731` (the Xbox's XBDM)
+4. An SSH `LocalForward 731 localhost:731` in the user's SSH config tunnels this to their Windows PC
+5. Assembly (or any XBDM tool) connects to `127.0.0.1:731` on Windows
+
+**Why not socat inside the xemu container?** Linux bridge hairpin mode is disabled by default. When socat inside the xemu container tries to reach the Xbox's pcap-injected IP, the packet exits the container's bridge port and needs to come back in the same port. The bridge silently drops it. A separate container on a different bridge port avoids this entirely.
 
 ## Code Style
 
