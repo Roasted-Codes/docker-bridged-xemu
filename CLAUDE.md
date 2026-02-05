@@ -84,6 +84,7 @@ Xemu hardcodes its config to `~/.local/share/xemu/xemu/xemu.toml`. The `01-insta
 
 2. **s6-overlay runs `custom-cont-init.d/10-xemu-setcap`** (as root):
    - Enables promiscuous mode on eth0 for receiving Xbox-addressed unicast frames
+   - Disables TX checksum offloading on eth0 (see "TCP Checksum Offloading Fix" below)
    - Registers AppImage libraries with system linker (`ldconfig`) so they can be found without `LD_LIBRARY_PATH`
    - Applies `setcap cap_net_raw,cap_net_admin+eip` to the xemu binary for pcap networking
    - Writes to `/etc/ld.so.preload`: Selkies interposer + fake udev + pcap immediate mode shim (see "Setcap and Input Compatibility" and "Pcap Immediate Mode Fix" below)
@@ -169,6 +170,7 @@ Inbound TCP connections to the emulated Xbox (FTP, XBDM, etc.) silently fail whi
 | `config/emulator/pcap_immediate.c` | LD_PRELOAD shim source: fixes pcap receive on libpcap >= 1.9 (see "Pcap Immediate Mode Fix") |
 | `config/emulator/passleader_v3.sh.disabled` | Gameplay automation script (rename to `.sh` to activate) |
 | `config/dnsmasq/dnsmasq.conf` | DHCP/DNS config for bridge network |
+| `FTP-Fix.md` | Guide for FTP access to the emulated Xbox (lftp, FileZilla, WinSCP via SOCKS proxy) |
 
 ## Code Style
 
@@ -198,6 +200,7 @@ Inbound TCP connections to the emulated Xbox (FTP, XBDM, etc.) silently fail whi
 - **The `custom-cont-init.d` mount must go to `/custom-cont-init.d`** (root), not `/config/custom-cont-init.d`. LinuxServer's s6-overlay only scans the root path.
 - **`01-install-autostart` must force-copy autostart every start**. The base image only copies `/defaults/autostart` on first run. Without force-sync, existing containers would use a stale autostart after image updates.
 - **`pcap_immediate.so` must be in `/etc/ld.so.preload`**. Without this shim, xemu's pcap backend cannot receive any packets on libpcap >= 1.9 (TPACKET_V3). The shim intercepts `pcap_open_live()` and injects `pcap_set_immediate_mode(1)`. It must intercept `pcap_open_live` (not `pcap_activate`) because xemu's bundled libpcap makes internal calls that bypass the PLT.
+- **TX checksum offloading must be disabled on eth0**. Without `ethtool -K eth0 tx off`, all inbound TCP connections to the Xbox (FTP, XBDM) silently fail because the host kernel writes placeholder checksums that never get completed by hardware on the software bridge. ICMP ping still works (kernel computes ICMP checksums in software). See `FTP-Fix.md` for details.
 
 ## Required Downloads (Not in Git)
 
