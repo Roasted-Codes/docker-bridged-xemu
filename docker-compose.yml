@@ -89,6 +89,11 @@ services:
     image: tailscale/tailscale:latest
     container_name: xemu-tailscale
     hostname: xemu-vps
+    entrypoint: /bin/sh
+    command: >
+      -c "apk add --no-cache ethtool > /dev/null 2>&1;
+          ethtool -K eth0 tx off 2>/dev/null || true;
+          exec /usr/local/bin/containerboot"
     cap_add:
       - NET_ADMIN
       - NET_RAW
