@@ -1,25 +1,30 @@
 [general]
 show_welcome = false
 skip_boot_anim = true
-last_viewed_menu_index = 1
+last_viewed_menu_index = 5
 
 [general.snapshots.shortcuts]
 f6 = 'Auto-Host-Lobby'
+f8 = 'pre-lobby'
 
 [input]
 background_input_capture = true
+gamepad_mappings = [
+    { gamepad_id = '000000004d6963726f736f6674205800'}
+    ]
 
 [input.bindings]
-port1_driver = 'usb-xbox-gamepad'
+port1_driver = 'usb-xbox-gamepad-s'
 port1 = 'keyboard'
-port2_driver = 'usb-xbox-gamepad'
+port2_driver = 'usb-xbox-gamepad-s'
+port2 = '000000004d6963726f736f6674205800'
 port3_driver = 'usb-xbox-gamepad'
+port3 = '000000004d6963726f736f6674205800'
 port4_driver = 'usb-xbox-gamepad'
+port4 = '000000004d6963726f736f6674205800'
 
 [display.window]
 startup_size = '640x480'
-last_width = 1920
-last_height = 1057
 
 [display.ui]
 hide_cursor = false
@@ -43,6 +48,9 @@ netif = 'eth0'
 [net.udp]
 bind_addr = '0.0.0.0:9968'
 remote_addr = 'localhost:34523'
+
+[sys]
+mem_limit = '128'
 
 [sys.files]
 bootrom_path = '/config/emulator/mcpx_1.0.bin'
