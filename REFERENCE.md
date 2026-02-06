@@ -1,6 +1,6 @@
 # docker-bridged-xemu: Quick Reference
 
-**Xbox emulator with real bridged networking via pcap**
+**Xbox emulator with real bridged networking via pcap + Tailscale subnet routing**
 
 [GitHub: Roasted-Codes/docker-bridged-xemu](https://github.com/Roasted-Codes/docker-bridged-xemu) | License: GPL-3.0
 
@@ -8,13 +8,14 @@
 
 ## What This Is
 
-4-container Docker stack that runs xemu (Xbox emulator) with true bridged networking. The emulated Xbox gets real IPs (172.20.0.50/51) via pcap packet injection, enabling:
-- FTP access to Xbox HDD
-- XBDM debugging (port 731)
+5-container Docker stack that runs xemu (Xbox emulator) with true bridged networking. The emulated Xbox gets real IPs (172.20.0.50/51) via pcap packet injection, plus Tailscale for direct remote access. Enables:
+- FTP access to Xbox HDD (direct via Tailscale, no SOCKS proxy)
+- XBDM debugging on port 731 (direct via Tailscale, no SSH tunnel)
 - XLink Kai online gaming
 - Real LAN presence for system link games
+- Direct access to entire Docker network from remote clients
 
-**Base:** LinuxServer.io's xemu image + minimal overlay (wmctrl, custom scripts)
+**Base:** LinuxServer.io's xemu image + minimal overlay (wmctrl, ethtool, custom scripts)
 
 ---
 
@@ -35,14 +36,23 @@ cd docker-bridged-xemu
 docker compose build
 docker compose up -d
 
-# Access web UI
-open https://localhost:3000
+# Authenticate Tailscale (first run only)
+docker logs xemu-tailscale  # Visit auth URL
+# Then approve 172.20.0.0/24 route in Tailscale admin console
+
+# Access from Windows PC (via Tailscale)
+# Assembly: connect to 172.20.0.51:731
+# FileZilla: connect to 172.20.0.50:21
+# Browser: https://172.20.0.10:3001
 ```
 
 **Network IPs:**
-- `172.20.0.10` - xemu container
+- `172.20.0.10` - xemu container (web UI on 3001)
 - `172.20.0.50` - Xbox title interface (FTP, games)
 - `172.20.0.51` - Xbox debug interface (XBDM)
+- `172.20.0.20` - XLink Kai
+- `172.20.0.4` - Tailscale (subnet router)
+- `172.20.0.2` - DHCP/DNS
 
 ---
 
@@ -56,12 +66,13 @@ open https://localhost:3000
 ### 2. TX Checksum Offloading
 **Problem:** Ping works, TCP times out (bad checksums on software bridge)
 **Fix:** `ethtool -K eth0 tx off` forces software checksum computation
-**Applied by:** [10-xemu-setcap](config/custom-cont-init.d/10-xemu-setcap) and xbdm-relay container
+**Applied by:** [10-xemu-setcap](config/custom-cont-init.d/10-xemu-setcap) in xemu container, and Tailscale container entrypoint
 
 ### 3. Bridge Hairpin Mode
 **Problem:** socat in xemu container can't reach Xbox IPs (same bridge port)
-**Fix:** Separate [xbdm-relay container](docker-compose.yml) on different bridge port (172.20.0.3)
-**Why:** Docker bridge hairpin disabled by default, can't be enabled from container
+**Original fix:** Separate xbdm-relay container on different bridge port (172.20.0.3)
+**Current solution:** Tailscale bypasses the hairpin issue entirely - remote clients access Xbox IPs directly via subnet routing
+**Fallback:** xbdm-relay kept commented out in docker-compose.yml for users not using Tailscale
 
 ---
 
@@ -69,8 +80,8 @@ open https://localhost:3000
 
 | File | Purpose |
 |------|---------|
-| [Dockerfile](Dockerfile) | Adds wmctrl, copies autostart (21 lines) |
-| [docker-compose.yml](docker-compose.yml) | 4 services: xemu, xlinkkai, xbdm-relay, dhcp |
+| [Dockerfile](Dockerfile) | Adds wmctrl, ethtool, copies autostart |
+| [docker-compose.yml](docker-compose.yml) | 5 services: xemu, xlinkkai, tailscale, dhcp, (xbdm-relay commented) |
 | [config/emulator/xemu.toml](config/emulator/xemu.toml) | xemu config (MUST have `backend = 'pcap'`) |
 | [config/emulator/pcap_immediate.c](config/emulator/pcap_immediate.c) | LD_PRELOAD shim source (73 lines) |
 | [config/custom-cont-init.d/01-install-autostart](config/custom-cont-init.d/01-install-autostart) | Syncs autostart, creates xemu.toml symlink |
@@ -90,14 +101,26 @@ docker compose logs -f xemu      # Watch logs
 docker compose down              # Stop everything
 ```
 
-### Access Xbox FTP
+### Access Xbox via Tailscale (from Windows PC)
+```bash
+# XBDM debugging with Assembly
+# Set Xbox IP to: 172.20.0.51
+
+# FTP with FileZilla (no SOCKS proxy needed)
+# Host: 172.20.0.50
+# Port: 21
+# User: xbox
+# Pass: xbox
+
+# xemu web UI
+# Browser: https://172.20.0.10:3001
+```
+
+### Access Xbox FTP (from VPS terminal)
 ```bash
 # From xemu container terminal
+docker exec -it xemu-halo2-server bash
 lftp 172.20.0.50
-
-# From host (requires SSH SOCKS proxy)
-ssh -D 1080 user@remote-host
-# Configure FileZilla: SOCKS5 proxy localhost:1080
 ```
 
 ### Debug Network Issues
@@ -114,9 +137,17 @@ docker exec xemu-halo2-server ip link show eth0
 docker exec xemu-halo2-server cat /etc/ld.so.preload
 # Should list pcap_immediate.so
 
-# Check TX offload (should be off)
+# Check TX offload in xemu container
 docker exec xemu-halo2-server ethtool -k eth0 | grep tx-checksumming
 # Should show: tx-checksumming: off
+
+# Check TX offload in Tailscale container
+docker exec xemu-tailscale ethtool -k eth0 | grep tx-checksumming
+# Should show: tx-checksumming: off
+
+# Verify Tailscale subnet route
+docker exec xemu-tailscale tailscale status
+# Should show 172.20.0.0/24 advertised
 
 # Capture Xbox traffic
 docker exec xemu-halo2-server tcpdump -i eth0 host 172.20.0.50
@@ -129,14 +160,12 @@ docker exec xemu-halo2-server bash -c \
 docker compose restart xemu
 ```
 
-### Git Push
+### Tailscale Re-authentication
 ```bash
-cd /home/docker/bridged-xemu
-git add .
-git commit -m "Your message
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
-git push origin main
+# If Tailscale loses auth (rare, usually persists via volume)
+docker exec xemu-tailscale tailscale logout
+docker compose restart tailscale
+docker logs xemu-tailscale  # Visit new auth URL
 ```
 
 ---
@@ -147,8 +176,10 @@ git push origin main
 |---------|-------|-----|
 | xemu won't start | Missing BIOS/HDD files | Check `config/emulator/` for required files |
 | Can send but not receive packets | Immediate mode not enabled | Rebuild pcap_immediate.so, check /etc/ld.so.preload |
-| Ping works, TCP times out | Bad checksums | `ethtool -K eth0 tx off` (check if ethtool installed) |
-| XBDM relay fails | Hairpin mode | Use separate xbdm-relay container (already in compose) |
+| Ping works, TCP times out (xemu) | Bad checksums | `ethtool -K eth0 tx off` in xemu container (check if ethtool installed) |
+| Ping works, TCP times out (Tailscale) | Bad checksums | Verify Tailscale entrypoint has ethtool command |
+| XBDM not reachable via Tailscale | Subnet route not approved | Check Tailscale admin console, approve 172.20.0.0/24 |
+| Tailscale auth URL keeps changing | Restart loop | Remove `restart: unless-stopped`, authenticate, then re-add |
 | `error loading shared libraries` | setcap stripped LD_LIBRARY_PATH | Check ldconfig ran, /etc/ld.so.conf.d/xemu.conf exists |
 | No browser gamepad | Selkies not in /etc/ld.so.preload | Check 10-xemu-setcap wrote all 3 .so files |
 | Dashboard boots to wrong HDD | xemu.toml stale path | Edit xemu.toml, set correct hdd_path |
@@ -159,10 +190,11 @@ git push origin main
 
 | Service | IP | Ports | Purpose |
 |---------|-----|-------|---------|
-| xemu | 172.20.0.10 | 3000 (HTTPS), 3001 (VNC) | Emulator with Selkies web UI |
+| xemu | 172.20.0.10 | 3000 (HTTP), 3001 (HTTPS) | Emulator with Selkies web UI |
 | xlinkkai | 172.20.0.20 | 34522 | Online system link gaming |
-| xbdm-relay | 172.20.0.3 | 127.0.0.1:731 | XBDM TCP relay (hairpin fix) |
-| dhcp | 172.20.0.2 | 53, 67 (internal) | DHCP/DNS services |
+| tailscale | 172.20.0.4 | 41641/udp (WireGuard) | Subnet router for remote access |
+| dhcp | 172.20.0.2 | 53 (DNS), 67 (DHCP) | DNS forwarding + DHCP pool |
+| xbdm-relay* | 172.20.0.3 | 127.0.0.1:731 | *Commented out - fallback if not using Tailscale |
 | Xbox (pcap) | 172.20.0.50/51 | 21 (FTP), 731 (XBDM) | Virtual Xbox IPs |
 
 ---
@@ -173,6 +205,7 @@ git push origin main
 2. **s6-overlay runs 10-xemu-setcap** (root) - Applies all 3 bug fixes, sets capabilities
 3. **Desktop starts, runs autostart** (user abc) - Launches xemu via xterm
 4. **xemu boots** - LD_PRELOAD loads pcap fix → Xbox BIOS → Dashboard → Network ready
+5. **Tailscale authenticates** (first run) - Visit auth URL, approve subnet route
 
 **Total time:** 35-70 seconds from `docker compose up` to playable Xbox
 
@@ -184,8 +217,8 @@ git push origin main
 - **Always pair setcap with ldconfig** - AppImage libs need system registration
 - **Always pair setcap with /etc/ld.so.preload** - AT_SECURE strips LD_PRELOAD env var
 - **Must use backend = 'pcap'** in xemu.toml - Other backends don't provide real network
-- **Must disable TX offload** - ethtool -K eth0 tx off (add ethtool to Dockerfile)
-- **xbdm-relay must be separate container** - Hairpin workaround
+- **Must disable TX offload** - Both xemu AND Tailscale containers need `ethtool -K eth0 tx off`
+- **Tailscale needs subnet route approval** - Admin console must enable 172.20.0.0/24
 
 ---
 
@@ -194,9 +227,11 @@ git push origin main
 ```
 LinuxServer xemu base (maintained upstream)
     ↓
-+ Dockerfile: wmctrl package, autostart
++ Dockerfile: wmctrl, ethtool, autostart
     ↓
 + Volume mounts: init scripts, config, pcap shim
+    ↓
++ Tailscale: subnet routing for remote access
     ↓
 docker-bridged-xemu (minimal overlay, auto-updates)
 ```
@@ -205,12 +240,33 @@ docker-bridged-xemu (minimal overlay, auto-updates)
 
 ---
 
+## Network Architecture
+
+```
+Windows PC (Tailscale client)
+  ↓ WireGuard tunnel (encrypted, NAT-traversing)
+  ↓
+VPS: Docker Network 172.20.0.0/24
+  ├── .4  Tailscale (subnet router)
+  ├── .10 xemu container → pcap injects .50/.51
+  ├── .20 XLink Kai
+  ├── .2  DHCP/DNS
+  └── .50/.51 Xbox (pcap-injected IPs)
+
+Direct Access from Windows:
+  - 172.20.0.51:731 → XBDM (Assembly)
+  - 172.20.0.50:21  → FTP (FileZilla)
+  - 172.20.0.10:3001 → Web UI
+```
+
+---
+
 ## Directory Structure
 
 ```
 bridged-xemu/
 ├── Dockerfile                       # Minimal overlay
-├── docker-compose.yml               # 4-service stack
+├── docker-compose.yml               # 5-service stack
 ├── root/defaults/autostart          # Launches xemu
 ├── config/
 │   ├── custom-cont-init.d/          # Runtime init scripts
@@ -228,9 +284,27 @@ bridged-xemu/
 
 ---
 
+## What Tailscale Provides
+
+✅ **Direct access** to Xbox IPs (172.20.0.50/51) from Windows PC
+✅ **No SSH tunnels** needed for XBDM or web UI
+✅ **No SOCKS proxy** needed for FTP
+✅ **Encrypted WireGuard tunnel** with NAT traversal
+✅ **Zero host firewall changes** - all in Docker
+✅ **Fully reproducible** from docker-compose.yml
+
+## What Tailscale Does NOT Replace
+
+- **XLink Kai** - still needed for Layer 2 system link gaming (Tailscale is Layer 3 only)
+- **VS Code Remote-SSH** - still used for editing files on the VPS
+- **pcap immediate mode shim** - still needed for xemu packet reception
+- **TX checksum offloading fix** - still needed in both xemu AND Tailscale containers
+
+---
+
 ## Related Documentation
 
-- **[CLAUDE.md](CLAUDE.md)** - Comprehensive technical guide (991 lines, all details)
+- **[CLAUDE.md](CLAUDE.md)** - Comprehensive technical guide (990+ lines, all details)
 - **[FTP-Fix.md](FTP-Fix.md)** - Detailed FTP access guide with diagrams
 - **[README.md](README.md)** - Original quick start (STALE, needs update)
 - **[CHANGELOG.md](CHANGELOG.md)** - Version history (STALE, needs update)
@@ -243,3 +317,4 @@ bridged-xemu/
 - **xemu upstream:** https://xemu.app
 - **XLink Kai:** https://www.teamxlink.co.uk
 - **LinuxServer base:** https://github.com/linuxserver/docker-xemu
+- **Tailscale:** https://tailscale.com/kb
