@@ -141,3 +141,19 @@ services:
     volumes:
       - ./config/dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf:ro
     restart: unless-stopped
+
+  l2tunnel:
+    build: ./l2tunnel-docker
+    container_name: l2tunnel
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      - HUB_PORT=1337
+      # Set XBOX_MAC to the emulated Xbox's MAC address
+      # Run: docker exec l2tunnel /app/l2tunnel discover eth0
+      # - XBOX_MAC=00:50:f2:xx:xx:xx
+    networks:
+      xemu_lan:
+        ipv4_address: 172.20.0.30
+    restart: unless-stopped
