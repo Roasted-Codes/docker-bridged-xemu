@@ -115,12 +115,11 @@ See [CLAUDE.md](CLAUDE.md) for full technical details.
 | File | Purpose |
 |------|---------|
 | [Dockerfile](Dockerfile) | Minimal overlay (wmctrl, ethtool) |
-| [docker-compose.yml](docker-compose.yml) | 5-service stack |
+| [docker-compose.yml](docker-compose.yml) | 4-service stack (xemu, xlinkkai, tailscale, dhcp) |
 | [config/emulator/xemu.toml](config/emulator/xemu.toml) | xemu config (backend=pcap) |
 | [config/emulator/pcap_immediate.c](config/emulator/pcap_immediate.c) | Immediate mode fix |
 | [config/custom-cont-init.d/10-xemu-setcap](config/custom-cont-init.d/10-xemu-setcap) | Runtime capability setup |
-| [CLAUDE.md](CLAUDE.md) | Comprehensive technical guide (990+ lines) |
-| [REFERENCE.md](REFERENCE.md) | Quick reference and troubleshooting |
+| [CLAUDE.md](CLAUDE.md) | Comprehensive technical guide |
 
 ---
 
@@ -175,9 +174,7 @@ We maintain a **minimal overlay** on linuxserver/docker-xemu. The base image is 
 
 ## Documentation
 
-- **[CLAUDE.md](CLAUDE.md)** - Comprehensive technical guide (all details, constraints, architecture)
-- **[REFERENCE.md](REFERENCE.md)** - Quick reference and troubleshooting
-- **[FTP-Fix.md](FTP-Fix.md)** - Detailed FTP access guide
+- **[CLAUDE.md](CLAUDE.md)** - Comprehensive technical guide (architecture, constraints, troubleshooting)
 
 ---
 
@@ -202,7 +199,7 @@ We maintain a **minimal overlay** on linuxserver/docker-xemu. The base image is 
 | XBDM not reachable | Tailscale route not approved | Check Tailscale admin console |
 | Gamepad not working | Selkies not loaded | Check `/etc/ld.so.preload` has all 3 .so files |
 
-See [REFERENCE.md](REFERENCE.md) for complete troubleshooting guide.
+See [CLAUDE.md](CLAUDE.md) for complete troubleshooting guide.
 
 ---
 
