@@ -2,9 +2,13 @@
 
 **This file provides guidance to Claude Code (claude.ai/code) when working with this repository.**
 
+**Maintenance:** Keep this file up to date as the project evolves. When adding new features, changing addresses, modifying CLI flags, or altering architecture, update the relevant sections here.
+
 **Repository:** [`Roasted-Codes/docker-bridged-xemu`](https://github.com/Roasted-Codes/docker-bridged-xemu)
 **Maintainer:** Roasted-Codes
 **License:** GPL-3.0
+
+> **Note:** Path examples in this document (such as `/home/docker/bridged-xemu/`) are for illustration. Replace with your actual clone location.
 
 ---
 
@@ -48,6 +52,7 @@ This project solves **three critical bugs** that prevent xemu from working with 
 
 **Critical rules for AI agents working with this codebase:**
 
+- **🚨 NEVER modify the Dockerfile.** This is a **minimal overlay** on `linuxserver/docker-xemu:latest`. The Dockerfile is intentionally kept minimal to receive automatic upstream updates. All modifications go in `config/` (overlay) or init scripts, never in the Dockerfile. If you need to add packages, document the requirement in CLAUDE.md and ask the user to run them manually in the container if needed.
 - **🚨 NEVER push to GitHub without explicit user confirmation first.** Git push is a hard-to-reverse action that affects shared state. Always ask the user before running `git push`. This is non-negotiable - even after committing changes, ALWAYS confirm before pushing.
 - **🔄 Keep documentation in sync.** When modifying docker-compose.yml, init scripts, or architecture: update CLAUDE.md and README.md to reflect changes. Remove references to deleted files. Update IP addresses, service names, and file paths. Stale documentation causes confusion.
 - **Never apply `setcap` at build time** in the Dockerfile. The xemu binary comes from the base image and changes when upstream updates. `setcap` must be applied at runtime via `10-xemu-setcap` to always target the current binary.

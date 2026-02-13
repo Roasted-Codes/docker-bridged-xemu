@@ -11,8 +11,8 @@ set -euo pipefail  # Exit on any error, undefined variable, or pipe failure
 
 # Debug logging function
 debug_log() {
-    mkdir -p /home/docker/.cursor 2>/dev/null || true
-    echo "{\"timestamp\":$(date +%s),\"location\":\"$0:${BASH_LINENO[0]}\",\"message\":\"$1\",\"data\":$2,\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"$3\"}" >> /home/docker/.cursor/debug.log 2>/dev/null || true
+    mkdir -p /tmp/xemu-debug 2>/dev/null || true
+    echo "{\"timestamp\":$(date +%s),\"location\":\"$0:${BASH_LINENO[0]}\",\"message\":\"$1\",\"data\":$2,\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"$3\"}" >> /tmp/xemu-debug/debug.log 2>/dev/null || true
 }
 
 # Color codes for pretty output

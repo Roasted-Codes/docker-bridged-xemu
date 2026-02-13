@@ -25,6 +25,8 @@ port4 = '000000004d6963726f736f6674205800'
 
 [display.window]
 startup_size = '640x480'
+last_width = 1024
+last_height = 745
 
 [display.ui]
 hide_cursor = false

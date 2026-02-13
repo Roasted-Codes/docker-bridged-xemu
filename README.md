@@ -72,6 +72,111 @@ docker logs xemu-tailscale
 
 ---
 
+## First-Time Setup Details
+
+### Which Files Are Included?
+
+This repository includes the Xbox BIOS files and startup configuration:
+
+| File | Included? | Notes |
+|------|-----------|-------|
+| `mcpx_1.0.bin` | ✅ Yes | Xbox bootloader |
+| `Complex_4627.bin` | ✅ Yes | Xbox kernel |
+| `iguana-eeprom.bin` | ✅ Yes | Xbox EEPROM (factory default) |
+| `iguana-dev.qcow2` | ❌ No | **You must provide an HDD image** |
+| `*.iso` game files | ❌ No | **You must provide your own games** |
+
+**Good news:** The hard disk image can be auto-created by xemu if missing. See below.
+
+### Getting a Hard Disk Image
+
+**Option 1: Use an existing HDD image (Recommended)**
+
+If you have a pre-built Xbox HDD image (from another xemu install or extracted from hardware):
+
+```bash
+cp /path/to/your/xbox-hdd.qcow2 config/emulator/iguana-dev.qcow2
+```
+
+**Option 2: Create a blank HDD on first run**
+
+If the `iguana-dev.qcow2` file is missing, xemu will create a blank HDD when it starts. You'll need to:
+
+1. Start the containers: `docker compose up -d`
+2. Access xemu via VNC or Selkies web UI
+3. Complete the Xbox dashboard setup
+4. Reboot when finished
+
+The HDD image persists in `config/emulator/iguana-dev.qcow2` for future runs.
+
+### Adding Games
+
+Place Xbox game ISO files in the `config/games/` directory:
+
+```bash
+mkdir -p config/games
+cp /path/to/game.iso config/games/
+```
+
+**To load a game:**
+
+1. **Via xemu UI:** Machine → Load Disc → browse to `/config/games/` and select your game
+2. **Via config file:** Edit `config/emulator/xemu.toml` and set:
+   ```toml
+   dvd_path = '/config/games/your-game.iso'
+   ```
+
+### What Gets Built Automatically?
+
+On the first run, the container init scripts will:
+
+✅ Compile `pcap_immediate.so` (fixes Xbox packet reception)
+✅ Set up network capabilities for xemu
+✅ Disable TX checksum offloading (fixes TCP connections)
+✅ Create runtime directories for xemu config
+✅ Register the pcap shim with the system loader
+
+**You don't need to manually compile anything!** All required libraries and fixes are applied automatically.
+
+### Verifying Everything Works
+
+After running `docker compose up -d`, verify:
+
+```bash
+# Check that xemu started without errors
+docker compose logs xemu | head -20
+
+# Check that pcap immediate mode is loaded
+docker exec xemu-halo2-server cat /etc/ld.so.preload
+
+# Verify TX checksum offloading is disabled (critical for TCP)
+docker exec xemu-halo2-server ethtool -k eth0 | grep tx-checksumming
+# Should show: tx-checksumming: off
+```
+
+If the logs are clean and the checksum offload is disabled, your setup is working correctly!
+
+### Troubleshooting First-Time Setup
+
+**xemu crashes on startup:**
+- Check that `config/emulator/` has BIOS files (they're included in the repo)
+- Check container logs: `docker compose logs xemu`
+
+**Can access xemu but XBDM won't connect (172.20.0.51:731):**
+- This likely indicates checksum offloading wasn't disabled
+- Verify: `docker exec xemu-halo2-server ethtool -k eth0 | grep tx-checksumming`
+- Should show `tx-checksumming: off`
+- If not, the init script may have failed - check full logs with `docker compose logs xemu`
+
+**pcap_immediate.so compilation failed:**
+- Check if gcc is installed in the container
+- Check container logs: `docker compose logs xemu | grep -i "gcc\|compile"`
+
+**Still having issues?**
+- Check [CLAUDE.md](CLAUDE.md) for the full technical troubleshooting guide
+
+---
+
 ## Network Architecture
 
 ```

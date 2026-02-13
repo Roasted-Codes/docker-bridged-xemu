@@ -56,6 +56,18 @@ if [ -f "$XEMU_BIN" ]; then
     INTERPOSER="/usr/lib/selkies_joystick_interposer.so"
     FAKE_UDEV="/opt/lib/libudev.so.1.0.0-fake"
     PCAP_IMMEDIATE="/config/emulator/pcap_immediate.so"
+
+    # Auto-compile pcap_immediate.so if it doesn't exist
+    if [ ! -f "$PCAP_IMMEDIATE" ]; then
+        echo "[10-xemu-setcap] pcap_immediate.so not found, compiling..."
+        if gcc -shared -fPIC -o "$PCAP_IMMEDIATE" /config/emulator/pcap_immediate.c -ldl; then
+            echo "[10-xemu-setcap] Successfully compiled pcap_immediate.so"
+        else
+            echo "[10-xemu-setcap] ERROR: Failed to compile pcap_immediate.so - networking may not work!"
+            exit 1
+        fi
+    fi
+
     if [ -f "$INTERPOSER" ]; then
         printf "%s\n%s\n" "$INTERPOSER" "$FAKE_UDEV" > /etc/ld.so.preload
         # Fix pcap receive: libpcap 1.9+ with TPACKET_V3 requires immediate
