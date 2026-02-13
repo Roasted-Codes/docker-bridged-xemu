@@ -13,4 +13,4 @@ fi
 # -----------------------------------------------------------------------------
 
 # Run xemu
-xterm -e /opt/xemu/AppRun
+xterm -e /opt/xemu/AppRun -qmp tcp:0.0.0.0:4444,server,nowait

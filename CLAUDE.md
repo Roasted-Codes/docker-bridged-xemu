@@ -2,6 +2,8 @@
 
 **This file provides guidance to Claude Code (claude.ai/code) when working with this repository.**
 
+**Maintenance:** Keep this file up to date as the project evolves. When adding new features, changing addresses, modifying CLI flags, or altering architecture, update the relevant sections here.
+
 **Repository:** [`Roasted-Codes/docker-bridged-xemu`](https://github.com/Roasted-Codes/docker-bridged-xemu)
 **Maintainer:** Roasted-Codes
 **License:** GPL-3.0
@@ -90,7 +92,7 @@ bridged-xemu/
     │   └── passleader_v3.sh.disabled   # Optional automation script (rename to .sh to enable)
     │
     ├── dnsmasq/
-    │   └── dnsmasq.conf                # DHCP (172.20.0.100-200) + DNS (8.8.8.8, 1.1.1.1)
+    │   └── dnsmasq.conf                # DHCP (172.20.0.100-200) + DNS (Cloudflare, Google, Quad9)
     │
     ├── xlinkkai/                       # XLink Kai runtime state (created at first start)
     │   ├── kaiengine.conf              # XLink Kai configuration
@@ -143,8 +145,9 @@ docker compose up -d
 
 **Services started:**
 - `xemu-halo2-server` (172.20.0.10) — xemu emulator with Selkies web UI
-- `xemu-tailscale` (172.20.0.4) — Tailscale subnet router (advertises 172.20.0.0/24)
+- `xemu-tailscale2` (172.20.0.43) — Tailscale subnet router (advertises 172.20.0.0/24)
 - `xlinkkai` (172.20.0.20) — XLink Kai for online multiplayer
+- `l2tunnel` (172.20.0.30) — Layer 2 tunnel hub for LAN gaming over Tailscale
 - `xemu-dhcp` (172.20.0.2) — dnsmasq DHCP/DNS server
 
 **Emulated Xbox IPs:**
@@ -158,12 +161,14 @@ docker compose up -d
 | Service | URL/Port | Notes |
 |---------|----------|-------|
 | xemu (HTTPS) | `https://172.20.0.10:3001` | Selkies web UI (direct via Tailscale) |
+| QMP (QEMU Protocol) | `tcp://172.20.0.10:4444` | Machine protocol for programmatic control |
 | XBDM (debug) | `172.20.0.51:731` | Direct access for Assembly, etc. |
 | Xbox FTP | `172.20.0.50:21` | Direct FTP (passive mode works!) |
 | XLink Kai | `http://172.20.0.20:34522` | Web interface |
+| l2tunnel Hub | `172.20.0.30:1337` | LAN gaming over Tailscale (TCP) |
 
 **Tailscale Setup:**
-1. First run: `docker logs xemu-tailscale` to get auth URL
+1. First run: `docker logs xemu-tailscale2` to get auth URL
 2. Visit URL and authenticate with your Tailscale account
 3. Approve the 172.20.0.0/24 subnet route in Tailscale admin console
 4. Install Tailscale client on your PC/Mac
@@ -265,14 +270,35 @@ docker exec -it xemu-halo2-server bash
 - **Zero-config VPN:** After initial auth, any Tailscale client can access the Xbox
 
 **Implementation:**
-- Tailscale container at 172.20.0.4 with `--advertise-routes=172.20.0.0/24`
+- Tailscale container at 172.20.0.43 with `--advertise-routes=172.20.0.0/24`
 - State persisted in Docker volume (`tailscale-state`) for auth persistence across restarts
 - Also runs `ethtool -K eth0 tx off` to fix TX checksum offloading
 
 **Fallback:**
 - `xbdm-relay` container is commented out in docker-compose.yml but can be re-enabled if Tailscale is not desired
 
-### 5. Static IPs for Xbox (No DHCP)
+### 5. l2tunnel for LAN Gaming
+
+**Decision:** Use mborgerson/l2tunnel to enable Xbox LAN/system link gaming over Tailscale.
+
+**Why:**
+- XLink Kai requires external service and doesn't support all games
+- l2tunnel provides direct Layer 2 Ethernet connectivity through Tailscale VPN
+- Games see remote players as if they're on the same physical LAN (Xbox LAN/system link discovery works transparently)
+- Auto-detects Xbox MAC address from EEPROM file (eliminates manual configuration)
+
+**Implementation:**
+- Container at 172.20.0.30 runs l2tunnel hub on port 1337
+- Reads Xbox MAC from `/config/emulator/iguana-eeprom.bin` (bytes 64-69)
+- Disables TX checksum offloading (same fix as Tailscale container)
+- Remote clients run l2tunnel client pointed to hub (connects via Tailscale)
+
+**Access:**
+- Tailscale clients connect to l2tunnel hub at `172.20.0.30:1337`
+- Client command: `l2tunnel client 172.20.0.30 1337` (must run on remote machine with Tailscale access)
+- Creates virtual ethernet interface for LAN gaming with emulated Xbox
+
+### 7. Static IPs for Xbox (No DHCP)
 
 **Decision:** Configure Xbox with static IPs (172.20.0.50/51) in Xbox Dashboard, not via DHCP.
 
@@ -286,7 +312,7 @@ docker exec -it xemu-halo2-server bash
 2. Select "Manual" configuration
 3. Enter: IP 172.20.0.50, Subnet 255.255.255.0, Gateway 172.20.0.1
 
-### 6. Custom Bridge Network (172.20.0.0/24)
+### 8. Custom Bridge Network (172.20.0.0/24)
 
 **Decision:** Create custom Docker bridge network instead of using default Docker network.
 
@@ -442,7 +468,7 @@ ethtool -k eth0 | grep tx-checksum
 - Setting hairpin requires host-level access: `echo 1 > /sys/class/net/<bridge>/brif/<port>/hairpin_mode`
 
 **Solution (Tailscale):**
-- Remote clients connect via Tailscale, which routes through the Tailscale container (172.20.0.4)
+- Remote clients connect via Tailscale, which routes through the Tailscale container (172.20.0.43)
 - Tailscale container is on a different bridge port — no hairpin problem
 - This is the primary access method for this project
 
@@ -526,6 +552,44 @@ docker compose restart xemu
 1. Edit `xemu.toml` in git
 2. Restart container to load new config
 3. Commit the updated `xemu.toml` back to git after verifying it works
+
+### Access xemu via QMP (QEMU Machine Protocol)
+
+QMP enables programmatic control of xemu for automation, testing, and integration with external tools.
+
+**Connect via Python:**
+```python
+import socket, json
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect(('172.20.0.10', 4444))
+
+# Receive QMP greeting
+greeting = sock.recv(4096)
+print(json.loads(greeting))
+
+# Send capabilities negotiation
+sock.send(json.dumps({"execute": "qmp_capabilities"}).encode() + b'\n')
+response = sock.recv(4096)
+print(json.loads(response))
+
+# Example: query machine status
+sock.send(json.dumps({"execute": "query-status"}).encode() + b'\n')
+response = sock.recv(4096)
+print(json.loads(response))
+```
+
+**Use cases:**
+- Save/load emulator snapshots programmatically
+- Query emulator state (running, paused, etc.)
+- Automate testing workflows
+- Integration with HaloCaster stats monitoring
+- Build custom tools and scripts around xemu
+
+**Access:**
+- From Tailscale clients: `172.20.0.10:4444`
+- From other containers: `172.20.0.10:4444`
+- QMP listens on all interfaces inside bridge network
 
 ### Change Xbox IP Addresses
 
@@ -734,14 +798,15 @@ ldconfig
 │  ┌────────────────────────────────────────────────────────────────────┐ │
 │  │                                                                      │ │
 │  │  .1  Docker Gateway (NATs to internet via host iptables)            │ │
-│  │  .2  xemu-dhcp (dnsmasq: DHCP 172.20.0.100-200, DNS 8.8.8.8)        │ │
-│  │  .4  xemu-tailscale (subnet router: advertises 172.20.0.0/24)       │ │
-│  │  .10 xemu-halo2-server (Selkies web UI: 3000/3001)                  │ │
+│  │  .2  xemu-dhcp (dnsmasq: DHCP 172.20.0.100-200, DNS 1.1.1.1)        │ │
+│  │  .10 xemu-halo2-server (Selkies web UI: 3000/3001, QMP: 4444)       │ │
 │  │      │                                                               │ │
 │  │      └─→ pcap on eth0 injects packets for:                          │ │
 │  │          .50 Emulated Xbox - title interface (FTP 21, gaming)       │ │
 │  │          .51 Emulated Xbox - debug interface (XBDM 731, ping)       │ │
 │  │  .20 xlinkkai (XLink Kai web UI: 34522)                             │ │
+│  │  .30 l2tunnel (LAN tunnel hub: 1337)                                │ │
+│  │  .43 xemu-tailscale2 (subnet router: advertises 172.20.0.0/24)      │ │
 │  │                                                                      │ │
 │  └────────────────────────────────────────────────────────────────────┘ │
 │                                                                          │
@@ -767,9 +832,10 @@ ldconfig
 |----|---------|---------|
 | 172.20.0.1 | Docker Gateway | NAT to internet |
 | 172.20.0.2 | dnsmasq | DHCP + DNS |
-| 172.20.0.4 | xemu-tailscale | Subnet router (exposes network to Tailscale clients) |
-| 172.20.0.10 | xemu container | Selkies web UI |
-| 172.20.0.20 | xlinkkai | XLink Kai |
+| 172.20.0.10 | xemu container | Selkies web UI + QMP (ports 3000/3001/4444) |
+| 172.20.0.20 | xlinkkai | XLink Kai for system link gaming |
+| 172.20.0.30 | l2tunnel | Layer 2 tunnel hub for LAN gaming (port 1337) |
+| 172.20.0.43 | xemu-tailscale2 | Subnet router (exposes network to Tailscale clients) |
 | 172.20.0.50 | Xbox (title) | Gaming, FTP (pcap-injected) |
 | 172.20.0.51 | Xbox (debug) | XBDM, ping (pcap-injected) |
 | 172.20.0.100-200 | DHCP pool | Available for future devices |
@@ -857,6 +923,35 @@ ldconfig
 **Xbox BIOS files:**
 - `mcpx_1.0.bin`, `CerbiosDebug_old.bin` included in git (publicly available)
 - EEPROM (`iguana-eeprom.bin`) included in git (not tied to real hardware)
+
+---
+
+## Known Issues & Investigation
+
+### Input Passthrough Fixed (Feb 13, 2026)
+
+**Root Cause:** xemu.toml auto-save behavior
+
+**What Happened:**
+1. During user interaction, xemu modified `config/emulator/xemu.toml` and auto-saved it
+2. Changed `port1 = 'keyboard'` → `port1 = '000000004d6963726f736f6674205800'` (Microsoft Xbox gamepad)
+3. This rebinding broke keyboard input because:
+   - Port 1 driver expects keyboard input when `port1 = 'keyboard'`
+   - Binding it to a gamepad device ID instead broke the input mapping
+   - Gamepad was already bound to port 2, so port 1 had conflicting/missing input
+
+**Why It Appeared as "Container Bug":**
+- xemu still detected and reported input devices correctly
+- xemu's UI still responded to inputs (because UI uses raw OS input, not Xbox port mappings)
+- But in-game input failed because the Xbox port 1 binding was wrong
+- The problem persisted after container rebuilds because the corrupted config was volume-mounted and persisted
+
+**Solution:**
+- Restored `xemu.toml` to git version: `port1 = 'keyboard'`
+- Restarted xemu container
+- **Inputs work again ✅**
+
+**Lesson:** xemu auto-saves config changes. If manual UI changes break things, check git diff of `xemu.toml` to see what changed and revert if needed.
 
 ---
 
@@ -958,13 +1053,13 @@ nc -zv 172.20.0.51 731
 
 **Check Tailscale status:**
 ```bash
-docker logs xemu-tailscale
-docker exec xemu-tailscale tailscale status
+docker logs xemu-tailscale2
+docker exec xemu-tailscale2 tailscale status
 ```
 
 **Verify subnet route approved:**
 - Check Tailscale admin console (admin.tailscale.com)
-- Ensure 172.20.0.0/24 route is approved for xemu-vps
+- Ensure 172.20.0.0/24 route is approved for xemu-halocaster
 
 **Test from server (bypasses Tailscale):**
 ```bash

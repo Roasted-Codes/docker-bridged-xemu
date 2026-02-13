@@ -1,6 +1,6 @@
 FROM python:3.11-alpine
 
-RUN apk add --no-cache libpcap-dev gcc musl-dev make git ethtool
+RUN apk add --no-cache libpcap-dev gcc musl-dev make git ethtool bash xxd
 
 WORKDIR /app
 RUN git clone --depth 1 https://github.com/mborgerson/l2tunnel.git . && make

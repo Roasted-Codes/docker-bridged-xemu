@@ -21,6 +21,8 @@
 networks:
   xemu_lan:
     driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-xemu_lan
     ipam:
       config:
         - subnet: 172.20.0.0/24
@@ -57,10 +59,16 @@ services:
     ports:
       - 3000:3000   # HTTP interface
       - 3001:3001   # HTTPS interface (default, self-signed cert)
+      - 4444:4444   # QMP (QEMU Machine Protocol)
     networks:
       xemu_lan:
         ipv4_address: 172.20.0.10
+    dns:
+      - 127.0.0.11  # Docker's embedded resolver (will forward to dnsmasq)
+      - 172.20.0.2  # Fallback to local dnsmasq
     shm_size: "1gb"
+    depends_on:
+      - dhcp  # Ensure DHCP/DNS is running before xemu
     restart: unless-stopped
 
   xlinkkai:
@@ -80,15 +88,20 @@ services:
     networks:
       xemu_lan:
         ipv4_address: 172.20.0.20
+    dns:
+      - 127.0.0.11  # Docker's embedded resolver (will forward to dnsmasq)
+      - 172.20.0.2  # Fallback to local dnsmasq
     privileged: true
     cap_add:
       - NET_ADMIN
+    depends_on:
+      - dhcp  # Ensure DHCP/DNS is running before xlinkkai
     restart: unless-stopped
 
   tailscale:
     image: tailscale/tailscale:latest
-    container_name: xemu-tailscale
-    hostname: xemu-vps
+    container_name: xemu-tailscale2
+    hostname: xemu-halocaster
     entrypoint: /bin/sh
     command: >
       -c "apk add --no-cache ethtool > /dev/null 2>&1;
@@ -108,7 +121,7 @@ services:
       - 41641:41641/udp  # WireGuard port for direct connections
     networks:
       xemu_lan:
-        ipv4_address: 172.20.0.4
+        ipv4_address: 172.20.0.43
     restart: unless-stopped
 
   # xbdm-relay:  # Disabled in favor of Tailscale direct access (uncomment if Tailscale not used)
@@ -150,10 +163,12 @@ services:
       - NET_RAW
     environment:
       - HUB_PORT=1337
-      # Set XBOX_MAC to the emulated Xbox's MAC address
-      # Run: docker exec l2tunnel /app/l2tunnel discover eth0
+      # XBOX_MAC auto-detected from EEPROM, or set manually:
       # - XBOX_MAC=00:50:f2:xx:xx:xx
+    volumes:
+      - ./config:/config:ro  # For EEPROM MAC auto-detection
     networks:
       xemu_lan:
         ipv4_address: 172.20.0.30
     restart: unless-stopped
+

@@ -10,12 +10,18 @@ python3 /app/hub.py --port ${HUB_PORT:-1337} --verbose &
 HUB_PID=$!
 sleep 1
 
-# Get the emulated Xbox MAC from environment or discover it
-XBOX_MAC="${XBOX_MAC:-}"
+# Auto-detect Xbox MAC from EEPROM file (bytes 64-69 = offset 0x40)
+EEPROM_FILE="${EEPROM_FILE:-/config/emulator/iguana-eeprom.bin}"
+
+if [ -z "$XBOX_MAC" ] && [ -f "$EEPROM_FILE" ]; then
+    # Read 6 bytes at offset 64, format as MAC address
+    XBOX_MAC=$(xxd -s 64 -l 6 -p "$EEPROM_FILE" | sed 's/\(..\)/\1:/g; s/:$//')
+    echo "Auto-detected Xbox MAC from EEPROM: $XBOX_MAC"
+fi
 
 if [ -z "$XBOX_MAC" ]; then
-    echo "XBOX_MAC not set. Run 'docker exec l2tunnel /app/l2tunnel discover eth0' to find it."
-    echo "Then set XBOX_MAC environment variable and restart."
+    echo "XBOX_MAC not set and EEPROM not found at $EEPROM_FILE"
+    echo "Run 'docker exec l2tunnel /app/l2tunnel discover eth0' to find it."
     # Keep hub running for discovery
     wait $HUB_PID
     exit 0
