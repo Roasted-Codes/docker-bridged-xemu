@@ -286,11 +286,24 @@ We maintain a **minimal overlay** on linuxserver/docker-xemu. The base image is 
 ## System Requirements
 
 - **Docker:** 20.10+ with Compose V2
-- **Host OS:** Linux (tested on Ubuntu 22.04+)
 - **Memory:** 2GB+ RAM for xemu container
-- **Network:** Static IPs in 172.20.0.0/24 range must be available
+- **Disk:** 8GB+ for Xbox HDD image and games
 
-**Note:** This setup requires a Linux host. Windows/Mac Docker Desktop uses a Linux VM internally, but pcap bridging may not work correctly.
+### Supported Platforms
+
+| Platform | Support | Notes |
+|----------|---------|-------|
+| **Linux** | ✅ Full | Ubuntu 22.04+, Debian 11+, Fedora 35+ |
+| **Windows (WSL2)** | ✅ Full | Native Docker in WSL2 (not Docker Desktop) |
+| **macOS** | ❌ No | Docker Desktop on Mac cannot access pcap |
+| **Windows (Docker Desktop)** | ❌ No | Cannot access pcap; use WSL2 instead |
+
+### Why WSL2 Works, Docker Desktop Doesn't
+
+- **WSL2 with native Docker**: Direct access to Linux network interfaces → pcap works
+- **Docker Desktop (Windows/Mac)**: Runs in isolated VM → pcap cannot access real networks
+
+For macOS, you'd need a remote Linux server or Ubuntu VM.
 
 ---
 
