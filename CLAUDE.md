@@ -129,8 +129,8 @@ bridged-xemu/
     ├── dnsmasq/                        # dnsmasq DHCP/DNS service
     │   └── dnsmasq.conf                # DHCP pool (172.20.0.100-200) + DNS forwarders
     │
-    ├── xlinkkai/                       # XLink Kai service (runtime state only)
-    │   └── (no committed files - runtime state gitignored)
+    ├── xlinkkai/                       # XLink Kai service
+    │   └── user.sh                     # Auto-join arena hook (injected into ich777 startup)
     │
     └── tailscale/                      # Tailscale subnet router (runtime state only)
         └── (no files - uses named Docker volume `tailscale-state`)
@@ -144,7 +144,7 @@ Excluded via [`.gitignore`](.gitignore):
 - `*.iso` (Game ISOs)
 - `*.so` (Compiled shared libraries, built at runtime)
 - `services/xemu/data/.cache/`, `.local/`, etc. (Runtime-generated LinuxServer base image state)
-- `services/xlinkkai/` (XLink Kai runtime state, created at first start)
+- `services/xlinkkai/*` (XLink Kai runtime state, except `user.sh` which is tracked)
 
 **Distribution:** Large files hosted externally (e.g., Google Drive) and downloaded separately.
 
