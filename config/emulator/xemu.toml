@@ -25,6 +25,8 @@ port4 = '000000004d6963726f736f6674205800'
 
 [display.window]
 startup_size = '640x480'
+last_width = 1024
+last_height = 745
 
 [display.ui]
 hide_cursor = false
@@ -57,4 +59,5 @@ bootrom_path = '/config/emulator/mcpx_1.0.bin'
 flashrom_path = '/config/emulator/CerbiosDebug_old.bin'
 eeprom_path = '/config/emulator/iguana-eeprom.bin'
 hdd_path = '/config/emulator/iguana-dev.qcow2'
+dvd_path = '/config/games/halo2_r1e_xiso.iso'
 

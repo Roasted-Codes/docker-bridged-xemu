@@ -60,6 +60,33 @@ This project solves **three critical bugs** that prevent xemu from working with 
 - **`pcap_immediate.so` must be in `/etc/ld.so.preload`**. Without this shim, xemu's pcap backend cannot receive any packets on libpcap >= 1.9 (TPACKET_V3). The shim intercepts `pcap_open_live()` and injects `pcap_set_immediate_mode(1)`. It must intercept `pcap_open_live` (not `pcap_activate`) because xemu's bundled libpcap makes internal calls that bypass the PLT.
 - **TX checksum offloading must be disabled on eth0**. Without `ethtool -K eth0 tx off`, all inbound TCP connections to the Xbox (FTP, XBDM) silently fail because the host kernel writes placeholder checksums that never get completed by hardware on the software bridge. ICMP ping still works (kernel computes ICMP checksums in software).
 
+### ⚠️ Critical: setcap + ldconfig + LD_PRELOAD Must Form a Unit
+
+These three operations are **interdependent** and must **always be applied together**. Never apply just one or two.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ CRITICAL UNIT - All three must be present:                      │
+├─────────────────────────────────────────────────────────────────┤
+│ 1. ldconfig: Register AppImage libraries system-wide            │
+│ 2. LD_PRELOAD: Write shims to /etc/ld.so.preload (not env var) │
+│ 3. setcap: Apply capabilities (triggers secure exec mode)       │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Why they're a unit:**
+- `setcap` triggers secure execution mode (AT_SECURE), which Linux uses to strip `LD_PRELOAD` and `LD_LIBRARY_PATH` env vars for security
+- xemu AppImage bundles libraries in `/opt/xemu/usr/lib/` and relies on `LD_LIBRARY_PATH` to find them — without ldconfig registration, they're unfindable
+- Selkies gamepad input depends on `LD_PRELOAD` joystick interposer (`/usr/lib/selkies_joystick_interposer.so`)
+- pcap receive fix depends on `LD_PRELOAD` immediate mode shim (`/config/emulator/pcap_immediate.so`)
+
+**What happens if you skip one:**
+- Skip ldconfig? → `error while loading shared libraries: libSDL2-2.0.so.0`
+- Skip LD_PRELOAD? → Gamepad and pcap packet receive fail silently
+- Skip setcap? → pcap networking doesn't work (no raw packet capabilities)
+
+**Implementation:** All three are applied together in `config/custom-cont-init.d/10-xemu-setcap` at container startup (not at build time).
+
 ---
 
 ## Directory Structure
@@ -144,9 +171,9 @@ docker compose up -d
 ```
 
 **Services started:**
-- `xemu-halo2-server` (172.20.0.10) — xemu emulator with Selkies web UI
-- `xemu-tailscale2` (172.20.0.43) — Tailscale subnet router (advertises 172.20.0.0/24)
-- `xlinkkai` (172.20.0.20) — XLink Kai for online multiplayer
+- `xemu-halo2-server` (172.20.0.49) — xemu emulator with Selkies web UI
+- `xemu-tailscale2` (172.20.0.10) — Tailscale subnet router (advertises 172.20.0.0/24)
+- `xlinkkai` (172.20.0.25) — XLink Kai for online multiplayer
 - `l2tunnel` (172.20.0.30) — Layer 2 tunnel hub for LAN gaming over Tailscale
 - `xemu-dhcp` (172.20.0.2) — dnsmasq DHCP/DNS server
 
@@ -160,11 +187,11 @@ docker compose up -d
 
 | Service | URL/Port | Notes |
 |---------|----------|-------|
-| xemu (HTTPS) | `https://172.20.0.10:3001` | Selkies web UI (direct via Tailscale) |
-| QMP (QEMU Protocol) | `tcp://172.20.0.10:4444` | Machine protocol for programmatic control |
+| xemu (HTTPS) | `https://172.20.0.49:3001` | Selkies web UI (direct via Tailscale) |
+| QMP (QEMU Protocol) | `tcp://172.20.0.49:4444` | Machine protocol for programmatic control |
 | XBDM (debug) | `172.20.0.51:731` | Direct access for Assembly, etc. |
 | Xbox FTP | `172.20.0.50:21` | Direct FTP (passive mode works!) |
-| XLink Kai | `http://172.20.0.20:34522` | Web interface |
+| XLink Kai | `http://172.20.0.25:34522` | Web interface |
 | l2tunnel Hub | `172.20.0.30:1337` | LAN gaming over Tailscale (TCP) |
 
 **Tailscale Setup:**
@@ -204,6 +231,79 @@ docker logs xemu-halo2-server        # Full container logs
 
 ```bash
 docker exec -it xemu-halo2-server bash
+```
+
+---
+
+## Quick Reference Commands
+
+**Common tasks at a glance:**
+
+| Task | Command |
+|------|---------|
+| Full rebuild from scratch | `docker compose down && docker compose build --no-cache && docker compose up -d` |
+| Quick restart (no rebuild) | `docker compose restart xemu` |
+| View xemu logs | `docker compose logs -f xemu` |
+| View all service logs | `docker compose logs -f` |
+| Test network connectivity | `docker exec xemu-halo2-server ping -c 3 172.20.0.51` |
+| Check xemu capabilities | `docker exec xemu-halo2-server getcap /opt/xemu/usr/bin/xemu` |
+| Verify TX checksum disabled | `docker exec xemu-halo2-server ethtool -k eth0 \| grep tx-checksum` |
+| Check LD_PRELOAD shims | `docker exec xemu-halo2-server cat /etc/ld.so.preload` |
+| SSH into container | `docker exec -it xemu-halo2-server bash` |
+| Stop all services | `docker compose down` |
+| Test FTP from server | `docker exec -it xemu-halo2-server lftp 172.20.0.50` |
+| Capture Xbox traffic | `docker exec xemu-halo2-server tcpdump -i eth0 host 172.20.0.50` |
+
+---
+
+## Development Workflow
+
+### Making Changes
+
+**Understanding what needs rebuild:**
+
+- **Config files** (NO rebuild): `xemu.toml`, `dnsmasq.conf` — changes take effect after service restart
+- **Init scripts** (NO rebuild): `config/custom-cont-init.d/*` — reload on next container start via `docker compose restart`
+- **Autostart script** (NO rebuild): `root/defaults/autostart` — reload on next container start
+- **Docker networking** (REBUILD): `docker-compose.yml` changes require `docker compose up -d` (with rebuild if service image changed)
+- **Base image** (REBUILD): `Dockerfile` changes require `docker compose build --no-cache`
+
+**Development cycle:**
+
+1. **Edit files** in your editor
+2. **Determine what changed:**
+   - Config/script only? → `docker compose restart xemu` (fast)
+   - Dockerfile or docker-compose.yml? → Full rebuild (slower)
+3. **Verify changes** using commands from [Quick Reference Commands](#quick-reference-commands) above
+4. **Check logs** for errors: `docker compose logs xemu`
+5. **Run test sequence** before committing (see [Test After Changes](#test-after-changes))
+
+### Commit Guidelines
+
+- **Always test thoroughly** before committing (especially networking changes — they're subtle!)
+- **Update documentation** if you change: IP addresses, service names, environment variables, or architecture
+- **Keep CLAUDE.md and README.md in sync** — stale docs cause confusion
+- **Use descriptive commit messages** that explain WHY, not just WHAT
+- **Reference constraints** from this file in commit messages if relevant
+- **Never push to GitHub without explicit user confirmation** (even after committing)
+
+### When to Rebuild
+
+```bash
+# Full rebuild (clean slate)
+docker compose down
+docker compose build --no-cache
+docker compose up -d
+
+# After Dockerfile changes only
+docker compose build --no-cache
+docker compose up -d
+
+# After config/init script changes (fast)
+docker compose restart xemu
+
+# After docker-compose.yml changes
+docker compose up -d
 ```
 
 ---
@@ -265,12 +365,12 @@ docker exec -it xemu-halo2-server bash
 
 **Why:**
 - **Direct access:** Remote clients can reach Xbox IPs (172.20.0.50/51) directly without SSH tunnels or SOCKS proxies
-- **Bypasses hairpin issue:** Tailscale clients route through the Tailscale container (172.20.0.4), which is on a different bridge port than xemu — no hairpin problem
+- **Bypasses hairpin issue:** Tailscale clients route through the Tailscale container (172.20.0.10), which is on a different bridge port than xemu — no hairpin problem
 - **FTP passive mode works:** Unlike SSH port forwarding, Tailscale provides full IP connectivity, so FTP passive mode data connections succeed
 - **Zero-config VPN:** After initial auth, any Tailscale client can access the Xbox
 
 **Implementation:**
-- Tailscale container at 172.20.0.43 with `--advertise-routes=172.20.0.0/24`
+- Tailscale container at 172.20.0.10 with `--advertise-routes=172.20.0.0/24`
 - State persisted in Docker volume (`tailscale-state`) for auth persistence across restarts
 - Also runs `ethtool -K eth0 tx off` to fix TX checksum offloading
 
@@ -461,14 +561,14 @@ ethtool -k eth0 | grep tx-checksum
 **Root Cause:**
 - Linux bridge hairpin mode is disabled by default
 - Packets exiting a bridge port cannot re-enter the same port
-- xemu container (172.20.0.10) and Xbox pcap-injected IPs (172.20.0.50/51) share the same bridge port
+- xemu container (172.20.0.49) and Xbox pcap-injected IPs (172.20.0.50/51) share the same bridge port
 
 **Cannot Fix from Inside Container:**
 - `/sys/class/net/eth0/brport/hairpin_mode` doesn't exist from container's perspective
 - Setting hairpin requires host-level access: `echo 1 > /sys/class/net/<bridge>/brif/<port>/hairpin_mode`
 
 **Solution (Tailscale):**
-- Remote clients connect via Tailscale, which routes through the Tailscale container (172.20.0.43)
+- Remote clients connect via Tailscale, which routes through the Tailscale container (172.20.0.10)
 - Tailscale container is on a different bridge port — no hairpin problem
 - This is the primary access method for this project
 
@@ -562,7 +662,7 @@ QMP enables programmatic control of xemu for automation, testing, and integratio
 import socket, json
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect(('172.20.0.10', 4444))
+sock.connect(('172.20.0.49', 4444))
 
 # Receive QMP greeting
 greeting = sock.recv(4096)
@@ -587,8 +687,8 @@ print(json.loads(response))
 - Build custom tools and scripts around xemu
 
 **Access:**
-- From Tailscale clients: `172.20.0.10:4444`
-- From other containers: `172.20.0.10:4444`
+- From Tailscale clients: `172.20.0.49:4444`
+- From other containers: `172.20.0.49:4444`
 - QMP listens on all interfaces inside bridge network
 
 ### Change Xbox IP Addresses
@@ -648,6 +748,52 @@ docker compose restart xemu
 ```
 
 Script launches in separate xterm window. Press Ctrl+C in automation terminal to stop.
+
+### Enable Optional Services
+
+#### l2tunnel: LAN Gaming Over Tailscale
+
+Layer 2 Ethernet tunneling for Xbox LAN/system link gaming through Tailscale. This allows remote players to appear on the same virtual LAN as the emulated Xbox.
+
+**To enable:**
+1. Uncomment the `l2tunnel` service block in `docker-compose.yml` (lines 158-173)
+2. Ensure `config/emulator/iguana-eeprom.bin` exists (Xbox MAC auto-detected from bytes 64-69)
+3. Rebuild: `docker compose up -d --build`
+
+**Verify it's running:**
+```bash
+docker compose ps | grep l2tunnel    # Should show "l2tunnel" running
+docker compose logs l2tunnel         # Should show "Hub listening on port 1337"
+```
+
+**From remote machines (with Tailscale access):**
+```bash
+# Install l2tunnel client on your machine, then:
+l2tunnel client 172.20.0.30 1337
+# Creates virtual ethernet interface for LAN gaming with Xbox
+```
+
+**Note:** l2tunnel is disabled by default because most users rely on Tailscale directly. Enable only if you need native LAN discovery for games that don't support direct IP connections.
+
+#### xbdm-relay: Fallback for XBDM Without Tailscale
+
+Simple TCP relay for XBDM (Xbox debug) connections if you're not using Tailscale. Runs on a separate bridge port to bypass the hairpin mode limitation.
+
+**To enable:**
+1. Uncomment the `xbdm-relay` service block in `docker-compose.yml` (lines 127-144)
+2. Rebuild: `docker compose up -d --build`
+
+**Access from server (requires SSH tunnel):**
+```bash
+# On server:
+docker compose port xbdm-relay 731   # Verify port mapping
+
+# From your machine:
+ssh -L 731:localhost:731 user@server-ip
+# Then connect to localhost:731 with Assembly, etc.
+```
+
+**Note:** This is a fallback. Tailscale is strongly recommended — it provides full IP connectivity without SSH tunnels.
 
 ### Push to GitHub
 
@@ -799,14 +945,14 @@ ldconfig
 │  │                                                                      │ │
 │  │  .1  Docker Gateway (NATs to internet via host iptables)            │ │
 │  │  .2  xemu-dhcp (dnsmasq: DHCP 172.20.0.100-200, DNS 1.1.1.1)        │ │
-│  │  .10 xemu-halo2-server (Selkies web UI: 3000/3001, QMP: 4444)       │ │
+│  │  .10 xemu-tailscale2 (subnet router: advertises 172.20.0.0/24)      │ │
+│  │  .25 xlinkkai (XLink Kai web UI: 34522)                             │ │
+│  │  .30 l2tunnel (LAN tunnel hub: 1337)                                │ │
+│  │  .49 xemu-halo2-server (Selkies web UI: 3000/3001, QMP: 4444)       │ │
 │  │      │                                                               │ │
 │  │      └─→ pcap on eth0 injects packets for:                          │ │
 │  │          .50 Emulated Xbox - title interface (FTP 21, gaming)       │ │
 │  │          .51 Emulated Xbox - debug interface (XBDM 731, ping)       │ │
-│  │  .20 xlinkkai (XLink Kai web UI: 34522)                             │ │
-│  │  .30 l2tunnel (LAN tunnel hub: 1337)                                │ │
-│  │  .43 xemu-tailscale2 (subnet router: advertises 172.20.0.0/24)      │ │
 │  │                                                                      │ │
 │  └────────────────────────────────────────────────────────────────────┘ │
 │                                                                          │
@@ -832,15 +978,15 @@ ldconfig
 |----|---------|---------|
 | 172.20.0.1 | Docker Gateway | NAT to internet |
 | 172.20.0.2 | dnsmasq | DHCP + DNS |
-| 172.20.0.10 | xemu container | Selkies web UI + QMP (ports 3000/3001/4444) |
-| 172.20.0.20 | xlinkkai | XLink Kai for system link gaming |
+| 172.20.0.10 | xemu-tailscale2 | Subnet router (exposes network to Tailscale clients) |
+| 172.20.0.25 | xlinkkai | XLink Kai for system link gaming |
 | 172.20.0.30 | l2tunnel | Layer 2 tunnel hub for LAN gaming (port 1337) |
-| 172.20.0.43 | xemu-tailscale2 | Subnet router (exposes network to Tailscale clients) |
+| 172.20.0.49 | xemu container | Selkies web UI + QMP (ports 3000/3001/4444) |
 | 172.20.0.50 | Xbox (title) | Gaming, FTP (pcap-injected) |
 | 172.20.0.51 | Xbox (debug) | XBDM, ping (pcap-injected) |
 | 172.20.0.100-200 | DHCP pool | Available for future devices |
 
-**Reserved (unused):** 172.20.0.3 — available for xbdm-relay if Tailscale not used
+**Reserved (unused):** 172.20.0.11 — available for xbdm-relay if Tailscale not used
 
 ---
 
@@ -903,7 +1049,7 @@ ldconfig
 - 34522 (XLink Kai) — can be exposed if needed
 
 **Not exposed publicly:**
-- 3000/3001 (xemu) — access via Tailscale at 172.20.0.10
+- 3000/3001 (xemu) — access via Tailscale at 172.20.0.49
 - 731 (XBDM) — access via Tailscale at 172.20.0.51
 - 21 (FTP) — access via Tailscale at 172.20.0.50
 
@@ -952,6 +1098,99 @@ ldconfig
 - **Inputs work again ✅**
 
 **Lesson:** xemu auto-saves config changes. If manual UI changes break things, check git diff of `xemu.toml` to see what changed and revert if needed.
+
+---
+
+## Integration Notes
+
+### QMP (QEMU Machine Protocol)
+
+QMP enables programmatic control of xemu for automation, testing, and integration with external tools.
+
+**Access:**
+- **From Tailscale clients:** `172.20.0.49:4444`
+- **From other containers:** `172.20.0.49:4444`
+- **From host (SSH tunnel):** `ssh -L 4444:172.20.0.49:4444 user@server`
+
+**Example: Connect via Python**
+```python
+import socket, json
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect(('172.20.0.49', 4444))
+
+# Receive QMP greeting
+greeting = sock.recv(4096)
+print(json.loads(greeting))
+
+# Send capabilities negotiation
+sock.send(json.dumps({"execute": "qmp_capabilities"}).encode() + b'\n')
+response = sock.recv(4096)
+print(json.loads(response))
+
+# Example: query machine status
+sock.send(json.dumps({"execute": "query-status"}).encode() + b'\n')
+response = sock.recv(4096)
+print(json.loads(response))
+```
+
+**Use Cases:**
+- Save/restore emulator snapshots programmatically
+- Query emulator state (running, paused, etc.) in real-time
+- Automate testing workflows
+- Integration with external monitoring tools (e.g., HaloCaster stats)
+- Build custom tools and dashboards around xemu
+
+**Documentation:** [QEMU QMP Protocol](https://wiki.qemu.org/Documentation/QMP)
+
+### Passleader Automation Script
+
+Optional automation for gameplay testing and demos.
+
+**Location:** `config/emulator/passleader_v3.sh.disabled`
+
+**To enable:**
+1. Rename: `mv passleader_v3.sh.disabled passleader_v3.sh`
+2. Restart: `docker compose restart xemu`
+3. Script launches in separate xterm window at xemu startup
+
+**To disable:**
+1. Rename: `mv passleader_v3.sh passleader_v3.sh.disabled`
+2. Restart: `docker compose restart xemu`
+
+**Features:**
+- Auto-runs at xemu startup without user interaction
+- Supports both keyboard and gamepad input (xemu.toml compatible)
+- Useful for automated testing, demos, or unattended gameplay
+- Stop with Ctrl+C in the automation terminal window
+
+### Selkies Web UI Gamepad Support
+
+Gamepad passthrough from browser to Xbox via Selkies interposer.
+
+**Enable in docker-compose.yml:**
+```yaml
+environment:
+  - SELKIES_GAMEPAD_ENABLED=true
+```
+
+**How it works:**
+1. Browser detects gamepad via Gamepad API
+2. Selkies joystick interposer (`/usr/lib/selkies_joystick_interposer.so`) loaded into xemu process
+3. Input forwarded from browser to Xbox port 2 (default gamepad port in `xemu.toml`)
+
+**Test with:**
+```bash
+# Open https://172.20.0.49:3001 in browser
+# Press any button on gamepad
+# Check xemu logs for input events
+docker compose logs xemu | grep -i gamepad
+```
+
+**Troubleshooting:**
+- If gamepad not detected in browser, check `/etc/ld.so.preload` includes `selkies_joystick_interposer.so`
+- Verify `SELKIES_GAMEPAD_ENABLED=true` is set in docker-compose.yml
+- Ensure browser gamepad API is supported (Chrome, Firefox, Edge)
 
 ---
 

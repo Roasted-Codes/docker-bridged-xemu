@@ -67,8 +67,8 @@ docker logs xemu-tailscale
 
 - **XBDM (Assembly):** Connect to `172.20.0.51:731`
 - **FTP (FileZilla):** `172.20.0.50:21` (user: xbox, pass: xbox)
-- **Web UI:** `https://172.20.0.10:3001`
-- **XLink Kai:** `http://172.20.0.20:34522`
+- **Web UI:** `https://172.20.0.49:3001`
+- **XLink Kai:** `http://172.20.0.25:34522`
 
 ---
 
@@ -79,10 +79,10 @@ Your Windows PC/Mac (Tailscale client)
   ↓ Encrypted WireGuard tunnel
   ↓
 VPS: Docker Network 172.20.0.0/24
-  ├── .4  Tailscale (subnet router)
-  ├── .10 xemu container → pcap injects .50/.51
-  ├── .20 XLink Kai
+  ├── .10 Tailscale (subnet router)
+  ├── .25 XLink Kai
   ├── .2  DHCP/DNS
+  ├── .49 xemu container → pcap injects .50/.51
   └── .50/.51 Xbox (pcap-injected IPs)
 ```
 
