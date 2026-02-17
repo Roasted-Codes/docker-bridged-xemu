@@ -9,21 +9,21 @@
 *.so
 
 # Runtime-generated container files (created by LinuxServer base image)
-config/.cache/
-config/.local/
-config/.dbus/
-config/.XDG/
-config/.Xresources
-config/.xsettingsd
-config/.bash_history
-config/.bashrc
-config/.config/pulse/
-config/.config/openbox/
-config/.config/gtk-3.0/
-config/.config/glib-2.0/
-config/.config/xfce4/
-config/ssl/
-config/Desktop/
+services/xemu/data/.cache/
+services/xemu/data/.local/
+services/xemu/data/.dbus/
+services/xemu/data/.XDG/
+services/xemu/data/.Xresources
+services/xemu/data/.xsettingsd
+services/xemu/data/.bash_history
+services/xemu/data/.bashrc
+services/xemu/data/.config/pulse/
+services/xemu/data/.config/openbox/
+services/xemu/data/.config/gtk-3.0/
+services/xemu/data/.config/glib-2.0/
+services/xemu/data/.config/xfce4/
+services/xemu/data/ssl/
+services/xemu/data/Desktop/
 
 # XLink Kai runtime data
-config/xlinkkai/
+services/xlinkkai/

@@ -33,7 +33,7 @@ volumes:
 
 services:
   xemu:
-    build: .
+    build: ./services/xemu
     image: xemu-bridged:latest
     container_name: xemu-halo2-server
     privileged: true  # Required for packet capture (pcap) in bridged mode
@@ -54,8 +54,8 @@ services:
       # Enable Selkies gamepad passthrough
       - SELKIES_GAMEPAD_ENABLED=true
     volumes:
-      - ./config:/config
-      - ./config/custom-cont-init.d:/custom-cont-init.d  # Run setcap as root at init
+      - ./services/xemu/data:/config
+      - ./services/xemu/init:/custom-cont-init.d  # Run setcap as root at init
     ports:
       - 3000:3000   # HTTP interface
       - 3001:3001   # HTTPS interface (default, self-signed cert)
@@ -80,7 +80,7 @@ services:
       - UID=99
       - GID=100
     volumes:
-      - ./config/xlinkkai:/xlinkkaievolution
+      - ./services/xlinkkai:/xlinkkaievolution
     ports:
       - 34522:34522      # XLink Kai web interface
       - 30000:30000/udp  # P2P connections to orbital
@@ -152,11 +152,11 @@ services:
       xemu_lan:
         ipv4_address: 172.20.0.2
     volumes:
-      - ./config/dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf:ro
+      - ./services/dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf:ro
     restart: unless-stopped
 
   # l2tunnel:
-  #   build: ./l2tunnel-docker
+  #   build: ./services/l2tunnel
   #   container_name: l2tunnel
   #   cap_add:
   #     - NET_ADMIN
@@ -166,7 +166,7 @@ services:
   #     # XBOX_MAC auto-detected from EEPROM, or set manually:
   #     # - XBOX_MAC=00:50:f2:xx:xx:xx
   #   volumes:
-  #     - ./config:/config:ro  # For EEPROM MAC auto-detection
+  #     - ./services/xemu/data/emulator/iguana-eeprom.bin:/config/emulator/iguana-eeprom.bin:ro
   #   networks:
   #     xemu_lan:
   #       ipv4_address: 172.20.0.30

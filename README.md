@@ -38,7 +38,7 @@ git clone https://github.com/Roasted-Codes/docker-bridged-xemu.git
 cd docker-bridged-xemu
 ```
 
-Add your Xbox files to `config/emulator/`:
+Add your Xbox files to `services/xemu/data/emulator/`:
 - `mcpx_1.0.bin` - Boot ROM
 - `CerbiosDebug_old.bin` - BIOS (or your preferred BIOS)
 - `iguana-eeprom.bin` - EEPROM
@@ -114,11 +114,11 @@ See [CLAUDE.md](CLAUDE.md) for full technical details.
 
 | File | Purpose |
 |------|---------|
-| [Dockerfile](Dockerfile) | Minimal overlay (wmctrl, ethtool) |
+| [services/xemu/Dockerfile](services/xemu/Dockerfile) | Minimal overlay (wmctrl, ethtool) |
 | [docker-compose.yml](docker-compose.yml) | 4-service stack (xemu, xlinkkai, tailscale, dhcp) |
-| [config/emulator/xemu.toml](config/emulator/xemu.toml) | xemu config (backend=pcap) |
-| [config/emulator/pcap_immediate.c](config/emulator/pcap_immediate.c) | Immediate mode fix |
-| [config/custom-cont-init.d/10-xemu-setcap](config/custom-cont-init.d/10-xemu-setcap) | Runtime capability setup |
+| [services/xemu/data/emulator/xemu.toml](services/xemu/data/emulator/xemu.toml) | xemu config (backend=pcap) |
+| [services/xemu/data/emulator/pcap_immediate.c](services/xemu/data/emulator/pcap_immediate.c) | Immediate mode fix |
+| [services/xemu/init/10-xemu-setcap](services/xemu/init/10-xemu-setcap) | Runtime capability setup |
 | [CLAUDE.md](CLAUDE.md) | Comprehensive technical guide |
 
 ---

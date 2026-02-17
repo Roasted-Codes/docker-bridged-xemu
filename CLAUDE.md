@@ -38,7 +38,7 @@ This project uses a **minimal overlay** approach instead of forking the entire b
 
 This project solves **three critical bugs** that prevent xemu from working with pcap networking:
 
-1. **libpcap immediate mode** (CRITICAL): xemu cannot receive packets without `pcap_set_immediate_mode()`. Fixed with LD_PRELOAD shim ([`pcap_immediate.c`](config/emulator/pcap_immediate.c)).
+1. **libpcap immediate mode** (CRITICAL): xemu cannot receive packets without `pcap_set_immediate_mode()`. Fixed with LD_PRELOAD shim ([`pcap_immediate.c`](services/xemu/data/emulator/pcap_immediate.c)).
 
 2. **TCP checksum offloading**: Host kernel writes placeholder checksums expecting hardware completion, but pcap-injected IPs go through software bridge. Fixed with `ethtool -K eth0 tx off` in init script.
 
@@ -85,7 +85,7 @@ These three operations are **interdependent** and must **always be applied toget
 - Skip LD_PRELOAD? → Gamepad and pcap packet receive fail silently
 - Skip setcap? → pcap networking doesn't work (no raw packet capabilities)
 
-**Implementation:** All three are applied together in `config/custom-cont-init.d/10-xemu-setcap` at container startup (not at build time).
+**Implementation:** All three are applied together in `services/xemu/init/10-xemu-setcap` at container startup (not at build time).
 
 ---
 
@@ -93,50 +93,58 @@ These three operations are **interdependent** and must **always be applied toget
 
 ```
 bridged-xemu/
-├── Dockerfile                          # Minimal overlay: adds wmctrl, copies autostart
-├── docker-compose.yml                  # 4 services: xemu, xlinkkai, tailscale, dhcp (xbdm-relay commented out)
-├── LICENSE                             # GPL-3.0
+├── docker-compose.yml                  # Service orchestration (all paths reference services/)
 ├── README.md                           # Quick start guide
-├── .gitignore                          # Excludes *.qcow2, *.iso, *.so, config runtime dirs
+├── CLAUDE.md                           # This file
+├── LICENSE                             # GPL-3.0
+├── .gitignore                          # Excludes large files and runtime state
 │
-├── root/
-│   └── defaults/
-│       └── autostart                   # Custom startup script (launches xemu in xterm)
-│
-└── config/                             # Volume-mounted into container at /config
-    ├── custom-cont-init.d/             # Root-level init scripts (run before user session)
-    │   ├── 01-install-autostart        # Syncs autostart, creates xemu.toml symlink
-    │   └── 10-xemu-setcap              # Grants network caps, disables TX checksum, sets ld.so.preload
+└── services/                           # Per-service directories (build contexts + config/data)
     │
-    ├── emulator/                       # xemu configuration and BIOS files
-    │   ├── xemu.toml                   # xemu config (pcap backend, paths, input bindings)
-    │   ├── pcap_immediate.c            # LD_PRELOAD shim source code
-    │   ├── pcap_immediate.so           # Compiled shim (built inside container, not in git)
-    │   ├── mcpx_1.0.bin                # Xbox boot ROM (1MB)
-    │   ├── CerbiosDebug_old.bin        # Cerbios BIOS (512KB)
-    │   ├── iguana-eeprom.bin           # EEPROM image (256 bytes)
-    │   ├── iguana-dev.qcow2            # Xbox HDD image (~3.6GB, NOT in git)
-    │   └── passleader_v3.sh.disabled   # Optional automation script (rename to .sh to enable)
+    ├── xemu/                           # xemu service
+    │   ├── Dockerfile                  # Custom overlay image: adds wmctrl, custom autostart
+    │   ├── root/                       # Baked into image at build time (LinuxServer convention)
+    │   │   └── defaults/
+    │   │       └── autostart           # Custom Openbox startup (launches xemu in xterm)
+    │   ├── init/                       # s6-overlay init scripts (mounted to /custom-cont-init.d)
+    │   │   ├── 01-install-autostart    # Syncs autostart, creates xemu.toml symlink
+    │   │   └── 10-xemu-setcap          # Network caps, TX checksum fix, ldconfig, ld.so.preload
+    │   └── data/                       # Runtime volume (mounted at /config in container)
+    │       ├── emulator/               # xemu configuration and BIOS files
+    │       │   ├── xemu.toml           # xemu config (pcap backend, paths, input bindings)
+    │       │   ├── pcap_immediate.c    # LD_PRELOAD shim source code
+    │       │   ├── pcap_immediate.so   # Compiled shim (built inside container, not in git)
+    │       │   ├── mcpx_1.0.bin        # Xbox boot ROM (1MB)
+    │       │   ├── CerbiosDebug_old.bin# Cerbios BIOS (512KB)
+    │       │   ├── complex_4627.bin    # Additional BIOS/ROM
+    │       │   ├── iguana-eeprom.bin   # EEPROM image (256 bytes)
+    │       │   ├── halo2-server-eeprom.bin # Alternate EEPROM
+    │       │   └── passleader_v3.sh.disabled # Optional automation (rename to .sh to enable)
+    │       └── games/                  # Game ISOs (NOT in git)
     │
-    ├── dnsmasq/
-    │   └── dnsmasq.conf                # DHCP (172.20.0.100-200) + DNS (Cloudflare, Google, Quad9)
+    ├── l2tunnel/                       # Layer 2 tunnel service (optional, commented out in compose)
+    │   ├── Dockerfile                  # Builds l2tunnel hub from mborgerson/l2tunnel
+    │   └── entrypoint.sh               # Hub startup + EEPROM MAC auto-detection
     │
-    ├── xlinkkai/                       # XLink Kai runtime state (created at first start)
-    │   ├── kaiengine.conf              # XLink Kai configuration
-    │   └── README                      # XLink Kai usage notes
+    ├── dnsmasq/                        # dnsmasq DHCP/DNS service
+    │   └── dnsmasq.conf                # DHCP pool (172.20.0.100-200) + DNS forwarders
     │
-    └── games/                          # Game ISOs (NOT in git)
-        └── *.iso
+    ├── xlinkkai/                       # XLink Kai service (runtime state only)
+    │   └── (no committed files - runtime state gitignored)
+    │
+    └── tailscale/                      # Tailscale subnet router (runtime state only)
+        └── (no files - uses named Docker volume `tailscale-state`)
 ```
 
 ### Files NOT in Git
 
 Excluded via [`.gitignore`](.gitignore):
 
-- `*.qcow2` (Xbox disk images, ~3.6GB)
+- `*.qcow2` (Xbox HDD images, ~3.6GB)
 - `*.iso` (Game ISOs)
 - `*.so` (Compiled shared libraries, built at runtime)
-- `config/.cache/`, `config/.local/`, etc. (Runtime-generated LinuxServer base image state)
+- `services/xemu/data/.cache/`, `.local/`, etc. (Runtime-generated LinuxServer base image state)
+- `services/xlinkkai/` (XLink Kai runtime state, created at first start)
 
 **Distribution:** Large files hosted externally (e.g., Google Drive) and downloaded separately.
 
@@ -147,8 +155,8 @@ Excluded via [`.gitignore`](.gitignore):
 ### Prerequisites
 
 1. **Download large files** (not in git):
-   - `iguana-dev.qcow2` (~3.6GB) → `config/emulator/iguana-dev.qcow2`
-   - Game ISOs → `config/games/*.iso`
+   - `iguana-dev.qcow2` (~3.6GB) → `services/xemu/data/emulator/iguana-dev.qcow2`
+   - Game ISOs → `services/xemu/data/games/*.iso`
 
 2. **Ensure host kernel modules** are loaded:
    ```bash
@@ -263,7 +271,7 @@ docker exec -it xemu-halo2-server bash
 **Understanding what needs rebuild:**
 
 - **Config files** (NO rebuild): `xemu.toml`, `dnsmasq.conf` — changes take effect after service restart
-- **Init scripts** (NO rebuild): `config/custom-cont-init.d/*` — reload on next container start via `docker compose restart`
+- **Init scripts** (NO rebuild): `services/xemu/init/*` — reload on next container start via `docker compose restart`
 - **Autostart script** (NO rebuild): `root/defaults/autostart` — reload on next container start
 - **Docker networking** (REBUILD): `docker-compose.yml` changes require `docker compose up -d` (with rebuild if service image changed)
 - **Base image** (REBUILD): `Dockerfile` changes require `docker compose build --no-cache`
@@ -323,7 +331,7 @@ docker compose up -d
 **Modifications:**
 - Add `wmctrl` package for window management
 - Replace `/defaults/autostart` with custom launcher script
-- Add `custom-cont-init.d` init scripts for network capabilities and config symlinks
+- Add `services/xemu/init/` init scripts for network capabilities and config symlinks
 
 ### 2. Bridged Networking with pcap Backend
 
@@ -357,7 +365,7 @@ docker compose up -d
 3. Apply `setcap` at runtime in `10-xemu-setcap` init script (runs as root during s6-overlay init)
 
 **Important Constraint:**
-- **NEVER apply setcap at build time.** Docker layers are immutable — runtime changes don't persist. Always apply in `custom-cont-init.d` script at container startup.
+- **NEVER apply setcap at build time.** Docker layers are immutable — runtime changes don't persist. Always apply in `services/xemu/init/` scripts at container startup.
 
 ### 4. Tailscale Subnet Router for Remote Access
 
@@ -428,13 +436,13 @@ docker compose up -d
 
 **Step-by-step initialization sequence:**
 
-1. **s6-overlay runs `custom-cont-init.d/01-install-autostart`** (as root):
+1. **s6-overlay runs `01-install-autostart`** (as root, from `services/xemu/init/`):
    - Copies `/defaults/autostart` to `/config/.config/openbox/autostart` (the base image only does this on first run; this script force-syncs it every start so our custom version is always active)
    - Creates `/config/.local/share/xemu/xemu/` directory tree
    - Symlinks `xemu.toml` from xemu's default location to `/config/emulator/xemu.toml`
    - Fixes file permissions (`chown abc:abc`)
 
-2. **s6-overlay runs `custom-cont-init.d/10-xemu-setcap`** (as root):
+2. **s6-overlay runs `10-xemu-setcap`** (as root, from `services/xemu/init/`):
    - Enables promiscuous mode on eth0 for receiving Xbox-addressed unicast frames
    - Disables TX checksum offloading on eth0 (see "TCP Checksum Offloading Fix" below)
    - Registers AppImage libraries with system linker (`ldconfig`) so they can be found without `LD_LIBRARY_PATH`
@@ -480,7 +488,7 @@ error while loading shared libraries: libSDL2-2.0.so.0: cannot open shared objec
    setcap cap_net_raw,cap_net_admin+eip /opt/xemu/usr/bin/xemu
    ```
 
-**Implemented in:** [`config/custom-cont-init.d/10-xemu-setcap`](config/custom-cont-init.d/10-xemu-setcap)
+**Implemented in:** [`services/xemu/init/10-xemu-setcap`](services/xemu/init/10-xemu-setcap)
 
 ### 2. NEVER Apply setcap at Build Time
 
@@ -493,7 +501,7 @@ error while loading shared libraries: libSDL2-2.0.so.0: cannot open shared objec
 - `getcap /opt/xemu/usr/bin/xemu` returns empty at runtime even if set during build
 
 **Solution:**
-- Always apply `setcap` at **runtime** in `custom-cont-init.d` init script
+- Always apply `setcap` at **runtime** in `services/xemu/init/10-xemu-setcap` script
 - The init script runs as root during s6-overlay initialization (before user session starts)
 - Capabilities are applied fresh on every container start
 
@@ -505,7 +513,7 @@ RUN setcap cap_net_raw+eip /opt/xemu/usr/bin/xemu
 
 **Always do this:**
 ```bash
-# ✅ CORRECT - in custom-cont-init.d/10-xemu-setcap
+# ✅ CORRECT - in services/xemu/init/10-xemu-setcap
 setcap cap_net_raw,cap_net_admin+eip /opt/xemu/usr/bin/xemu
 ```
 
@@ -534,7 +542,7 @@ ethtool -k eth0 | grep tx-checksum
 # Output should show: tx-checksum-ip-generic: off
 ```
 
-**Implemented in:** [`config/custom-cont-init.d/10-xemu-setcap`](config/custom-cont-init.d/10-xemu-setcap:36)
+**Implemented in:** [`services/xemu/init/10-xemu-setcap`](services/xemu/init/10-xemu-setcap:36)
 
 ### 4. libpcap Immediate Mode Required for Packet Receive
 
@@ -550,9 +558,9 @@ ethtool -k eth0 | grep tx-checksum
 - Must use `/etc/ld.so.preload` (not `LD_PRELOAD` env var) because setcap strips env vars
 
 **Implemented in:**
-- Source: [`config/emulator/pcap_immediate.c`](config/emulator/pcap_immediate.c)
-- Compiled: `config/emulator/pcap_immediate.so` (built inside container, not in git)
-- Loaded: [`config/custom-cont-init.d/10-xemu-setcap:58-66`](config/custom-cont-init.d/10-xemu-setcap#L58-L66)
+- Source: [`services/xemu/data/emulator/pcap_immediate.c`](services/xemu/data/emulator/pcap_immediate.c)
+- Compiled: `services/xemu/data/emulator/pcap_immediate.so` (built inside container, not in git)
+- Loaded: [`services/xemu/init/10-xemu-setcap:58-66`](services/xemu/init/10-xemu-setcap#L58-L66)
 
 ### 5. Bridge Hairpin Mode (Cannot Reach Same-Port IPs)
 
@@ -641,7 +649,7 @@ docker compose up -d
 
 ### Modify xemu Configuration
 
-**Edit:** [`config/emulator/xemu.toml`](config/emulator/xemu.toml)
+**Edit:** [`services/xemu/data/emulator/xemu.toml`](services/xemu/data/emulator/xemu.toml)
 
 Changes take effect on next xemu restart:
 ```bash
@@ -724,7 +732,7 @@ docker compose up -d
 **Inside container:**
 ```bash
 docker exec -it xemu-halo2-server bash
-cd /config/emulator
+cd /config/emulator  # Note: paths inside container are always at /config, regardless of host mount
 gcc -shared -fPIC -o pcap_immediate.so pcap_immediate.c -ldl
 exit
 ```
@@ -738,7 +746,7 @@ docker compose restart xemu
 
 **Rename script:**
 ```bash
-cd /home/docker/bridged-xemu/config/emulator
+cd /home/docker/bridged-xemu/services/xemu/data/emulator
 mv passleader_v3.sh.disabled passleader_v3.sh
 ```
 
@@ -1014,7 +1022,7 @@ ldconfig
 **Adds:**
 - `wmctrl` package for window management
 - Custom `/defaults/autostart` script (replaces upstream)
-- `custom-cont-init.d` init scripts for network capabilities
+- `services/xemu/init/` init scripts for network capabilities
 - pcap immediate mode shim (`pcap_immediate.c` + `.so`)
 - Tailscale subnet router container for remote access
 - XLink Kai container
