@@ -81,6 +81,7 @@ services:
       - GID=100
     volumes:
       - ./services/xlinkkai:/xlinkkaievolution
+      - ./services/xlinkkai/user.sh:/opt/scripts/user.sh  # Auto-join arena on startup
     ports:
       - 34522:34522      # XLink Kai web interface
       - 30000:30000/udp  # P2P connections to orbital

@@ -25,5 +25,6 @@ services/xemu/data/.config/xfce4/
 services/xemu/data/ssl/
 services/xemu/data/Desktop/
 
-# XLink Kai runtime data
-services/xlinkkai/
+# XLink Kai runtime data (exclude user.sh hook script from ignore)
+services/xlinkkai/*
+!services/xlinkkai/user.sh
