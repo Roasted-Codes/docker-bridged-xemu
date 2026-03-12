@@ -1,4 +1,5 @@
 .jenkins-external
+.claude/
 
 # Large files - distributed separately
 *.qcow2
