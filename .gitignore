@@ -19,6 +19,7 @@ services/xemu/data/.bash_history
 services/xemu/data/.bashrc
 services/xemu/data/.config/pulse/
 services/xemu/data/.config/openbox/
+services/xemu/data/.config/labwc/
 services/xemu/data/.config/gtk-3.0/
 services/xemu/data/.config/glib-2.0/
 services/xemu/data/.config/xfce4/

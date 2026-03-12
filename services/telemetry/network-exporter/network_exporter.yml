@@ -118,12 +118,8 @@ targets:
       service: xemu
       category: internal
 
-  - name: xemu-qmp-tcp
-    host: 172.20.0.49:4444
-    type: TCP
-    labels:
-      service: xemu
-      category: internal
+  # QMP probe removed — QMP only accepts one client connection (server,nowait).
+  # TCP probes leave CLOSE-WAIT connections that block StatsBorg from connecting.
 
   - name: xbox-debug
     host: 172.20.0.51

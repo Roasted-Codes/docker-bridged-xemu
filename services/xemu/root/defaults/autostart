@@ -8,9 +8,9 @@
 # This allows users to see the automation output and stop it with Ctrl+C.
 if [ -f /config/emulator/passleader_v3.sh ]; then
     echo "Launching passleader automation script in separate terminal..."
-    xterm -title "Passleader Automation" -geometry 120x30 -e bash /config/emulator/passleader_v3.sh &
+    foot -e bash /config/emulator/passleader_v3.sh &
 fi
 # -----------------------------------------------------------------------------
 
-# Run xemu
-xterm -e /opt/xemu/AppRun -qmp tcp:0.0.0.0:4444,server,nowait
+# Run xemu (foot is the terminal provided by the base image's labwc/Wayland session)
+foot -e /opt/xemu/AppRun -qmp tcp:0.0.0.0:4444,server,nowait

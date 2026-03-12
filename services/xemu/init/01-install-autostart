@@ -20,15 +20,22 @@
 set -euo pipefail
 
 # --- Autostart sync ---
+# The base image switched from openbox to labwc (Wayland), so we must
+# copy our custom autostart to both locations for compatibility.
 AUTOSTART_SRC="/defaults/autostart"
-AUTOSTART_DST="/config/.config/openbox/autostart"
+AUTOSTART_TARGETS=(
+    "/config/.config/openbox/autostart"
+    "/config/.config/labwc/autostart"
+)
 
 if [ -f "$AUTOSTART_SRC" ]; then
-    mkdir -p "$(dirname "$AUTOSTART_DST")"
-    cp -f "$AUTOSTART_SRC" "$AUTOSTART_DST"
-    chown abc:abc "$AUTOSTART_DST"
-    chmod +x "$AUTOSTART_DST"
-    echo "[01-install-autostart] Synced autostart to $AUTOSTART_DST"
+    for dst in "${AUTOSTART_TARGETS[@]}"; do
+        mkdir -p "$(dirname "$dst")"
+        cp -f "$AUTOSTART_SRC" "$dst"
+        chown abc:abc "$dst"
+        chmod +x "$dst"
+        echo "[01-install-autostart] Synced autostart to $dst"
+    done
 fi
 
 # --- Xemu config symlink ---
