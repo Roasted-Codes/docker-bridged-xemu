@@ -172,11 +172,21 @@ Excluded via [`.gitignore`](.gitignore):
 
 ### Prerequisites
 
-1. **Download large files** (not in git):
+1. **Clone with submodules** (StatsBorg is a git submodule):
+   ```bash
+   git clone --recurse-submodules https://github.com/Roasted-Codes/cairo-station.git
+   ```
+
+2. **Download large files** (not in git):
    - `iguana-dev.qcow2` (~3.6GB) → `services/xemu/data/emulator/iguana-dev.qcow2`
    - Game ISOs → `services/xemu/data/games/*.iso`
 
-2. **Ensure host kernel modules** are loaded:
+3. **Create `.env`** with Tailscale auth key:
+   ```bash
+   echo "TS_AUTHKEY=tskey-auth-..." > .env
+   ```
+
+4. **Ensure host kernel modules** are loaded:
    ```bash
    sudo modprobe tun
    ```
@@ -231,10 +241,11 @@ docker compose up -d
 | l2tunnel Hub | `172.20.0.30:1337` | LAN gaming over Tailscale (TCP) |
 
 **Tailscale Setup:**
-1. First run: `docker logs tailscale` to get auth URL
-2. Visit URL and authenticate with your Tailscale account
-3. Approve the 172.20.0.0/24 subnet route in Tailscale admin console
-4. Install Tailscale client on your PC/Mac
+1. Generate a reusable auth key at [tailscale.com/admin/settings/keys](https://login.tailscale.com/admin/settings/keys)
+2. Create `.env` in the cairo-station directory: `echo "TS_AUTHKEY=tskey-auth-..." > .env`
+3. Tailscale authenticates automatically on `docker compose up -d`
+4. Approve the 172.20.0.0/24 subnet route in Tailscale admin console (or configure `autoApprovers` in your ACL to skip this)
+5. Install Tailscale client on your PC/Mac
 
 **Fallback (SSH tunnel):** If not using Tailscale:
 ```bash
@@ -1347,13 +1358,13 @@ nc -zv 172.20.0.51 731
 
 **Check Tailscale status:**
 ```bash
-docker logs tailscale
 docker exec tailscale tailscale status
 ```
+If it shows "Logged out", check that `.env` exists with a valid `TS_AUTHKEY` and run `docker compose up -d tailscale` to recreate the container (restart alone won't pick up new env vars).
 
 **Verify subnet route approved:**
 - Check Tailscale admin console (admin.tailscale.com)
-- Ensure 172.20.0.0/24 route is approved for tailscale
+- Ensure 172.20.0.0/24 route is approved, or add `autoApprovers` to your ACL policy
 
 **Test from server (bypasses Tailscale):**
 ```bash
