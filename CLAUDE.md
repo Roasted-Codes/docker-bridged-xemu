@@ -94,7 +94,7 @@ These three operations are **interdependent** and must **always be applied toget
 ## Directory Structure
 
 ```
-bridged-xemu/
+cairo-station/
 ├── docker-compose.yml                  # Service orchestration (all paths reference services/)
 ├── README.md                           # Quick start guide
 ├── CLAUDE.md                           # This file
@@ -898,7 +898,7 @@ When replacing or modifying upstream files, use clear comment markers:
 
 ```bash
 # =============================================================================
-# LOCAL OVERRIDE: Custom autostart script for docker-bridged-xemu
+# LOCAL OVERRIDE: Custom autostart script for cairo-station
 # =============================================================================
 # This file replaces the upstream LinuxServer.io autostart.
 # Modifications:
@@ -923,7 +923,7 @@ When replacing or modifying upstream files, use clear comment markers:
 - Remove `.disabled` to enable: `passleader_v3.sh`
 
 **Docker Services:**
-- Use descriptive container names: `xemu-halo2-server`, `xemu-tailscale`, `xemu-dhcp`
+- Use descriptive container names: `xemu-halo2-server`, `xemu-tailscale2`, `xemu-dhcp`
 - Prefix related services: `xemu-*` for project components
 
 ### Code Style
@@ -1058,7 +1058,7 @@ ldconfig
 
 ### Overlay (This Project)
 
-**Image:** `xemu-bridged:latest` (built from [`Dockerfile`](Dockerfile))
+**Image:** `xemu-bridged:latest` (built from [`services/xemu/Dockerfile`](services/xemu/Dockerfile))
 
 **Adds:**
 - `wmctrl` package for window management
@@ -1327,7 +1327,7 @@ Connect directly to `172.20.0.50:21` from any FTP client on a Tailscale-connecte
 1. Is Xbox booted to dashboard?
 2. Is FTP server enabled in XBMC settings?
 3. Is Tailscale subnet route approved? (check admin.tailscale.com)
-4. Is TX checksum offloading disabled? (`docker exec xemu-tailscale ethtool -k eth0`)
+4. Is TX checksum offloading disabled? (`docker exec xemu-tailscale2 ethtool -k eth0`)
 
 **From server terminal:** `lftp -u xbox,xbox 172.20.0.50` (basic commands: `ls`, `cd E:/`, `get file`, `put file`, `quit`)
 
