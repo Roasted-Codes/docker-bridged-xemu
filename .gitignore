@@ -4,6 +4,7 @@
 
 # Large files - distributed separately
 *.qcow2
+*.qcow2_orig
 *.iso
 *.img
 

@@ -51,8 +51,8 @@ services:
       - /dev/net/tun:/dev/net/tun  # Required for bridged networking
       - /dev/uinput:/dev/uinput    # Required for Selkies virtual gamepad
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
       - TZ=Etc/UTC
       # CPU-only rendering settings (no GPU required)
       - DISABLE_ZINK=true
