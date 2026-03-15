@@ -1,0 +1,447 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-13T23:59:33.439153",
+  "fingerprint": "faa1cc31dc5f11a49a92c54b364e82ca",
+  "source": "pgcr_display",
+  "gametype": "territories",
+  "gametype_id": 8,
+  "player_count": 8,
+  "players": [
+    {
+      "name": "Ironsquid",
+      "display_name": "",
+      "score_string": "18",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 18,
+      "deaths": 10,
+      "assists": 6,
+      "suicides": 0,
+      "kd_ratio": 1.8,
+      "medals": {
+        "total": 3,
+        "by_type": 1
+      },
+      "accuracy": {
+        "total_shots": 586,
+        "shots_hit": 284,
+        "headshots": 16,
+        "percentage": 48.5
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        5,
+        3,
+        6,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        39,
+        4
+      ],
+      "gametype_stats": {
+        "Terr. Taken": 39,
+        "Terr. Lost": 4
+      }
+    },
+    {
+      "name": "Goose",
+      "display_name": "",
+      "score_string": "12",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 12,
+      "deaths": 13,
+      "assists": 8,
+      "suicides": 1,
+      "kd_ratio": 0.92,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 469,
+        "shots_hit": 209,
+        "headshots": 9,
+        "percentage": 44.6
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        3,
+        5,
+        2,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        30,
+        2
+      ],
+      "gametype_stats": {
+        "Terr. Taken": 30,
+        "Terr. Lost": 2
+      }
+    },
+    {
+      "name": "M15F1T",
+      "display_name": "",
+      "score_string": "10",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 10,
+      "deaths": 16,
+      "assists": 8,
+      "suicides": 0,
+      "kd_ratio": 0.62,
+      "medals": {
+        "total": 1,
+        "by_type": 1
+      },
+      "accuracy": {
+        "total_shots": 504,
+        "shots_hit": 192,
+        "headshots": 5,
+        "percentage": 38.1
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        2,
+        2,
+        2,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        23,
+        3
+      ],
+      "gametype_stats": {
+        "Terr. Taken": 23,
+        "Terr. Lost": 3
+      }
+    },
+    {
+      "name": "Rock",
+      "display_name": "",
+      "score_string": "10",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 10,
+      "deaths": 5,
+      "assists": 2,
+      "suicides": 0,
+      "kd_ratio": 2.0,
+      "medals": {
+        "total": 4,
+        "by_type": 8512
+      },
+      "accuracy": {
+        "total_shots": 190,
+        "shots_hit": 95,
+        "headshots": 6,
+        "percentage": 50.0
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        3,
+        3,
+        2,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        77,
+        7
+      ],
+      "gametype_stats": {
+        "Terr. Taken": 77,
+        "Terr. Lost": 7
+      }
+    },
+    {
+      "name": "Behaved",
+      "display_name": "",
+      "score_string": "13",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 13,
+      "deaths": 13,
+      "assists": 9,
+      "suicides": 0,
+      "kd_ratio": 1.0,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 535,
+        "shots_hit": 235,
+        "headshots": 9,
+        "percentage": 43.9
+      },
+      "killed": [
+        2,
+        2,
+        8,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        30,
+        3
+      ],
+      "gametype_stats": {
+        "Terr. Taken": 30,
+        "Terr. Lost": 3
+      }
+    },
+    {
+      "name": "Minerkazoo",
+      "display_name": "",
+      "score_string": "12",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 12,
+      "deaths": 13,
+      "assists": 7,
+      "suicides": 0,
+      "kd_ratio": 0.92,
+      "medals": {
+        "total": 1,
+        "by_type": 512
+      },
+      "accuracy": {
+        "total_shots": 448,
+        "shots_hit": 131,
+        "headshots": 8,
+        "percentage": 29.2
+      },
+      "killed": [
+        7,
+        2,
+        2,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        30,
+        3
+      ],
+      "gametype_stats": {
+        "Terr. Taken": 30,
+        "Terr. Lost": 3
+      }
+    },
+    {
+      "name": "Seraph",
+      "display_name": "",
+      "score_string": "10",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 10,
+      "deaths": 12,
+      "assists": 5,
+      "suicides": 0,
+      "kd_ratio": 0.83,
+      "medals": {
+        "total": 4,
+        "by_type": 321
+      },
+      "accuracy": {
+        "total_shots": 326,
+        "shots_hit": 149,
+        "headshots": 5,
+        "percentage": 45.7
+      },
+      "killed": [
+        0,
+        5,
+        4,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        33,
+        3
+      ],
+      "gametype_stats": {
+        "Terr. Taken": 33,
+        "Terr. Lost": 3
+      }
+    },
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "9",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 9,
+      "deaths": 12,
+      "assists": 7,
+      "suicides": 0,
+      "kd_ratio": 0.75,
+      "medals": {
+        "total": 2,
+        "by_type": 513
+      },
+      "accuracy": {
+        "total_shots": 366,
+        "shots_hit": 143,
+        "headshots": 6,
+        "percentage": 39.1
+      },
+      "killed": [
+        1,
+        4,
+        2,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        32,
+        2
+      ],
+      "gametype_stats": {
+        "Terr. Taken": 32,
+        "Terr. Lost": 2
+      }
+    }
+  ],
+  "teams": [
+    {
+      "index": 0,
+      "name": "Red Team",
+      "score": 50,
+      "score_string": "50",
+      "place": 0,
+      "team_id": 0,
+      "place_string": "1st"
+    },
+    {
+      "index": 1,
+      "name": "Blue Team",
+      "score": 44,
+      "score_string": "44",
+      "place": 1,
+      "team_id": 1,
+      "place_string": "2nd"
+    }
+  ]
+}

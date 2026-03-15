@@ -11,6 +11,7 @@ if [ "${WATCH_MODE:-xbdm}" = "qmp" ]; then
         --host "${QMP_HOST:-172.20.0.49}" \
         --qmp "${QMP_PORT:-4444}" \
         --watch \
+        --verbose \
         --history-dir /app/history
 else
     exec python -u halo2_stats.py \

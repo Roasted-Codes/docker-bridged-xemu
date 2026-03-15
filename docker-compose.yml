@@ -65,7 +65,10 @@ services:
     ports:
       - "127.0.0.1:3000:3000"   # HTTP interface (localhost + SSH tunnel only)
       - "127.0.0.1:3001:3001"   # HTTPS interface (localhost + SSH tunnel only)
-      - "127.0.0.1:4444:4444"   # QMP (localhost + SSH tunnel only)
+      # QMP port NOT published to host — Docker's userland proxy occupies QMP's
+      # single-connection slot, blocking container-to-container access (StatsBorg).
+      # Access QMP from host via: docker exec xemu socat - TCP:localhost:4444
+      # - "127.0.0.1:4444:4444"
       # Ports bound to 127.0.0.1 so Docker's iptables DNAT rules don't
       # intercept container-to-container bridge traffic. Remote access
       # via Tailscale routes directly to 172.20.0.49, bypassing DNAT.
