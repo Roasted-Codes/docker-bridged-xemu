@@ -1,0 +1,271 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-13T22:34:12.089801",
+  "fingerprint": "eb07fa0aedcfcc42986495d122535b46",
+  "source": "pgcr_display",
+  "gametype": "koth",
+  "gametype_id": 4,
+  "player_count": 5,
+  "players": [
+    {
+      "name": "XspoSive BoX",
+      "display_name": "",
+      "score_string": "24",
+      "place": 0,
+      "place_string": "1st",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 26,
+      "deaths": 23,
+      "assists": 8,
+      "suicides": 5,
+      "kd_ratio": 1.13,
+      "medals": {
+        "total": 12,
+        "by_type": 9025
+      },
+      "accuracy": {
+        "total_shots": 691,
+        "shots_hit": 221,
+        "headshots": 17,
+        "percentage": 32.0
+      },
+      "killed": [
+        2,
+        12,
+        6,
+        8,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        32,
+        6
+      ],
+      "gametype_stats": {
+        "Kings Killed": 32,
+        "Kills From": 6
+      }
+    },
+    {
+      "name": "Ironsquid",
+      "display_name": "",
+      "score_string": "21",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 21,
+      "deaths": 18,
+      "assists": 8,
+      "suicides": 3,
+      "kd_ratio": 1.17,
+      "medals": {
+        "total": 7,
+        "by_type": 8513
+      },
+      "accuracy": {
+        "total_shots": 1101,
+        "shots_hit": 409,
+        "headshots": 12,
+        "percentage": 37.1
+      },
+      "killed": [
+        11,
+        0,
+        5,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        42,
+        8
+      ],
+      "gametype_stats": {
+        "Kings Killed": 42,
+        "Kills From": 8
+      }
+    },
+    {
+      "name": "htx",
+      "display_name": "",
+      "score_string": "14",
+      "place": 2,
+      "place_string": "3rd",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 14,
+      "deaths": 13,
+      "assists": 7,
+      "suicides": 0,
+      "kd_ratio": 1.08,
+      "medals": {
+        "total": 4,
+        "by_type": 8768
+      },
+      "accuracy": {
+        "total_shots": 278,
+        "shots_hit": 99,
+        "headshots": 10,
+        "percentage": 35.6
+      },
+      "killed": [
+        5,
+        5,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        35,
+        5
+      ],
+      "gametype_stats": {
+        "Kings Killed": 35,
+        "Kills From": 5
+      }
+    },
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "8",
+      "place": 3,
+      "place_string": "4th",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 8,
+      "deaths": 17,
+      "assists": 4,
+      "suicides": 0,
+      "kd_ratio": 0.47,
+      "medals": {
+        "total": 3,
+        "by_type": 256
+      },
+      "accuracy": {
+        "total_shots": 199,
+        "shots_hit": 85,
+        "headshots": 4,
+        "percentage": 42.7
+      },
+      "killed": [
+        5,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        45,
+        3
+      ],
+      "gametype_stats": {
+        "Kings Killed": 45,
+        "Kills From": 3
+      }
+    },
+    {
+      "name": "II M15F1T II",
+      "display_name": "",
+      "score_string": "0",
+      "place": 4,
+      "place_string": "5th",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 0,
+      "deaths": 0,
+      "assists": 0,
+      "suicides": 0,
+      "kd_ratio": 0.0,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 0,
+        "shots_hit": 0,
+        "headshots": 0,
+        "percentage": 0
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        0
+      ],
+      "gametype_stats": {
+        "Kings Killed": 0,
+        "Kills From": 0
+      }
+    }
+  ]
+}

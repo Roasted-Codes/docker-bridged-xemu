@@ -1,0 +1,445 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-22T02:44:58.374915",
+  "fingerprint": "d98d303c9505ad6e3bb4ad6cbb57ea7d",
+  "source": "halo-scraper",
+  "gametype": "ctf",
+  "gametype_id": 1,
+  "player_count": 8,
+  "players": [
+    {
+      "name": "Red",
+      "display_name": "",
+      "score_string": "1",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 32,
+      "deaths": 19,
+      "assists": 10,
+      "suicides": 1,
+      "kd_ratio": 1.6842105263157894,
+      "medals": {
+        "total": 19,
+        "by_type": 1327873
+      },
+      "accuracy": {
+        "total_shots": 731,
+        "shots_hit": 423,
+        "headshots": 16,
+        "percentage": 57.865937072503414
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        7,
+        6,
+        6,
+        13,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        1
+      ],
+      "gametype_stats": {
+        "Flag Saves": 0,
+        "Flag Steals": 1
+      }
+    },
+    {
+      "name": "Minerkazoo",
+      "display_name": "",
+      "score_string": "1",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 18,
+      "deaths": 19,
+      "assists": 6,
+      "suicides": 0,
+      "kd_ratio": 0.9473684210526315,
+      "medals": {
+        "total": 16,
+        "by_type": 1311552
+      },
+      "accuracy": {
+        "total_shots": 363,
+        "shots_hit": 126,
+        "headshots": 7,
+        "percentage": 34.710743801652896
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        3,
+        7,
+        5,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        5
+      ],
+      "gametype_stats": {
+        "Flag Saves": 0,
+        "Flag Steals": 5
+      }
+    },
+    {
+      "name": "nico",
+      "display_name": "",
+      "score_string": "0",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 25,
+      "deaths": 20,
+      "assists": 11,
+      "suicides": 0,
+      "kd_ratio": 1.25,
+      "medals": {
+        "total": 18,
+        "by_type": 1319745
+      },
+      "accuracy": {
+        "total_shots": 685,
+        "shots_hit": 301,
+        "headshots": 16,
+        "percentage": 43.941605839416056
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        10,
+        6,
+        5,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        8
+      ],
+      "gametype_stats": {
+        "Flag Saves": 0,
+        "Flag Steals": 8
+      }
+    },
+    {
+      "name": "TURDSONG",
+      "display_name": "",
+      "score_string": "0",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 23,
+      "deaths": 22,
+      "assists": 14,
+      "suicides": 0,
+      "kd_ratio": 1.0454545454545454,
+      "medals": {
+        "total": 7,
+        "by_type": 1057537
+      },
+      "accuracy": {
+        "total_shots": 909,
+        "shots_hit": 398,
+        "headshots": 13,
+        "percentage": 43.784378437843785
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        3,
+        6,
+        6,
+        8,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        0
+      ],
+      "gametype_stats": {
+        "Flag Saves": 0,
+        "Flag Steals": 0
+      }
+    },
+    {
+      "name": "Toyota Man",
+      "display_name": "",
+      "score_string": "1",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 13,
+      "deaths": 23,
+      "assists": 17,
+      "suicides": 0,
+      "kd_ratio": 0.5652173913043478,
+      "medals": {
+        "total": 7,
+        "by_type": 1843201
+      },
+      "accuracy": {
+        "total_shots": 723,
+        "shots_hit": 322,
+        "headshots": 8,
+        "percentage": 44.53665283540803
+      },
+      "killed": [
+        1,
+        2,
+        5,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        2
+      ],
+      "gametype_stats": {
+        "Flag Saves": 1,
+        "Flag Steals": 2
+      }
+    },
+    {
+      "name": "           Goose",
+      "display_name": "",
+      "score_string": "0",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 20,
+      "deaths": 25,
+      "assists": 11,
+      "suicides": 0,
+      "kd_ratio": 0.8,
+      "medals": {
+        "total": 15,
+        "by_type": 1835265
+      },
+      "accuracy": {
+        "total_shots": 568,
+        "shots_hit": 265,
+        "headshots": 8,
+        "percentage": 46.654929577464785
+      },
+      "killed": [
+        5,
+        6,
+        6,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        4
+      ],
+      "gametype_stats": {
+        "Flag Saves": 1,
+        "Flag Steals": 4
+      }
+    },
+    {
+      "name": " Rocky",
+      "display_name": "",
+      "score_string": "0",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 28,
+      "deaths": 22,
+      "assists": 14,
+      "suicides": 0,
+      "kd_ratio": 1.2727272727272727,
+      "medals": {
+        "total": 14,
+        "by_type": 1319745
+      },
+      "accuracy": {
+        "total_shots": 784,
+        "shots_hit": 380,
+        "headshots": 20,
+        "percentage": 48.46938775510204
+      },
+      "killed": [
+        8,
+        8,
+        5,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        3
+      ],
+      "gametype_stats": {
+        "Flag Saves": 0,
+        "Flag Steals": 3
+      }
+    },
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "0",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 19,
+      "deaths": 28,
+      "assists": 17,
+      "suicides": 2,
+      "kd_ratio": 0.6785714285714286,
+      "medals": {
+        "total": 10,
+        "by_type": 1319488
+      },
+      "accuracy": {
+        "total_shots": 639,
+        "shots_hit": 312,
+        "headshots": 12,
+        "percentage": 48.82629107981221
+      },
+      "killed": [
+        5,
+        3,
+        4,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        3
+      ],
+      "gametype_stats": {
+        "Flag Saves": 0,
+        "Flag Steals": 3
+      }
+    }
+  ],
+  "teams": [
+    {
+      "team_id": 0,
+      "name": "Red Team",
+      "score": 2,
+      "score_string": "2",
+      "place": 0,
+      "round_score": 0
+    },
+    {
+      "team_id": 1,
+      "name": "Blue Team",
+      "score": 1,
+      "score_string": "1",
+      "place": 1,
+      "round_score": 0
+    }
+  ]
+}

@@ -1,0 +1,446 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-26T03:34:35.299246",
+  "fingerprint": "17cbfa57b3c5842515a04891329a25b5",
+  "source": "halo-scraper",
+  "map": "",
+  "gametype": "slayer",
+  "gametype_id": 2,
+  "player_count": 8,
+  "players": [
+    {
+      "name": "Ironsquid",
+      "display_name": "",
+      "score_string": "17",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 17,
+      "deaths": 10,
+      "assists": 4,
+      "suicides": 0,
+      "kd_ratio": 1.7,
+      "medals": {
+        "total": 5,
+        "by_type": 8512
+      },
+      "accuracy": {
+        "total_shots": 356,
+        "shots_hit": 166,
+        "headshots": 12,
+        "percentage": 46.62921348314607
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        2,
+        4,
+        4,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        42,
+        5
+      ],
+      "gametype_stats": {
+        "Avg Life": 42,
+        "Best Spree": 5
+      }
+    },
+    {
+      "name": "Elephantitis",
+      "display_name": "",
+      "score_string": "17",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 17,
+      "deaths": 11,
+      "assists": 1,
+      "suicides": 0,
+      "kd_ratio": 1.5454545454545454,
+      "medals": {
+        "total": 13,
+        "by_type": 8961
+      },
+      "accuracy": {
+        "total_shots": 325,
+        "shots_hit": 181,
+        "headshots": 7,
+        "percentage": 55.69230769230769
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        8,
+        2,
+        2,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        38,
+        6
+      ],
+      "gametype_stats": {
+        "Avg Life": 38,
+        "Best Spree": 6
+      }
+    },
+    {
+      "name": "MJHammer75",
+      "display_name": "",
+      "score_string": "11",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 11,
+      "deaths": 12,
+      "assists": 4,
+      "suicides": 0,
+      "kd_ratio": 0.9166666666666666,
+      "medals": {
+        "total": 1,
+        "by_type": 512
+      },
+      "accuracy": {
+        "total_shots": 390,
+        "shots_hit": 133,
+        "headshots": 6,
+        "percentage": 34.1025641025641
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        5,
+        3,
+        2,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        34,
+        2
+      ],
+      "gametype_stats": {
+        "Avg Life": 34,
+        "Best Spree": 2
+      }
+    },
+    {
+      "name": "NonMetalSquid",
+      "display_name": "",
+      "score_string": "5",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 5,
+      "deaths": 6,
+      "assists": 5,
+      "suicides": 0,
+      "kd_ratio": 0.8333333333333334,
+      "medals": {
+        "total": 1,
+        "by_type": 64
+      },
+      "accuracy": {
+        "total_shots": 327,
+        "shots_hit": 123,
+        "headshots": 5,
+        "percentage": 37.61467889908257
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        69,
+        2
+      ],
+      "gametype_stats": {
+        "Avg Life": 69,
+        "Best Spree": 2
+      }
+    },
+    {
+      "name": "DSJ",
+      "display_name": "",
+      "score_string": "14",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 14,
+      "deaths": 17,
+      "assists": 7,
+      "suicides": 0,
+      "kd_ratio": 0.8235294117647058,
+      "medals": {
+        "total": 6,
+        "by_type": 257
+      },
+      "accuracy": {
+        "total_shots": 378,
+        "shots_hit": 204,
+        "headshots": 8,
+        "percentage": 53.96825396825397
+      },
+      "killed": [
+        4,
+        3,
+        5,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        24,
+        3
+      ],
+      "gametype_stats": {
+        "Avg Life": 24,
+        "Best Spree": 3
+      }
+    },
+    {
+      "name": "           Goose",
+      "display_name": "",
+      "score_string": "9",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 9,
+      "deaths": 9,
+      "assists": 7,
+      "suicides": 0,
+      "kd_ratio": 1,
+      "medals": {
+        "total": 2,
+        "by_type": 768
+      },
+      "accuracy": {
+        "total_shots": 346,
+        "shots_hit": 139,
+        "headshots": 5,
+        "percentage": 40.17341040462428
+      },
+      "killed": [
+        4,
+        2,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        47,
+        2
+      ],
+      "gametype_stats": {
+        "Avg Life": 47,
+        "Best Spree": 2
+      }
+    },
+    {
+      "name": "itz britney bitc",
+      "display_name": "",
+      "score_string": "8",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 8,
+      "deaths": 9,
+      "assists": 8,
+      "suicides": 0,
+      "kd_ratio": 0.8888888888888888,
+      "medals": {
+        "total": 2,
+        "by_type": 576
+      },
+      "accuracy": {
+        "total_shots": 380,
+        "shots_hit": 159,
+        "headshots": 7,
+        "percentage": 41.8421052631579
+      },
+      "killed": [
+        1,
+        1,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        47,
+        3
+      ],
+      "gametype_stats": {
+        "Avg Life": 47,
+        "Best Spree": 3
+      }
+    },
+    {
+      "name": "Minerkazoo",
+      "display_name": "",
+      "score_string": "8",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 8,
+      "deaths": 15,
+      "assists": 5,
+      "suicides": 0,
+      "kd_ratio": 0.5333333333333333,
+      "medals": {
+        "total": 5,
+        "by_type": 833
+      },
+      "accuracy": {
+        "total_shots": 236,
+        "shots_hit": 85,
+        "headshots": 5,
+        "percentage": 36.016949152542374
+      },
+      "killed": [
+        1,
+        5,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        27,
+        2
+      ],
+      "gametype_stats": {
+        "Avg Life": 27,
+        "Best Spree": 2
+      }
+    }
+  ],
+  "teams": [
+    {
+      "team_id": 1,
+      "name": "Blue Team",
+      "score": 50,
+      "score_string": "50",
+      "place": 0,
+      "round_score": 0
+    },
+    {
+      "team_id": 0,
+      "name": "Red Team",
+      "score": 39,
+      "score_string": "39",
+      "place": 1,
+      "round_score": 0
+    }
+  ]
+}

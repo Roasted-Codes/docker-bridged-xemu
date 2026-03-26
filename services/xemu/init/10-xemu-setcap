@@ -21,6 +21,12 @@ set -euo pipefail
 XEMU_BIN="/opt/xemu/usr/bin/xemu"
 XEMU_LIB="/opt/xemu/usr/lib"
 
+# Make QMP socket directory writable by user abc (xemu runs as abc, not root)
+if [ -d /run/qmp ]; then
+    chown abc:abc /run/qmp
+    echo "[10-xemu-setcap] Set /run/qmp ownership for QMP socket"
+fi
+
 # Enable promiscuous mode on eth0 so pcap can receive unicast frames
 # addressed to the Xbox's emulated MAC (not the container's MAC)
 echo "[10-xemu-setcap] Enabling promiscuous mode on eth0..."

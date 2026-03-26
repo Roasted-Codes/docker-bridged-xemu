@@ -1,0 +1,20 @@
+[server]
+addr = ":9000"
+tick_hz = 30
+
+[pocketbase]
+enabled = false
+
+[database]
+path = "data/statsborg.db"
+history_dir = "data/history"
+
+[performance]
+idle_ms = 1000
+game_ms = 33
+events = true
+
+[[hosts]]
+name = "xemu"
+qmp_sock = "/run/qmp/qmp.sock"
+game = "halo2"

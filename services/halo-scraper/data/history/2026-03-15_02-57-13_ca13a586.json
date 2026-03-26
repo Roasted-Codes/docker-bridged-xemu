@@ -1,0 +1,447 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-15T02:57:13.743131",
+  "fingerprint": "ca13a5864ea3c04232510ae40cb4b66f",
+  "source": "pgcr_display",
+  "gametype": "ctf",
+  "gametype_id": 1,
+  "player_count": 8,
+  "players": [
+    {
+      "name": "S7ale",
+      "display_name": "",
+      "score_string": "1",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 36,
+      "deaths": 27,
+      "assists": 14,
+      "suicides": 0,
+      "kd_ratio": 1.33,
+      "medals": {
+        "total": 14,
+        "by_type": 1835777
+      },
+      "accuracy": {
+        "total_shots": 950,
+        "shots_hit": 488,
+        "headshots": 24,
+        "percentage": 51.4
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        7,
+        7,
+        13,
+        9,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        7
+      ],
+      "gametype_stats": {
+        "Flag Saves": 1,
+        "Flag Steals": 7
+      }
+    },
+    {
+      "name": "Mental",
+      "display_name": "",
+      "score_string": "1",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 27,
+      "deaths": 30,
+      "assists": 16,
+      "suicides": 0,
+      "kd_ratio": 0.9,
+      "medals": {
+        "total": 9,
+        "by_type": 1310977
+      },
+      "accuracy": {
+        "total_shots": 1109,
+        "shots_hit": 395,
+        "headshots": 17,
+        "percentage": 35.6
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        10,
+        2,
+        10,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        1
+      ],
+      "gametype_stats": {
+        "Flag Saves": 0,
+        "Flag Steals": 1
+      }
+    },
+    {
+      "name": "Hyrax",
+      "display_name": "",
+      "score_string": "0",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 19,
+      "deaths": 31,
+      "assists": 14,
+      "suicides": 1,
+      "kd_ratio": 0.61,
+      "medals": {
+        "total": 9,
+        "by_type": 1573122
+      },
+      "accuracy": {
+        "total_shots": 906,
+        "shots_hit": 347,
+        "headshots": 14,
+        "percentage": 38.3
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        3,
+        5,
+        5,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        2,
+        0
+      ],
+      "gametype_stats": {
+        "Flag Saves": 2,
+        "Flag Steals": 0
+      }
+    },
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "0",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 19,
+      "deaths": 35,
+      "assists": 16,
+      "suicides": 0,
+      "kd_ratio": 0.54,
+      "medals": {
+        "total": 7,
+        "by_type": 787201
+      },
+      "accuracy": {
+        "total_shots": 645,
+        "shots_hit": 243,
+        "headshots": 9,
+        "percentage": 37.7
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        4,
+        7,
+        2,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        2
+      ],
+      "gametype_stats": {
+        "Flag Saves": 1,
+        "Flag Steals": 2
+      }
+    },
+    {
+      "name": "Goose",
+      "display_name": "",
+      "score_string": "1",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 17,
+      "deaths": 24,
+      "assists": 17,
+      "suicides": 0,
+      "kd_ratio": 0.71,
+      "medals": {
+        "total": 9,
+        "by_type": 1315584
+      },
+      "accuracy": {
+        "total_shots": 777,
+        "shots_hit": 307,
+        "headshots": 12,
+        "percentage": 39.5
+      },
+      "killed": [
+        4,
+        4,
+        4,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        2
+      ],
+      "gametype_stats": {
+        "Flag Saves": 0,
+        "Flag Steals": 2
+      }
+    },
+    {
+      "name": "AfroMaN",
+      "display_name": "",
+      "score_string": "0",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 42,
+      "deaths": 21,
+      "assists": 21,
+      "suicides": 0,
+      "kd_ratio": 2.0,
+      "medals": {
+        "total": 17,
+        "by_type": 1327873
+      },
+      "accuracy": {
+        "total_shots": 1334,
+        "shots_hit": 575,
+        "headshots": 33,
+        "percentage": 43.1
+      },
+      "killed": [
+        11,
+        8,
+        10,
+        13,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        1
+      ],
+      "gametype_stats": {
+        "Flag Saves": 0,
+        "Flag Steals": 1
+      }
+    },
+    {
+      "name": "nico",
+      "display_name": "",
+      "score_string": "0",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 34,
+      "deaths": 30,
+      "assists": 17,
+      "suicides": 0,
+      "kd_ratio": 1.13,
+      "medals": {
+        "total": 16,
+        "by_type": 1843970
+      },
+      "accuracy": {
+        "total_shots": 974,
+        "shots_hit": 424,
+        "headshots": 20,
+        "percentage": 43.5
+      },
+      "killed": [
+        6,
+        10,
+        10,
+        8,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        2
+      ],
+      "gametype_stats": {
+        "Flag Saves": 1,
+        "Flag Steals": 2
+      }
+    },
+    {
+      "name": "Sauce",
+      "display_name": "",
+      "score_string": "0",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 30,
+      "deaths": 26,
+      "assists": 21,
+      "suicides": 0,
+      "kd_ratio": 1.15,
+      "medals": {
+        "total": 5,
+        "by_type": 262657
+      },
+      "accuracy": {
+        "total_shots": 982,
+        "shots_hit": 391,
+        "headshots": 20,
+        "percentage": 39.8
+      },
+      "killed": [
+        6,
+        8,
+        7,
+        9,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        1
+      ],
+      "gametype_stats": {
+        "Flag Saves": 0,
+        "Flag Steals": 1
+      }
+    }
+  ],
+  "teams": [
+    {
+      "index": 0,
+      "name": "Blue Team",
+      "score": 2,
+      "score_string": "2",
+      "place": 0,
+      "team_id": 1,
+      "place_string": "1st"
+    },
+    {
+      "index": 1,
+      "name": "Red Team",
+      "score": 1,
+      "score_string": "1",
+      "place": 1,
+      "team_id": 0,
+      "place_string": "2nd"
+    }
+  ]
+}

@@ -1,0 +1,375 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-17T04:45:15.321709",
+  "fingerprint": "e93c0a4dccfb1e46c9ff39c25e480cb7",
+  "source": "pgcr_display",
+  "gametype": "slayer",
+  "gametype_id": 2,
+  "player_count": 7,
+  "players": [
+    {
+      "name": "Hamamon",
+      "display_name": "",
+      "score_string": "23",
+      "place": 0,
+      "place_string": "1st",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 23,
+      "deaths": 6,
+      "assists": 6,
+      "suicides": 0,
+      "kd_ratio": 3.83,
+      "medals": {
+        "total": 10,
+        "by_type": 12545
+      },
+      "accuracy": {
+        "total_shots": 440,
+        "shots_hit": 267,
+        "headshots": 18,
+        "percentage": 60.7
+      },
+      "killed": [
+        0,
+        4,
+        6,
+        7,
+        3,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        41,
+        8
+      ],
+      "gametype_stats": {
+        "Avg Life": 41,
+        "Best Spree": 8
+      }
+    },
+    {
+      "name": "Hyrax",
+      "display_name": "",
+      "score_string": "16",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 16,
+      "deaths": 9,
+      "assists": 11,
+      "suicides": 0,
+      "kd_ratio": 1.78,
+      "medals": {
+        "total": 2,
+        "by_type": 257
+      },
+      "accuracy": {
+        "total_shots": 519,
+        "shots_hit": 241,
+        "headshots": 10,
+        "percentage": 46.4
+      },
+      "killed": [
+        1,
+        0,
+        6,
+        5,
+        3,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        27,
+        4
+      ],
+      "gametype_stats": {
+        "Avg Life": 27,
+        "Best Spree": 4
+      }
+    },
+    {
+      "name": "The Squanderer",
+      "display_name": "",
+      "score_string": "16",
+      "place": 2,
+      "place_string": "3rd",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 16,
+      "deaths": 14,
+      "assists": 5,
+      "suicides": 1,
+      "kd_ratio": 1.14,
+      "medals": {
+        "total": 2,
+        "by_type": 257
+      },
+      "accuracy": {
+        "total_shots": 290,
+        "shots_hit": 158,
+        "headshots": 13,
+        "percentage": 54.5
+      },
+      "killed": [
+        3,
+        3,
+        0,
+        3,
+        3,
+        2,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        16,
+        3
+      ],
+      "gametype_stats": {
+        "Avg Life": 16,
+        "Best Spree": 3
+      }
+    },
+    {
+      "name": "nico",
+      "display_name": "",
+      "score_string": "6",
+      "place": 3,
+      "place_string": "4th",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 6,
+      "deaths": 16,
+      "assists": 7,
+      "suicides": 0,
+      "kd_ratio": 0.38,
+      "medals": {
+        "total": 4,
+        "by_type": 769
+      },
+      "accuracy": {
+        "total_shots": 190,
+        "shots_hit": 82,
+        "headshots": 3,
+        "percentage": 43.2
+      },
+      "killed": [
+        1,
+        1,
+        1,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        13,
+        2
+      ],
+      "gametype_stats": {
+        "Avg Life": 13,
+        "Best Spree": 2
+      }
+    },
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "4",
+      "place": 4,
+      "place_string": "5th",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 4,
+      "deaths": 11,
+      "assists": 1,
+      "suicides": 0,
+      "kd_ratio": 0.36,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 54,
+        "shots_hit": 33,
+        "headshots": 2,
+        "percentage": 61.1
+      },
+      "killed": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        21,
+        2
+      ],
+      "gametype_stats": {
+        "Avg Life": 21,
+        "Best Spree": 2
+      }
+    },
+    {
+      "name": "DU7S",
+      "display_name": "",
+      "score_string": "0",
+      "place": 5,
+      "place_string": "6th",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 0,
+      "deaths": 4,
+      "assists": 0,
+      "suicides": 0,
+      "kd_ratio": 0.0,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 0,
+        "shots_hit": 0,
+        "headshots": 0,
+        "percentage": 0
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        59,
+        0
+      ],
+      "gametype_stats": {
+        "Avg Life": 59,
+        "Best Spree": 0
+      }
+    },
+    {
+      "name": "simon hagiwara",
+      "display_name": "",
+      "score_string": "0",
+      "place": 6,
+      "place_string": "7th",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 0,
+      "deaths": 5,
+      "assists": 0,
+      "suicides": 0,
+      "kd_ratio": 0.0,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 0,
+        "shots_hit": 0,
+        "headshots": 0,
+        "percentage": 0
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        48,
+        0
+      ],
+      "gametype_stats": {
+        "Avg Life": 48,
+        "Best Spree": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,445 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-21T02:13:04.839382",
+  "fingerprint": "6f26d1cfe507a4e701d521f24ef08d46",
+  "source": "halo-scraper",
+  "gametype": "slayer",
+  "gametype_id": 2,
+  "player_count": 8,
+  "players": [
+    {
+      "name": "EpiiiC",
+      "display_name": "",
+      "score_string": "19",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 19,
+      "deaths": 13,
+      "assists": 6,
+      "suicides": 0,
+      "kd_ratio": 1.4615384615384615,
+      "medals": {
+        "total": 6,
+        "by_type": 769
+      },
+      "accuracy": {
+        "total_shots": 376,
+        "shots_hit": 206,
+        "headshots": 9,
+        "percentage": 54.78723404255319
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        7,
+        6,
+        4,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        19,
+        4
+      ],
+      "gametype_stats": {
+        "Avg Life": 19,
+        "Best Spree": 4
+      }
+    },
+    {
+      "name": "AfroMaN",
+      "display_name": "",
+      "score_string": "18",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 18,
+      "deaths": 8,
+      "assists": 7,
+      "suicides": 0,
+      "kd_ratio": 2.25,
+      "medals": {
+        "total": 9,
+        "by_type": 8513
+      },
+      "accuracy": {
+        "total_shots": 363,
+        "shots_hit": 167,
+        "headshots": 10,
+        "percentage": 46.005509641873275
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        4,
+        6,
+        2,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        33,
+        7
+      ],
+      "gametype_stats": {
+        "Avg Life": 33,
+        "Best Spree": 7
+      }
+    },
+    {
+      "name": "nico",
+      "display_name": "",
+      "score_string": "10",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 10,
+      "deaths": 12,
+      "assists": 4,
+      "suicides": 0,
+      "kd_ratio": 0.8333333333333334,
+      "medals": {
+        "total": 2,
+        "by_type": 1
+      },
+      "accuracy": {
+        "total_shots": 231,
+        "shots_hit": 107,
+        "headshots": 7,
+        "percentage": 46.320346320346324
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        2,
+        5,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        21,
+        4
+      ],
+      "gametype_stats": {
+        "Avg Life": 21,
+        "Best Spree": 4
+      }
+    },
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "3",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 3,
+      "deaths": 10,
+      "assists": 10,
+      "suicides": 0,
+      "kd_ratio": 0.3,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 295,
+        "shots_hit": 127,
+        "headshots": 3,
+        "percentage": 43.050847457627114
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        26,
+        1
+      ],
+      "gametype_stats": {
+        "Avg Life": 26,
+        "Best Spree": 1
+      }
+    },
+    {
+      "name": "KurL",
+      "display_name": "",
+      "score_string": "16",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 16,
+      "deaths": 13,
+      "assists": 3,
+      "suicides": 0,
+      "kd_ratio": 1.2307692307692308,
+      "medals": {
+        "total": 5,
+        "by_type": 8449
+      },
+      "accuracy": {
+        "total_shots": 487,
+        "shots_hit": 193,
+        "headshots": 10,
+        "percentage": 39.630390143737166
+      },
+      "killed": [
+        4,
+        5,
+        2,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        19,
+        5
+      ],
+      "gametype_stats": {
+        "Avg Life": 19,
+        "Best Spree": 5
+      }
+    },
+    {
+      "name": "Curts GLORY",
+      "display_name": "",
+      "score_string": "13",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 13,
+      "deaths": 14,
+      "assists": 6,
+      "suicides": 0,
+      "kd_ratio": 0.9285714285714286,
+      "medals": {
+        "total": 7,
+        "by_type": 4417
+      },
+      "accuracy": {
+        "total_shots": 274,
+        "shots_hit": 138,
+        "headshots": 9,
+        "percentage": 50.36496350364964
+      },
+      "killed": [
+        3,
+        2,
+        3,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        18,
+        4
+      ],
+      "gametype_stats": {
+        "Avg Life": 18,
+        "Best Spree": 4
+      }
+    },
+    {
+      "name": "Toyota Man",
+      "display_name": "",
+      "score_string": "8",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 8,
+      "deaths": 11,
+      "assists": 9,
+      "suicides": 0,
+      "kd_ratio": 0.7272727272727273,
+      "medals": {
+        "total": 2,
+        "by_type": 8704
+      },
+      "accuracy": {
+        "total_shots": 325,
+        "shots_hit": 133,
+        "headshots": 5,
+        "percentage": 40.92307692307692
+      },
+      "killed": [
+        4,
+        1,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        23,
+        5
+      ],
+      "gametype_stats": {
+        "Avg Life": 23,
+        "Best Spree": 5
+      }
+    },
+    {
+      "name": "Tuna",
+      "display_name": "",
+      "score_string": "6",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 6,
+      "deaths": 12,
+      "assists": 7,
+      "suicides": 1,
+      "kd_ratio": 0.5,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 262,
+        "shots_hit": 75,
+        "headshots": 2,
+        "percentage": 28.62595419847328
+      },
+      "killed": [
+        2,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        21,
+        3
+      ],
+      "gametype_stats": {
+        "Avg Life": 21,
+        "Best Spree": 3
+      }
+    }
+  ],
+  "teams": [
+    {
+      "team_id": 0,
+      "name": "Red Team",
+      "score": 50,
+      "score_string": "50",
+      "place": 0,
+      "round_score": 0
+    },
+    {
+      "team_id": 1,
+      "name": "Blue Team",
+      "score": 43,
+      "score_string": "43",
+      "place": 1,
+      "round_score": 0
+    }
+  ]
+}

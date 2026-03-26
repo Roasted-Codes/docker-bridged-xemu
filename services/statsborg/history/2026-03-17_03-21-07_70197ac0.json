@@ -1,0 +1,447 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-17T03:21:07.193459",
+  "fingerprint": "70197ac0fd7e1a2de24174142ece8470",
+  "source": "pgcr_display",
+  "gametype": "oddball",
+  "gametype_id": 3,
+  "player_count": 8,
+  "players": [
+    {
+      "name": "DU7S",
+      "display_name": "",
+      "score_string": "1:16",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 21,
+      "deaths": 13,
+      "assists": 14,
+      "suicides": 0,
+      "kd_ratio": 1.62,
+      "medals": {
+        "total": 7,
+        "by_type": 9024
+      },
+      "accuracy": {
+        "total_shots": 624,
+        "shots_hit": 232,
+        "headshots": 12,
+        "percentage": 37.2
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        5,
+        3,
+        9,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        1
+      ],
+      "gametype_stats": {
+        "Carrier Kills": 1,
+        "Ball Kills": 1
+      }
+    },
+    {
+      "name": "Goose",
+      "display_name": "",
+      "score_string": "1:13",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 21,
+      "deaths": 18,
+      "assists": 15,
+      "suicides": 0,
+      "kd_ratio": 1.17,
+      "medals": {
+        "total": 3,
+        "by_type": 4097
+      },
+      "accuracy": {
+        "total_shots": 598,
+        "shots_hit": 257,
+        "headshots": 14,
+        "percentage": 43.0
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        2,
+        8,
+        5,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        0
+      ],
+      "gametype_stats": {
+        "Carrier Kills": 1,
+        "Ball Kills": 0
+      }
+    },
+    {
+      "name": "Hamamon",
+      "display_name": "",
+      "score_string": "1:11",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 23,
+      "deaths": 15,
+      "assists": 11,
+      "suicides": 0,
+      "kd_ratio": 1.53,
+      "medals": {
+        "total": 7,
+        "by_type": 13057
+      },
+      "accuracy": {
+        "total_shots": 777,
+        "shots_hit": 336,
+        "headshots": 15,
+        "percentage": 43.2
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        8,
+        8,
+        5,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        2,
+        0
+      ],
+      "gametype_stats": {
+        "Carrier Kills": 2,
+        "Ball Kills": 0
+      }
+    },
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "1:07",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 14,
+      "deaths": 18,
+      "assists": 16,
+      "suicides": 0,
+      "kd_ratio": 0.78,
+      "medals": {
+        "total": 3,
+        "by_type": 4097
+      },
+      "accuracy": {
+        "total_shots": 567,
+        "shots_hit": 221,
+        "headshots": 6,
+        "percentage": 39.0
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        5,
+        2,
+        4,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        2,
+        0
+      ],
+      "gametype_stats": {
+        "Carrier Kills": 2,
+        "Ball Kills": 0
+      }
+    },
+    {
+      "name": "simon hagiwara",
+      "display_name": "",
+      "score_string": ":44",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 15,
+      "deaths": 22,
+      "assists": 11,
+      "suicides": 1,
+      "kd_ratio": 0.68,
+      "medals": {
+        "total": 2,
+        "by_type": 512
+      },
+      "accuracy": {
+        "total_shots": 583,
+        "shots_hit": 194,
+        "headshots": 6,
+        "percentage": 33.3
+      },
+      "killed": [
+        4,
+        3,
+        4,
+        4,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        2,
+        0
+      ],
+      "gametype_stats": {
+        "Carrier Kills": 2,
+        "Ball Kills": 0
+      }
+    },
+    {
+      "name": "Ironsquid",
+      "display_name": "",
+      "score_string": ":21",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 11,
+      "deaths": 21,
+      "assists": 19,
+      "suicides": 0,
+      "kd_ratio": 0.52,
+      "medals": {
+        "total": 2,
+        "by_type": 256
+      },
+      "accuracy": {
+        "total_shots": 735,
+        "shots_hit": 308,
+        "headshots": 6,
+        "percentage": 41.9
+      },
+      "killed": [
+        1,
+        4,
+        2,
+        4,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        0
+      ],
+      "gametype_stats": {
+        "Carrier Kills": 0,
+        "Ball Kills": 0
+      }
+    },
+    {
+      "name": "nico",
+      "display_name": "",
+      "score_string": ":10",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 25,
+      "deaths": 23,
+      "assists": 12,
+      "suicides": 0,
+      "kd_ratio": 1.09,
+      "medals": {
+        "total": 11,
+        "by_type": 8961
+      },
+      "accuracy": {
+        "total_shots": 714,
+        "shots_hit": 282,
+        "headshots": 13,
+        "percentage": 39.5
+      },
+      "killed": [
+        6,
+        7,
+        5,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        3,
+        0
+      ],
+      "gametype_stats": {
+        "Carrier Kills": 3,
+        "Ball Kills": 0
+      }
+    },
+    {
+      "name": "Minerkazoo",
+      "display_name": "",
+      "score_string": ":04",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 13,
+      "deaths": 16,
+      "assists": 12,
+      "suicides": 2,
+      "kd_ratio": 0.81,
+      "medals": {
+        "total": 8,
+        "by_type": 9025
+      },
+      "accuracy": {
+        "total_shots": 382,
+        "shots_hit": 126,
+        "headshots": 6,
+        "percentage": 33.0
+      },
+      "killed": [
+        2,
+        4,
+        4,
+        3,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        2,
+        0
+      ],
+      "gametype_stats": {
+        "Carrier Kills": 2,
+        "Ball Kills": 0
+      }
+    }
+  ],
+  "teams": [
+    {
+      "index": 0,
+      "name": "Red Team",
+      "score": 287,
+      "score_string": "4:47",
+      "place": 0,
+      "team_id": 0,
+      "place_string": "1st"
+    },
+    {
+      "index": 1,
+      "name": "Blue Team",
+      "score": 79,
+      "score_string": "1:19",
+      "place": 1,
+      "team_id": 1,
+      "place_string": "2nd"
+    }
+  ]
+}

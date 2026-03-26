@@ -1,0 +1,447 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-15T02:29:46.399779",
+  "fingerprint": "417dae5edc04371c350b2b979d620c3f",
+  "source": "pgcr_display",
+  "gametype": "assault",
+  "gametype_id": 9,
+  "player_count": 8,
+  "players": [
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "2",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 1,
+      "deaths": 9,
+      "assists": 10,
+      "suicides": 0,
+      "kd_ratio": 0.11,
+      "medals": {
+        "total": 3,
+        "by_type": 2097408
+      },
+      "accuracy": {
+        "total_shots": 219,
+        "shots_hit": 96,
+        "headshots": 0,
+        "percentage": 43.8
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        2,
+        0
+      ],
+      "gametype_stats": {
+        "Bomb Grabs": 2,
+        "Bomber Kills": 0
+      }
+    },
+    {
+      "name": "Mental",
+      "display_name": "",
+      "score_string": "1",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 12,
+      "deaths": 8,
+      "assists": 7,
+      "suicides": 0,
+      "kd_ratio": 1.5,
+      "medals": {
+        "total": 4,
+        "by_type": 6291713
+      },
+      "accuracy": {
+        "total_shots": 340,
+        "shots_hit": 141,
+        "headshots": 10,
+        "percentage": 41.5
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        3,
+        1,
+        4,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        1
+      ],
+      "gametype_stats": {
+        "Bomb Grabs": 0,
+        "Bomber Kills": 1
+      }
+    },
+    {
+      "name": "Hyrax",
+      "display_name": "",
+      "score_string": "0",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 10,
+      "deaths": 5,
+      "assists": 8,
+      "suicides": 1,
+      "kd_ratio": 2.0,
+      "medals": {
+        "total": 3,
+        "by_type": 8960
+      },
+      "accuracy": {
+        "total_shots": 316,
+        "shots_hit": 147,
+        "headshots": 5,
+        "percentage": 46.5
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        3,
+        5,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        0
+      ],
+      "gametype_stats": {
+        "Bomb Grabs": 0,
+        "Bomber Kills": 0
+      }
+    },
+    {
+      "name": "S7ale",
+      "display_name": "",
+      "score_string": "0",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 24,
+      "deaths": 7,
+      "assists": 6,
+      "suicides": 0,
+      "kd_ratio": 3.43,
+      "medals": {
+        "total": 4,
+        "by_type": 8193
+      },
+      "accuracy": {
+        "total_shots": 503,
+        "shots_hit": 250,
+        "headshots": 18,
+        "percentage": 49.7
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        8,
+        3,
+        8,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        0
+      ],
+      "gametype_stats": {
+        "Bomb Grabs": 0,
+        "Bomber Kills": 0
+      }
+    },
+    {
+      "name": "nico",
+      "display_name": "",
+      "score_string": "0",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 6,
+      "deaths": 15,
+      "assists": 5,
+      "suicides": 0,
+      "kd_ratio": 0.4,
+      "medals": {
+        "total": 3,
+        "by_type": 4194305
+      },
+      "accuracy": {
+        "total_shots": 246,
+        "shots_hit": 112,
+        "headshots": 5,
+        "percentage": 45.5
+      },
+      "killed": [
+        2,
+        2,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        2
+      ],
+      "gametype_stats": {
+        "Bomb Grabs": 0,
+        "Bomber Kills": 2
+      }
+    },
+    {
+      "name": "AfroMaN",
+      "display_name": "",
+      "score_string": "0",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 9,
+      "deaths": 10,
+      "assists": 5,
+      "suicides": 1,
+      "kd_ratio": 0.9,
+      "medals": {
+        "total": 2,
+        "by_type": 4097
+      },
+      "accuracy": {
+        "total_shots": 228,
+        "shots_hit": 108,
+        "headshots": 5,
+        "percentage": 47.4
+      },
+      "killed": [
+        4,
+        2,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        0
+      ],
+      "gametype_stats": {
+        "Bomb Grabs": 0,
+        "Bomber Kills": 0
+      }
+    },
+    {
+      "name": "Goose",
+      "display_name": "",
+      "score_string": "0",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 5,
+      "deaths": 15,
+      "assists": 7,
+      "suicides": 0,
+      "kd_ratio": 0.33,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 248,
+        "shots_hit": 118,
+        "headshots": 4,
+        "percentage": 47.6
+      },
+      "killed": [
+        0,
+        3,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        0
+      ],
+      "gametype_stats": {
+        "Bomb Grabs": 1,
+        "Bomber Kills": 0
+      }
+    },
+    {
+      "name": "Sauce",
+      "display_name": "",
+      "score_string": "0",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 8,
+      "deaths": 11,
+      "assists": 6,
+      "suicides": 0,
+      "kd_ratio": 0.73,
+      "medals": {
+        "total": 1,
+        "by_type": 1
+      },
+      "accuracy": {
+        "total_shots": 375,
+        "shots_hit": 189,
+        "headshots": 6,
+        "percentage": 50.4
+      },
+      "killed": [
+        3,
+        0,
+        3,
+        2,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        0
+      ],
+      "gametype_stats": {
+        "Bomb Grabs": 0,
+        "Bomber Kills": 0
+      }
+    }
+  ],
+  "teams": [
+    {
+      "index": 0,
+      "name": "Blue Team",
+      "score": 3,
+      "score_string": "3",
+      "place": 0,
+      "team_id": 1,
+      "place_string": "1st"
+    },
+    {
+      "index": 1,
+      "name": "Red Team",
+      "score": 0,
+      "score_string": "0",
+      "place": 1,
+      "team_id": 0,
+      "place_string": "2nd"
+    }
+  ]
+}

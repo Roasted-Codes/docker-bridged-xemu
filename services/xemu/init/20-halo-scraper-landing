@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# =============================================================================
+# 20-halo-scraper-landing — Cairo Station landing page via nginx reverse proxy
+# =============================================================================
+# Adds an nginx server block on port 9080 that:
+#   - Serves /config/halo-scraper-landing.html at /
+#   - Proxies everything else to halo-scraper on :9000
+# =============================================================================
+
+CONF_SRC="/config/halo-scraper-nginx.conf"
+CONF_DST="/etc/nginx/conf.d/halo-scraper.conf"
+HTPASSWD_SRC="/config/halo-scraper-htpasswd"
+HTPASSWD_DST="/etc/nginx/halo-scraper-htpasswd"
+
+if [ ! -f "$CONF_SRC" ]; then
+  echo "[20-halo-scraper-landing] No config found at $CONF_SRC, skipping"
+  exit 0
+fi
+
+cp "$CONF_SRC" "$CONF_DST"
+
+if [ -f "$HTPASSWD_SRC" ]; then
+  cp "$HTPASSWD_SRC" "$HTPASSWD_DST"
+  chmod 640 "$HTPASSWD_DST"
+  echo "[20-halo-scraper-landing] htpasswd installed"
+else
+  echo "[20-halo-scraper-landing] WARNING: no htpasswd file at $HTPASSWD_SRC — auth will fail"
+fi
+
+nginx -t 2>/dev/null && nginx -s reload 2>/dev/null || true
+echo "[20-halo-scraper-landing] Landing page available on :9080"

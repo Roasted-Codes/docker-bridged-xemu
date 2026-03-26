@@ -1,0 +1,272 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-22T03:44:18.341383",
+  "fingerprint": "cdf4674776c3c38eb741cbb244fd4103",
+  "source": "halo-scraper",
+  "gametype": "slayer",
+  "gametype_id": 2,
+  "player_count": 5,
+  "players": [
+    {
+      "name": "Toyota Man",
+      "display_name": "",
+      "score_string": "19",
+      "place": 0,
+      "place_string": "1st",
+      "team": 65535,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 20,
+      "deaths": 4,
+      "assists": 0,
+      "suicides": 1,
+      "kd_ratio": 5,
+      "medals": {
+        "total": 12,
+        "by_type": 33088
+      },
+      "accuracy": {
+        "total_shots": 386,
+        "shots_hit": 124,
+        "headshots": 16,
+        "percentage": 32.12435233160622
+      },
+      "killed": [
+        1,
+        20,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        106,
+        16
+      ],
+      "gametype_stats": {
+        "Avg Life": 106,
+        "Best Spree": 16
+      }
+    },
+    {
+      "name": "nico",
+      "display_name": "",
+      "score_string": "0",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 65535,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 3,
+      "deaths": 23,
+      "assists": 0,
+      "suicides": 3,
+      "kd_ratio": 0.13043478260869565,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 425,
+        "shots_hit": 93,
+        "headshots": 3,
+        "percentage": 21.88235294117647
+      },
+      "killed": [
+        3,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        17,
+        3
+      ],
+      "gametype_stats": {
+        "Avg Life": 17,
+        "Best Spree": 3
+      }
+    },
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "0",
+      "place": 2,
+      "place_string": "3rd",
+      "team": 65535,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 0,
+      "deaths": 0,
+      "assists": 0,
+      "suicides": 0,
+      "kd_ratio": 0,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 0,
+        "shots_hit": 0,
+        "headshots": 0,
+        "percentage": 0
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        557,
+        0
+      ],
+      "gametype_stats": {
+        "Avg Life": 557,
+        "Best Spree": 0
+      }
+    },
+    {
+      "name": "           Goose",
+      "display_name": "",
+      "score_string": "0",
+      "place": 3,
+      "place_string": "4th",
+      "team": 65535,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 0,
+      "deaths": 0,
+      "assists": 0,
+      "suicides": 0,
+      "kd_ratio": 0,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 0,
+        "shots_hit": 0,
+        "headshots": 0,
+        "percentage": 0
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        52,
+        0
+      ],
+      "gametype_stats": {
+        "Avg Life": 52,
+        "Best Spree": 0
+      }
+    },
+    {
+      "name": "Minerkazoo",
+      "display_name": "",
+      "score_string": "0",
+      "place": 3,
+      "place_string": "4th",
+      "team": 65535,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 0,
+      "deaths": 0,
+      "assists": 0,
+      "suicides": 0,
+      "kd_ratio": 0,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 0,
+        "shots_hit": 0,
+        "headshots": 0,
+        "percentage": 0
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        7,
+        0
+      ],
+      "gametype_stats": {
+        "Avg Life": 7,
+        "Best Spree": 0
+      }
+    }
+  ],
+  "teams": null
+}

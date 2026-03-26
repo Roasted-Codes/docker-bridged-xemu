@@ -1,0 +1,413 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-20T03:21:14.575495",
+  "fingerprint": "8b9e36c7d20a34ab02dcc0eb5d463dc7",
+  "source": "halo-scraper",
+  "gametype": "ctf",
+  "gametype_id": 1,
+  "player_count": 8,
+  "players": [
+    {
+      "name": "  Em Won 5 F 1 T",
+      "display_name": "",
+      "score_string": "3",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": 0,
+      "kills": 12,
+      "deaths": 17,
+      "assists": 20,
+      "suicides": 0,
+      "kd_ratio": 0.7058823529411765,
+      "medals": {
+        "total": 10,
+        "by_type": 1843968
+      },
+      "accuracy": {
+        "total_shots": 711,
+        "shots_hit": 247,
+        "headshots": 8,
+        "percentage": 34.73980309423347
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        4,
+        5,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        4
+      ],
+      "gametype_stats": {}
+    },
+    {
+      "name": "J3",
+      "display_name": "",
+      "score_string": "2",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": 0,
+      "kills": 29,
+      "deaths": 18,
+      "assists": 12,
+      "suicides": 0,
+      "kd_ratio": 1.6111111111111112,
+      "medals": {
+        "total": 9,
+        "by_type": 267009
+      },
+      "accuracy": {
+        "total_shots": 809,
+        "shots_hit": 354,
+        "headshots": 19,
+        "percentage": 43.75772558714463
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        7,
+        5,
+        9,
+        8,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        2
+      ],
+      "gametype_stats": {}
+    },
+    {
+      "name": "Ironsquid  ",
+      "display_name": "",
+      "score_string": "0",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": 0,
+      "kills": 27,
+      "deaths": 15,
+      "assists": 20,
+      "suicides": 0,
+      "kd_ratio": 1.8,
+      "medals": {
+        "total": 7,
+        "by_type": 1581569
+      },
+      "accuracy": {
+        "total_shots": 818,
+        "shots_hit": 369,
+        "headshots": 20,
+        "percentage": 45.11002444987775
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        4,
+        4,
+        11,
+        8,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        0
+      ],
+      "gametype_stats": {}
+    },
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "0",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": 0,
+      "kills": 26,
+      "deaths": 22,
+      "assists": 16,
+      "suicides": 0,
+      "kd_ratio": 1.1818181818181819,
+      "medals": {
+        "total": 8,
+        "by_type": 1835265
+      },
+      "accuracy": {
+        "total_shots": 783,
+        "shots_hit": 306,
+        "headshots": 17,
+        "percentage": 39.08045977011494
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        6,
+        8,
+        8,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        2
+      ],
+      "gametype_stats": {}
+    },
+    {
+      "name": "TURDSONG",
+      "display_name": "",
+      "score_string": "1",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": 0,
+      "kills": 26,
+      "deaths": 21,
+      "assists": 11,
+      "suicides": 0,
+      "kd_ratio": 1.2380952380952381,
+      "medals": {
+        "total": 12,
+        "by_type": 1843970
+      },
+      "accuracy": {
+        "total_shots": 657,
+        "shots_hit": 260,
+        "headshots": 18,
+        "percentage": 39.5738203957382
+      },
+      "killed": [
+        6,
+        9,
+        7,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        2
+      ],
+      "gametype_stats": {}
+    },
+    {
+      "name": "J1",
+      "display_name": "",
+      "score_string": "1",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": 0,
+      "kills": 19,
+      "deaths": 22,
+      "assists": 16,
+      "suicides": 0,
+      "kd_ratio": 0.8636363636363636,
+      "medals": {
+        "total": 4,
+        "by_type": 798720
+      },
+      "accuracy": {
+        "total_shots": 878,
+        "shots_hit": 325,
+        "headshots": 12,
+        "percentage": 37.01594533029613
+      },
+      "killed": [
+        7,
+        4,
+        3,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        1
+      ],
+      "gametype_stats": {}
+    },
+    {
+      "name": "Minerkazoo",
+      "display_name": "",
+      "score_string": "0",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": 0,
+      "kills": 12,
+      "deaths": 29,
+      "assists": 8,
+      "suicides": 0,
+      "kd_ratio": 0.41379310344827586,
+      "medals": {
+        "total": 10,
+        "by_type": 1835521
+      },
+      "accuracy": {
+        "total_shots": 489,
+        "shots_hit": 164,
+        "headshots": 4,
+        "percentage": 33.537832310838446
+      },
+      "killed": [
+        2,
+        3,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        4
+      ],
+      "gametype_stats": {}
+    },
+    {
+      "name": "           Goose",
+      "display_name": "",
+      "score_string": "0",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": 0,
+      "kills": 15,
+      "deaths": 22,
+      "assists": 8,
+      "suicides": 0,
+      "kd_ratio": 0.6818181818181818,
+      "medals": {
+        "total": 2,
+        "by_type": 1310720
+      },
+      "accuracy": {
+        "total_shots": 616,
+        "shots_hit": 247,
+        "headshots": 11,
+        "percentage": 40.0974025974026
+      },
+      "killed": [
+        2,
+        2,
+        5,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        1
+      ],
+      "gametype_stats": {}
+    }
+  ],
+  "teams": [
+    {
+      "team_id": 1,
+      "name": "Blue Team",
+      "score": 5,
+      "score_string": "5",
+      "place": 0,
+      "round_score": 0
+    },
+    {
+      "team_id": 0,
+      "name": "Red Team",
+      "score": 2,
+      "score_string": "2",
+      "place": 1,
+      "round_score": 0
+    }
+  ]
+}

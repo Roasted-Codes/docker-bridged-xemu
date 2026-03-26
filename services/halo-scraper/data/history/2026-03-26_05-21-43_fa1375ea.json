@@ -1,0 +1,65 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-26T05:21:43.437157",
+  "fingerprint": "fa1375ea9e33f04a022ddd781f188a5f",
+  "source": "halo-scraper",
+  "map": "Lockout",
+  "gametype": "slayer (MLG FFA 2007)",
+  "gametype_id": 2,
+  "player_count": 1,
+  "players": [
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "-2",
+      "place": 0,
+      "place_string": "1st",
+      "team": 65535,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 0,
+      "deaths": 2,
+      "assists": 0,
+      "suicides": 2,
+      "kd_ratio": 0,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 137,
+        "shots_hit": 0,
+        "headshots": 0,
+        "percentage": 0
+      },
+      "killed": [
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1859,
+        0
+      ],
+      "gametype_stats": {
+        "Avg Life": 1859,
+        "Best Spree": 0
+      }
+    }
+  ],
+  "teams": null
+}

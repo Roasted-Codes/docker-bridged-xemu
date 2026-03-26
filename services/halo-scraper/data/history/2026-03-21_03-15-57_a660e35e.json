@@ -1,0 +1,445 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-21T03:15:57.652536",
+  "fingerprint": "a660e35e88474be4a33c596d047eb8eb",
+  "source": "halo-scraper",
+  "gametype": "oddball",
+  "gametype_id": 3,
+  "player_count": 8,
+  "players": [
+    {
+      "name": "KurL",
+      "display_name": "",
+      "score_string": "1:44",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 27,
+      "deaths": 28,
+      "assists": 21,
+      "suicides": 0,
+      "kd_ratio": 0.9642857142857143,
+      "medals": {
+        "total": 5,
+        "by_type": 4353
+      },
+      "accuracy": {
+        "total_shots": 954,
+        "shots_hit": 463,
+        "headshots": 19,
+        "percentage": 48.532494758909856
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        10,
+        5,
+        5,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        3,
+        0
+      ],
+      "gametype_stats": {
+        "Ball Kills": 0,
+        "Carrier Kills": 3
+      }
+    },
+    {
+      "name": "Curts GLORY",
+      "display_name": "",
+      "score_string": " :49",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 37,
+      "deaths": 25,
+      "assists": 17,
+      "suicides": 2,
+      "kd_ratio": 1.48,
+      "medals": {
+        "total": 9,
+        "by_type": 13057
+      },
+      "accuracy": {
+        "total_shots": 937,
+        "shots_hit": 455,
+        "headshots": 25,
+        "percentage": 48.559231590181426
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        7,
+        14,
+        6,
+        10,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        2,
+        0
+      ],
+      "gametype_stats": {
+        "Ball Kills": 0,
+        "Carrier Kills": 2
+      }
+    },
+    {
+      "name": "Tuna",
+      "display_name": "",
+      "score_string": " :40",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 17,
+      "deaths": 31,
+      "assists": 19,
+      "suicides": 0,
+      "kd_ratio": 0.5483870967741935,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 741,
+        "shots_hit": 320,
+        "headshots": 13,
+        "percentage": 43.18488529014845
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        6,
+        2,
+        6,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        2,
+        0
+      ],
+      "gametype_stats": {
+        "Ball Kills": 0,
+        "Carrier Kills": 2
+      }
+    },
+    {
+      "name": "Toyota Man",
+      "display_name": "",
+      "score_string": " :14",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 21,
+      "deaths": 31,
+      "assists": 14,
+      "suicides": 1,
+      "kd_ratio": 0.6774193548387096,
+      "medals": {
+        "total": 2,
+        "by_type": 257
+      },
+      "accuracy": {
+        "total_shots": 812,
+        "shots_hit": 315,
+        "headshots": 17,
+        "percentage": 38.793103448275865
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        6,
+        5,
+        6,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        0
+      ],
+      "gametype_stats": {
+        "Ball Kills": 0,
+        "Carrier Kills": 1
+      }
+    },
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "1:19",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 16,
+      "deaths": 29,
+      "assists": 18,
+      "suicides": 0,
+      "kd_ratio": 0.5517241379310345,
+      "medals": {
+        "total": 5,
+        "by_type": 769
+      },
+      "accuracy": {
+        "total_shots": 642,
+        "shots_hit": 349,
+        "headshots": 7,
+        "percentage": 54.361370716510905
+      },
+      "killed": [
+        1,
+        2,
+        6,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        2,
+        0
+      ],
+      "gametype_stats": {
+        "Ball Kills": 0,
+        "Carrier Kills": 2
+      }
+    },
+    {
+      "name": "nico",
+      "display_name": "",
+      "score_string": " :48",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 20,
+      "deaths": 26,
+      "assists": 21,
+      "suicides": 0,
+      "kd_ratio": 0.7692307692307693,
+      "medals": {
+        "total": 3,
+        "by_type": 8448
+      },
+      "accuracy": {
+        "total_shots": 845,
+        "shots_hit": 334,
+        "headshots": 13,
+        "percentage": 39.52662721893491
+      },
+      "killed": [
+        10,
+        0,
+        5,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        1,
+        0
+      ],
+      "gametype_stats": {
+        "Ball Kills": 0,
+        "Carrier Kills": 1
+      }
+    },
+    {
+      "name": "AfroMaN",
+      "display_name": "",
+      "score_string": " :43",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 47,
+      "deaths": 23,
+      "assists": 15,
+      "suicides": 0,
+      "kd_ratio": 2.0434782608695654,
+      "medals": {
+        "total": 16,
+        "by_type": 12545
+      },
+      "accuracy": {
+        "total_shots": 983,
+        "shots_hit": 469,
+        "headshots": 28,
+        "percentage": 47.71108850457782
+      },
+      "killed": [
+        11,
+        14,
+        13,
+        9,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        6,
+        1
+      ],
+      "gametype_stats": {
+        "Ball Kills": 1,
+        "Carrier Kills": 6
+      }
+    },
+    {
+      "name": "EpiiiC",
+      "display_name": "",
+      "score_string": " :26",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 32,
+      "deaths": 24,
+      "assists": 24,
+      "suicides": 0,
+      "kd_ratio": 1.3333333333333333,
+      "medals": {
+        "total": 3,
+        "by_type": 8193
+      },
+      "accuracy": {
+        "total_shots": 1002,
+        "shots_hit": 506,
+        "headshots": 29,
+        "percentage": 50.49900199600798
+      },
+      "killed": [
+        6,
+        9,
+        7,
+        10,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        2,
+        0
+      ],
+      "gametype_stats": {
+        "Ball Kills": 0,
+        "Carrier Kills": 2
+      }
+    }
+  ],
+  "teams": [
+    {
+      "team_id": 1,
+      "name": "Blue Team",
+      "score": 327,
+      "score_string": "3:27",
+      "place": 0,
+      "round_score": 0
+    },
+    {
+      "team_id": 0,
+      "name": "Red Team",
+      "score": 316,
+      "score_string": "3:16",
+      "place": 1,
+      "round_score": 0
+    }
+  ]
+}

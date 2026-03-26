@@ -1,0 +1,133 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-20T05:15:26.820104",
+  "fingerprint": "35cfe816423c494dcf0acce5e55c18e5",
+  "source": "halo-scraper",
+  "gametype": "ctf",
+  "gametype_id": 1,
+  "player_count": 2,
+  "players": [
+    {
+      "name": "c",
+      "display_name": "",
+      "score_string": "0",
+      "place": 0,
+      "place_string": "1st",
+      "team": 0,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 0,
+      "deaths": 3,
+      "assists": 0,
+      "suicides": 0,
+      "kd_ratio": 0,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 0,
+        "shots_hit": 0,
+        "headshots": 0,
+        "percentage": 0
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        0
+      ],
+      "gametype_stats": {
+        "Flag Saves": 0,
+        "Flag Steals": 0
+      }
+    },
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "0",
+      "place": 0,
+      "place_string": "1st",
+      "team": 1,
+      "observer": false,
+      "rank": -1,
+      "rank_verified": -1,
+      "kills": 3,
+      "deaths": 2,
+      "assists": 0,
+      "suicides": 2,
+      "kd_ratio": 1.5,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 204,
+        "shots_hit": 22,
+        "headshots": 2,
+        "percentage": 10.784313725490197
+      },
+      "killed": [
+        3,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        0,
+        0
+      ],
+      "gametype_stats": {
+        "Flag Saves": 0,
+        "Flag Steals": 0
+      }
+    }
+  ],
+  "teams": [
+    {
+      "team_id": 1,
+      "name": "Blue Team",
+      "score": 0,
+      "score_string": "0",
+      "place": 0,
+      "round_score": 0
+    },
+    {
+      "team_id": 0,
+      "name": "Red Team",
+      "score": 0,
+      "score_string": "0",
+      "place": 0,
+      "round_score": 0
+    }
+  ]
+}

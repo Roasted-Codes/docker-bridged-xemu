@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Cairo Station</title>
+  <link rel="stylesheet" href="/ui/style.css"/>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .logo { margin-bottom: 6px; }
+    .logo h1 {
+      font-size: 22px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+    }
+    .logo .sub {
+      font-size: 10px;
+      color: var(--dim);
+      text-align: center;
+      letter-spacing: 0.1em;
+      margin-top: 2px;
+    }
+    .status {
+      font-size: 10px;
+      color: var(--dim);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .status .dot { color: var(--green); }
+    .status .dot.off { color: var(--red); }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      max-width: 600px;
+      width: 100%;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 14px 16px;
+      text-decoration: none;
+      color: var(--text);
+      transition: border-color .15s, background .15s;
+    }
+    .card:hover {
+      border-color: var(--gold);
+      background: var(--card2);
+    }
+    .card .label {
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 0.06em;
+    }
+    .card .desc {
+      font-size: 10px;
+      color: var(--dim);
+      line-height: 1.4;
+    }
+    .card .icon {
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+    .divider {
+      width: 100%;
+      max-width: 600px;
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 16px 0 12px;
+    }
+    .section-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--dim);
+      margin-bottom: 8px;
+      text-align: left;
+      max-width: 600px;
+      width: 100%;
+    }
+    .footer {
+      margin-top: 28px;
+      font-size: 9px;
+      color: var(--dim);
+      letter-spacing: 0.08em;
+    }
+    .footer a { color: var(--dim); text-decoration: none; }
+    .footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <h1>Cairo Station</h1>
+    <div class="sub">Halo 2 Xbox Emulation Stack</div>
+  </div>
+  <div class="status" id="status"></div>
+
+  <div class="section-label">Halo Scraper</div>
+  <div class="cards">
+    <a class="card" href="/ui/debug/">
+      <span class="icon">&gt;_</span>
+      <span class="label">Debug</span>
+      <span class="desc">Live memory view, WebSocket inspector</span>
+    </a>
+    <a class="card" href="/ui/tools/">
+      <span class="icon">&#9881;</span>
+      <span class="label">Tools</span>
+      <span class="desc">Host status, server logs, reconnect</span>
+    </a>
+    <a class="card" href="/ui/pgcr/" id="games-link">
+      <span class="icon">&#9776;</span>
+      <span class="label">Game History</span>
+      <span class="desc" id="games-desc">Saved PGCRs (JSON API)</span>
+    </a>
+  </div>
+
+  <hr class="divider"/>
+
+  <div class="section-label">Infrastructure</div>
+  <div class="cards" id="infra-cards">
+    <a class="card" id="xemu-link" href="#" target="_blank">
+      <span class="icon">&#9654;</span>
+      <span class="label">xemu</span>
+      <span class="desc">Selkies web UI (HTTPS :3001)</span>
+    </a>
+    <a class="card" id="xlink-link" href="#" target="_blank">
+      <span class="icon">&#8644;</span>
+      <span class="label">XLink Kai</span>
+      <span class="desc">System link tunneling (:34522)</span>
+    </a>
+  </div>
+
+  <div class="footer">
+    <a href="https://github.com/Roasted-Codes/cairo-station" target="_blank">Roasted-Codes/cairo-station</a>
+  </div>
+
+  <script>
+  (() => {
+    // Build infra links relative to current host so they work from
+    // both localhost (SSH tunnel) and Tailscale (172.20.0.x).
+    const h = location.hostname;
+    const ts = h === "172.20.0.49" || h.endsWith(".ts.net");
+    // Via Tailscale: use bridge IPs directly. Via localhost: use same host, mapped ports.
+    document.getElementById("xemu-link").href = ts
+      ? "https://172.20.0.49:3001"
+      : "https://" + h + ":3001";
+    document.getElementById("xlink-link").href = ts
+      ? "http://172.20.0.25:34522"
+      : "http://" + h + ":34522";
+  })();
+
+  (async () => {
+    const el = document.getElementById("status");
+    try {
+      const r = await fetch("/api/status");
+      const d = await r.json();
+      const hosts = Object.entries(d.hosts || {});
+      const parts = hosts.map(([n, h]) => {
+        const ok = h.state === "online";
+        return '<span class="dot' + (ok ? "" : " off") + '">&bull;</span> ' + n + " " + h.state;
+      });
+      el.innerHTML = parts.join("&ensp;&ensp;") || "no hosts configured";
+    } catch { el.textContent = "scraper unreachable"; }
+
+    try {
+      const r = await fetch("/api/games");
+      const games = await r.json();
+      if (Array.isArray(games) && games.length > 0) {
+        document.getElementById("games-desc").textContent =
+          games.length + " saved PGCRs (JSON API)";
+      }
+    } catch {}
+  })();
+  </script>
+</body>
+</html>

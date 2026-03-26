@@ -1,0 +1,102 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-20T00:44:12.155438",
+  "fingerprint": "a7a5b97d9a49a42cd0e9af6a183225da",
+  "source": "halo-scraper",
+  "gametype": "slayer",
+  "gametype_id": 2,
+  "player_count": 2,
+  "players": [
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "0",
+      "place": -65536,
+      "place_string": "1st",
+      "team": 65535,
+      "observer": false,
+      "rank": 0,
+      "kills": 0,
+      "deaths": 0,
+      "assists": 0,
+      "suicides": 0,
+      "kd_ratio": 0,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 103,
+        "shots_hit": 0,
+        "headshots": 0,
+        "percentage": 0
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [],
+      "gametype_stats": {}
+    },
+    {
+      "name": "c",
+      "display_name": "",
+      "score_string": "0",
+      "place": -65536,
+      "place_string": "1st",
+      "team": 65535,
+      "observer": false,
+      "rank": 0,
+      "kills": 0,
+      "deaths": 0,
+      "assists": 0,
+      "suicides": 0,
+      "kd_ratio": 0,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 0,
+        "shots_hit": 0,
+        "headshots": 0,
+        "percentage": 0
+      },
+      "killed": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [],
+      "gametype_stats": {}
+    }
+  ],
+  "teams": null
+}

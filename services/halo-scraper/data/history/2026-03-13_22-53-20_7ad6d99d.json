@@ -1,0 +1,323 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-13T22:53:20.099253",
+  "fingerprint": "7ad6d99da415bd1c548fa1ccd6f5683c",
+  "source": "pgcr_display",
+  "gametype": "oddball",
+  "gametype_id": 3,
+  "player_count": 6,
+  "players": [
+    {
+      "name": "Ironsquid",
+      "display_name": "",
+      "score_string": "35",
+      "place": 0,
+      "place_string": "1st",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 35,
+      "deaths": 26,
+      "assists": 5,
+      "suicides": 0,
+      "kd_ratio": 1.35,
+      "medals": {
+        "total": 6,
+        "by_type": 769
+      },
+      "accuracy": {
+        "total_shots": 847,
+        "shots_hit": 426,
+        "headshots": 29,
+        "percentage": 50.3
+      },
+      "killed": [
+        0,
+        12,
+        10,
+        5,
+        4,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        21,
+        4
+      ],
+      "gametype_stats": {
+        "Carrier Kills": 21,
+        "Ball Kills": 4
+      }
+    },
+    {
+      "name": "XspoSive BoX",
+      "display_name": "",
+      "score_string": "29",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 29,
+      "deaths": 19,
+      "assists": 17,
+      "suicides": 0,
+      "kd_ratio": 1.53,
+      "medals": {
+        "total": 2,
+        "by_type": 768
+      },
+      "accuracy": {
+        "total_shots": 981,
+        "shots_hit": 413,
+        "headshots": 22,
+        "percentage": 42.1
+      },
+      "killed": [
+        9,
+        0,
+        5,
+        8,
+        3,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        30,
+        4
+      ],
+      "gametype_stats": {
+        "Carrier Kills": 30,
+        "Ball Kills": 4
+      }
+    },
+    {
+      "name": "htx",
+      "display_name": "",
+      "score_string": "27",
+      "place": 2,
+      "place_string": "3rd",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 27,
+      "deaths": 19,
+      "assists": 8,
+      "suicides": 0,
+      "kd_ratio": 1.42,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 664,
+        "shots_hit": 380,
+        "headshots": 20,
+        "percentage": 57.2
+      },
+      "killed": [
+        11,
+        6,
+        0,
+        5,
+        1,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        23,
+        4
+      ],
+      "gametype_stats": {
+        "Carrier Kills": 23,
+        "Ball Kills": 4
+      }
+    },
+    {
+      "name": "Minerkazoo",
+      "display_name": "",
+      "score_string": "6",
+      "place": 3,
+      "place_string": "4th",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 6,
+      "deaths": 20,
+      "assists": 10,
+      "suicides": 0,
+      "kd_ratio": 0.3,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 301,
+        "shots_hit": 112,
+        "headshots": 4,
+        "percentage": 37.2
+      },
+      "killed": [
+        3,
+        0,
+        2,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        14,
+        1
+      ],
+      "gametype_stats": {
+        "Carrier Kills": 14,
+        "Ball Kills": 1
+      }
+    },
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "5",
+      "place": 4,
+      "place_string": "5th",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 5,
+      "deaths": 9,
+      "assists": 1,
+      "suicides": 0,
+      "kd_ratio": 0.56,
+      "medals": {
+        "total": 4,
+        "by_type": 769
+      },
+      "accuracy": {
+        "total_shots": 95,
+        "shots_hit": 47,
+        "headshots": 2,
+        "percentage": 49.5
+      },
+      "killed": [
+        2,
+        1,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        67,
+        2
+      ],
+      "gametype_stats": {
+        "Carrier Kills": 67,
+        "Ball Kills": 2
+      }
+    },
+    {
+      "name": "MohnJorrow",
+      "display_name": "",
+      "score_string": "3",
+      "place": 5,
+      "place_string": "6th",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 3,
+      "deaths": 12,
+      "assists": 5,
+      "suicides": 0,
+      "kd_ratio": 0.25,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 162,
+        "shots_hit": 82,
+        "headshots": 3,
+        "percentage": 50.6
+      },
+      "killed": [
+        1,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        22,
+        2
+      ],
+      "gametype_stats": {
+        "Carrier Kills": 22,
+        "Ball Kills": 2
+      }
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "schema_version": 3,
+  "timestamp": "2026-03-13T21:45:15.756262",
+  "fingerprint": "da0536eb10f0f026985be466e986bb98",
+  "source": "pgcr_display",
+  "gametype": "slayer",
+  "gametype_id": 2,
+  "player_count": 2,
+  "players": [
+    {
+      "name": "XspoSive BoX",
+      "display_name": "",
+      "score_string": "5",
+      "place": 0,
+      "place_string": "1st",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 5,
+      "deaths": 3,
+      "assists": 0,
+      "suicides": 0,
+      "kd_ratio": 1.67,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 95,
+        "shots_hit": 47,
+        "headshots": 4,
+        "percentage": 49.5
+      },
+      "killed": [
+        0,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        33,
+        4
+      ],
+      "gametype_stats": {
+        "Avg Life": 33,
+        "Best Spree": 4
+      }
+    },
+    {
+      "name": "roasted",
+      "display_name": "",
+      "score_string": "3",
+      "place": 1,
+      "place_string": "2nd",
+      "team": 65535,
+      "observer": false,
+      "rank": 65535,
+      "rank_verified": 65535,
+      "kills": 3,
+      "deaths": 5,
+      "assists": 0,
+      "suicides": 0,
+      "kd_ratio": 0.6,
+      "medals": {
+        "total": 0,
+        "by_type": 0
+      },
+      "accuracy": {
+        "total_shots": 120,
+        "shots_hit": 32,
+        "headshots": 3,
+        "percentage": 26.7
+      },
+      "killed": [
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "gametype_values": [
+        20,
+        1
+      ],
+      "gametype_stats": {
+        "Avg Life": 20,
+        "Best Spree": 1
+      }
+    }
+  ]
+}

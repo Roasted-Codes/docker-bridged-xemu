@@ -32,3 +32,14 @@ services/xemu/data/Desktop/
 # XLink Kai runtime data (exclude user.sh hook script from ignore)
 services/xlinkkai/*
 !services/xlinkkai/user.sh
+
+# Derived artifacts (raw data in database)
+services/statsborg/history/*_memdump.txt
+services/statsborg/history/*_pgcr_annotated.txt
+
+# Backup files
+*.bak
+*.bak-*
+
+# Generated download bundles
+services/gateway/downloads/

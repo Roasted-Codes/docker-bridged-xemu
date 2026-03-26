@@ -12,5 +12,10 @@ if [ -f /config/emulator/passleader_v3.sh ]; then
 fi
 # -----------------------------------------------------------------------------
 
-# Run xemu (foot is the terminal provided by the base image's labwc/Wayland session)
-foot -e /opt/xemu/AppRun -qmp tcp:0.0.0.0:4444,server,nowait
+# Run xemu with dual QMP:
+#   - Unix socket for halo-scraper (shared volume at /run/qmp/)
+#   - TCP for StatsBorg and remote tools (backward compatible)
+# foot is the terminal provided by the base image's labwc/Wayland session
+foot -e /opt/xemu/AppRun \
+  -qmp unix:/run/qmp/qmp.sock,server,nowait \
+  -qmp tcp:0.0.0.0:4444,server,nowait
