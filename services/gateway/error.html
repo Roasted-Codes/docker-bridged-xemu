@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Cairo Station</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0e1a;
+      color: #d0d4dc;
+      font-family: 'Rajdhani', 'Segoe UI', 'Helvetica Neue', Tahoma, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .code {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      color: #8ab4d8;
+    }
+    .msg {
+      font-size: 16px;
+      color: #4a6a8a;
+      margin-top: 8px;
+      letter-spacing: 0.5px;
+    }
+    a {
+      margin-top: 24px;
+      color: #4a8ad4;
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+    a:hover { color: #8ab4d8; }
+  </style>
+</head>
+<body>
+  <div class="code"><!--# echo var="status" default="Error" --></div>
+  <div class="msg"><!--# echo var="status" default="" --> <!--# echo var="request_uri" default="" --></div>
+  <a href="/">Cairo Station</a>
+</body>
+</html>

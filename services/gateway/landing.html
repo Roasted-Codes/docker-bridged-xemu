@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Cairo Station</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0e1a;
+      color: #d0d4dc;
+      font-family: 'Rajdhani', 'Segoe UI', 'Helvetica Neue', Tahoma, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      margin-bottom: 8px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #1a2a40;
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #4a8ad4, #2a5a9a, transparent);
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #8ab4d8;
+      padding-top: 12px;
+    }
+    .header .sub {
+      color: #4a6a8a;
+      font-size: 13px;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Status ── */
+    .status {
+      font-size: 13px;
+      color: #4a6a8a;
+      text-align: center;
+      margin-bottom: 20px;
+      letter-spacing: 0.3px;
+    }
+    .status .dot { color: #40cc60; }
+    .status .dot.off { color: #cc4040; }
+
+    /* ── Section labels ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #6a7a9a;
+      margin-bottom: 10px;
+      text-align: left;
+      max-width: 640px;
+      width: 100%;
+    }
+
+    /* ── Cards ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      max-width: 640px;
+      width: 100%;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: #111520;
+      border: 1px solid #1e2535;
+      border-radius: 4px;
+      padding: 14px 16px;
+      text-decoration: none;
+      color: #d0d4dc;
+      transition: background .15s, border-color .15s;
+    }
+    .card:hover {
+      background: rgba(74, 138, 212, 0.08);
+      border-color: #4a8ad4;
+    }
+    .card .label {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .card .desc {
+      font-size: 12px;
+      color: #4a6a8a;
+      line-height: 1.4;
+    }
+    .card .badge {
+      display: inline-block;
+      background: #1a3050;
+      color: #8ab4d8;
+      padding: 1px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      width: fit-content;
+      margin-bottom: 2px;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      width: 100%;
+      max-width: 640px;
+      border: none;
+      border-top: 1px solid #1a2a40;
+      margin: 16px 0 12px;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 28px;
+      font-size: 11px;
+      color: #4a6a8a;
+      letter-spacing: 0.5px;
+    }
+    .footer a { color: #4a6a8a; text-decoration: none; }
+    .footer a:hover { color: #8ab4d8; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Cairo Station</h1>
+    <div class="sub">Halo 2 Xbox Emulation Stack</div>
+  </div>
+  <div class="status" id="status"></div>
+
+  <div class="section-label">Halo Scraper</div>
+  <div class="cards">
+    <a class="card" href="/ui/live/">
+      <span class="badge" style="background:#e05050;color:#fff">Live</span>
+      <span class="label">Live Stats</span>
+      <span class="desc">Real-time scoreboard, kill feed, team scores</span>
+    </a>
+    <a class="card" href="/ui/pgcr/">
+      <span class="badge" id="games-badge">PGCR</span>
+      <span class="label">Game History</span>
+      <span class="desc" id="games-desc">Post-Game Carnage Reports</span>
+    </a>
+    <a class="card" href="/ui/debug/">
+      <span class="badge">Debug</span>
+      <span class="label">Debug</span>
+      <span class="desc">Live memory view, WebSocket inspector</span>
+    </a>
+    <a class="card" href="/ui/tools/">
+      <span class="badge">Tools</span>
+      <span class="label">Server</span>
+      <span class="desc">Host status, server logs, reconnect</span>
+    </a>
+  </div>
+
+  <hr class="divider"/>
+
+  <div class="section-label">Infrastructure</div>
+  <div class="cards">
+    <a class="card" id="xemu-link" href="#" target="_blank">
+      <span class="badge">Stream</span>
+      <span class="label">xemu</span>
+      <span class="desc">Selkies web UI (HTTPS :3001)</span>
+    </a>
+    <a class="card" id="xlink-link" href="#" target="_blank">
+      <span class="badge">Network</span>
+      <span class="label">XLink Kai</span>
+      <span class="desc">System link tunneling (:34522)</span>
+    </a>
+  </div>
+
+  <div class="footer">
+    <a href="https://github.com/Roasted-Codes/cairo-station" target="_blank">Roasted-Codes/cairo-station</a>
+  </div>
+
+  <script>
+  (() => {
+    const h = location.hostname;
+    const ts = h === "172.20.0.49" || h.endsWith(".ts.net");
+    document.getElementById("xemu-link").href = ts
+      ? "https://172.20.0.49:3001"
+      : "https://" + h + ":3001";
+    document.getElementById("xlink-link").href = ts
+      ? "http://172.20.0.25:34522"
+      : "http://" + h + ":34522";
+  })();
+
+  (async () => {
+    const el = document.getElementById("status");
+    try {
+      const r = await fetch("/api/status");
+      const d = await r.json();
+      const hosts = Object.entries(d.hosts || {});
+      const parts = hosts.map(([n, h]) => {
+        const ok = h.state === "online";
+        return '<span class="dot' + (ok ? "" : " off") + '">&bull;</span> ' + n + " " + h.state;
+      });
+      el.innerHTML = parts.join("&ensp;&ensp;") || "no hosts configured";
+    } catch { el.textContent = "scraper unreachable"; }
+
+    try {
+      const r = await fetch("/api/games");
+      const games = await r.json();
+      if (Array.isArray(games) && games.length > 0) {
+        document.getElementById("games-desc").textContent =
+          games.length + " saved PGCRs";
+      }
+    } catch {}
+  })();
+  </script>
+</body>
+</html>
