@@ -55,11 +55,20 @@ services:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
       - TZ=Etc/UTC
-      # CPU-only rendering settings (no GPU required)
+      # CPU-only rendering (no GPU required)
       - DISABLE_ZINK=true
       - DISABLE_DRI3=true
-      # Enable Selkies gamepad passthrough
-      - SELKIES_GAMEPAD_ENABLED=true
+      # Selkies streaming (CPU-optimized defaults)
+      - SELKIES_ENCODER=jpeg
+      - SELKIES_FRAMERATE=30
+      - SELKIES_JPEG_QUALITY=40
+      - SELKIES_AUDIO_ENABLED=false
+      - SELKIES_MICROPHONE_ENABLED=false
+      - SELKIES_GAMEPAD_ENABLED=false
+      - SELKIES_USE_PAINT_OVER_QUALITY=true
+      - SELKIES_PAINT_OVER_JPEG_QUALITY=80
+      # Passleader automation (set PASSLEADER_ENABLED=true in .env to enable)
+      - PASSLEADER_ENABLED=${PASSLEADER_ENABLED:-false}
     volumes:
       - ./services/xemu/data:/config
       - ./services/xemu/init:/custom-cont-init.d  # Run setcap as root at init
@@ -92,14 +101,29 @@ services:
       - ./services/gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./services/gateway/htpasswd:/etc/nginx/htpasswd:ro
       - ./services/gateway/landing.html:/usr/share/nginx/html/landing.html:ro
+      - ./services/gateway/downloads:/usr/share/nginx/html/downloads:ro
+      - ./services/gateway/ssl:/etc/nginx/ssl:ro
     ports:
-      - "8080:80"
+      - "8081:80"
+      - "8443:443"
     networks:
       xemu_lan:
         ipv4_address: 172.20.0.5
     depends_on:
       - xemu
       - halo-scraper
+      - fileserver
+    restart: unless-stopped
+
+  fileserver:
+    image: filebrowser/filebrowser
+    container_name: fileserver
+    command: --noauth --baseurl /files --root /srv
+    volumes:
+      - /home/linuxuser:/srv:ro
+    networks:
+      xemu_lan:
+        ipv4_address: 172.20.0.6
     restart: unless-stopped
 
   halo-scraper:
@@ -117,6 +141,23 @@ services:
     networks:
       xemu_lan:
         ipv4_address: 172.20.0.45
+    depends_on:
+      - xemu
+    restart: unless-stopped
+
+  xemu-cartographer:
+    image: alpine:latest
+    container_name: xemu-cartographer
+    pid: "service:xemu"
+    privileged: true
+    volumes:
+      - /home/linuxuser/xemu-cartographer:/app:ro
+      - qmp-sock:/run/qmp:ro
+    working_dir: /app
+    entrypoint: ["/bin/sh", "-c", "while [ ! -S /run/qmp/qmp.sock ]; do sleep 1; done; exec ./cartographer"]
+    networks:
+      xemu_lan:
+        ipv4_address: 172.20.0.46
     depends_on:
       - xemu
     restart: unless-stopped
@@ -184,7 +225,7 @@ services:
     command: >
       -c "apk add --no-cache ethtool > /dev/null 2>&1;
           ethtool -K eth0 tx off 2>/dev/null || true;
-          exec socat TCP-LISTEN:731,reuseaddr,fork TCP:172.20.0.49:731"
+          exec socat TCP-LISTEN:731,reuseaddr,fork TCP:172.20.0.51:731"
     cap_add:
       - NET_ADMIN    # Required for ethtool to disable TX checksum offloading
     ports:

@@ -62,16 +62,30 @@ if [ -f "$XEMU_BIN" ]; then
     INTERPOSER="/usr/lib/selkies_joystick_interposer.so"
     FAKE_UDEV="/opt/lib/libudev.so.1.0.0-fake"
     PCAP_IMMEDIATE="/opt/pcap_immediate.so"
-    if [ -f "$INTERPOSER" ]; then
-        printf "%s\n%s\n" "$INTERPOSER" "$FAKE_UDEV" > /etc/ld.so.preload
-        # Fix pcap receive: libpcap 1.9+ with TPACKET_V3 requires immediate
-        # mode or the selectable fd never becomes readable. xemu doesn't set
-        # this, so we shim pcap_activate to inject pcap_set_immediate_mode.
-        if [ -f "$PCAP_IMMEDIATE" ]; then
-            echo "$PCAP_IMMEDIATE" >> /etc/ld.so.preload
-        fi
-        echo "[10-xemu-setcap] Wrote ld.so.preload for setcap compatibility"
+
+    # Start fresh
+    > /etc/ld.so.preload
+
+    # Only load gamepad interposer + fake udev if gamepad is enabled.
+    # Default is enabled (SELKIES_GAMEPAD_ENABLED defaults to "true" in
+    # docker-compose.yml). Using != "false" so unset/empty values safely
+    # default to including the interposer.
+    if [ "${SELKIES_GAMEPAD_ENABLED}" != "false" ] && [ -f "$INTERPOSER" ]; then
+        printf "%s\n%s\n" "$INTERPOSER" "$FAKE_UDEV" >> /etc/ld.so.preload
+        echo "[10-xemu-setcap] Loaded gamepad interposer into ld.so.preload"
+    else
+        echo "[10-xemu-setcap] Gamepad disabled, skipping joystick interposer"
     fi
+
+    # Fix pcap receive: libpcap 1.9+ with TPACKET_V3 requires immediate
+    # mode or the selectable fd never becomes readable. xemu doesn't set
+    # this, so we shim pcap_activate to inject pcap_set_immediate_mode.
+    # This is always required regardless of gamepad setting.
+    if [ -f "$PCAP_IMMEDIATE" ]; then
+        echo "$PCAP_IMMEDIATE" >> /etc/ld.so.preload
+    fi
+
+    echo "[10-xemu-setcap] Wrote ld.so.preload for setcap compatibility"
 else
     echo "[10-xemu-setcap] WARNING: xemu binary not found at $XEMU_BIN"
 fi

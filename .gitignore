@@ -43,3 +43,16 @@ services/statsborg/history/*_pgcr_annotated.txt
 
 # Generated download bundles
 services/gateway/downloads/
+
+# Runtime secrets (not code)
+services/gateway/htpasswd
+services/gateway/ssl/
+
+# Runtime databases
+services/halo-scraper/data/*.db
+
+# Game history (runtime data)
+services/halo-scraper/data/history/
+
+# Backup directories
+services/halo-scraper/data/history_backup*/

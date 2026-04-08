@@ -201,7 +201,7 @@ print_success "Found Xemu window (ID: $WINDOW_ID)"
 
 # Give Xemu additional time to fully initialize
 print_info "Giving Xemu time to fully initialize..."
-for i in {5..1}; do
+for i in {15..1}; do
     echo -ne "\r${BLUE}[INFO]${NC} Starting in $i seconds...   "
     sleep 1
 done

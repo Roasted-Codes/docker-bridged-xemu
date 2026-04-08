@@ -1,9 +1,10 @@
 [general]
 show_welcome = false
 skip_boot_anim = true
+last_viewed_menu_index = 5
 
 [general.snapshots.shortcuts]
-f6 = 'Auto-Host-Lobby'
+f6 = 'Scripted-Host-Lobby'
 f8 = 'pre-lobby'
 
 [input]
@@ -55,7 +56,7 @@ mem_limit = '128'
 [sys.files]
 bootrom_path = '/config/emulator/mcpx_1.0.bin'
 flashrom_path = '/config/emulator/CerbiosDebug.bin'
-eeprom_path = '/config/emulator/iguana-eeprom.bin'
+eeprom_path = '/config/.local/share/xemu/xemu/eeprom.bin'
 hdd_path = '/config/emulator/iguana-dev.qcow2'
 dvd_path = '/config/games/halo2_multiplayer.xiso.iso'
 

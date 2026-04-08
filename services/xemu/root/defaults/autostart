@@ -3,10 +3,10 @@
 # -----------------------------------------------------------------------------
 # Automation Script Launcher
 # -----------------------------------------------------------------------------
-# Launch passleader automation script in its own terminal window if it exists.
-# Rename passleader_v3.sh.disabled to passleader_v3.sh to activate.
+# Launch passleader automation script in its own terminal window if enabled.
+# Set PASSLEADER_ENABLED=true in .env to activate.
 # This allows users to see the automation output and stop it with Ctrl+C.
-if [ -f /config/emulator/passleader_v3.sh ]; then
+if [ "${PASSLEADER_ENABLED}" = "true" ] && [ -f /config/emulator/passleader_v3.sh ]; then
     echo "Launching passleader automation script in separate terminal..."
     foot -e bash /config/emulator/passleader_v3.sh &
 fi
