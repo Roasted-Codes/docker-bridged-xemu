@@ -1,0 +1,2570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Halo 2 — Postgame Carnage Report</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0e1a;
+    color: #d0d4dc;
+    font-family: 'Rajdhani', 'Segoe UI', 'Helvetica Neue', Tahoma, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Page header (shared) ── */
+  .page-header {
+    border-bottom: 1px solid #1a2a40;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    position: relative;
+  }
+  .page-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4a8ad4, #2a5a9a, transparent);
+  }
+  .page-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #8ab4d8;
+    padding-top: 12px;
+  }
+  .page-header .header-sub {
+    color: #4a6a8a;
+    font-size: 13px;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Game list screen ── */
+  #game-list-screen {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .game-count { display: none; }
+  .game-list-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .game-list-table th {
+    background: #111520;
+    color: #6a7a9a;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 8px 14px;
+    text-align: left;
+    border-bottom: 1px solid #1e2535;
+  }
+  .game-list-table td {
+    padding: 10px 14px;
+    font-size: 15px;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .game-list-table tr:hover td:not(.cb-col) {
+    background: rgba(74, 138, 212, 0.08);
+    cursor: pointer;
+  }
+  .game-list-table .gt-badge {
+    display: inline-block;
+    background: #1a3050;
+    color: #8ab4d8;
+    padding: 1px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .team-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+
+  /* ── Loading / Error states ── */
+  .loading-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 16px;
+    color: #6a8ab0;
+  }
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #1a2a40;
+    border-top-color: #4a8ad4;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-msg {
+    text-align: center;
+    padding: 40px 20px;
+    color: #aa6666;
+  }
+  .error-msg p { margin-bottom: 12px; }
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #5a7a9a;
+    font-size: 16px;
+  }
+
+  /* ── Drag-drop fallback ── */
+  #drop-fallback {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: 24px;
+  }
+  #drop-fallback h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #8ab4d8;
+  }
+  #drop-zone {
+    width: 480px;
+    max-width: 90vw;
+    padding: 48px 32px;
+    border: 2px dashed #3a4a6a;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  #drop-zone:hover, #drop-zone.dragover {
+    border-color: #6a8ab4;
+    background: rgba(106, 138, 180, 0.08);
+  }
+  #drop-zone p { font-size: 18px; margin-bottom: 12px; }
+  #drop-zone small { color: #6a7a9a; font-size: 14px; }
+  #file-input { display: none; }
+
+  /* ── Main viewer ── */
+  #viewer { display: none; max-width: 960px; margin: 0 auto; padding: 20px; }
+  #viewer.active { display: block; }
+
+  /* ── Header banner ── */
+  .header-banner {
+    position: relative;
+    background: linear-gradient(135deg, #1a2a4a 0%, #0d1a30 60%, #0a1020 100%);
+    padding: 16px 24px;
+    margin-bottom: 0;
+    border-bottom: 2px solid #2a4a7a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4a8ad4, #2a5a9a, transparent);
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #c0d0e8;
+  }
+  .tab-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .tab-arrow {
+    font-size: 28px;
+    color: #5a8ac0;
+    cursor: pointer;
+    user-select: none;
+    padding: 4px 8px;
+    transition: color 0.15s;
+  }
+  .tab-arrow:hover { color: #8ab4e0; }
+  .tab-name {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #c0d0e8;
+    min-width: 200px;
+    text-align: center;
+  }
+
+  /* ── Game info bar ── */
+  .game-info {
+    background: #0d1628;
+    padding: 8px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #6a8ab0;
+    border-bottom: 1px solid #1a2a40;
+  }
+  .game-info .gametype-badge {
+    background: #1a3050;
+    color: #8ab4d8;
+    padding: 2px 12px;
+    border-radius: 3px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ── Team score banner ── */
+  .team-banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    padding: 12px 24px;
+    background: #0d1628;
+    border-bottom: 1px solid #1a2a40;
+  }
+  .team-banner-side {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .team-banner-score {
+    font-size: 28px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .team-banner-vs {
+    color: #4a6080;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+  }
+  .win-star {
+    color: #d4a820;
+    font-size: 18px;
+    line-height: 1;
+    text-shadow: 0 0 6px rgba(212, 168, 32, 0.5);
+    margin-left: 6px;
+  }
+
+  /* ── Table ── */
+  .pgcr-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  .pgcr-table th {
+    background: #1a1e2a;
+    color: #8a8e9a;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #2a2e3a;
+  }
+  .pgcr-table th.num { text-align: right; }
+  .pgcr-table td {
+    padding: 10px 12px;
+    font-size: 16px;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .pgcr-table td.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .pgcr-table td.player-name {
+    font-weight: 600;
+    font-size: 17px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Row colors — cycling through Halo 2 player palette (FFA) */
+  .pgcr-table tr.row-0 { background: #2a2a30; }
+  .pgcr-table tr.row-1 { background: #1a2050; }
+  .pgcr-table tr.row-2 { background: #1e2858; }
+  .pgcr-table tr.row-3 { background: #1a3828; }
+  .pgcr-table tr.row-4 { background: #3a3820; }
+  .pgcr-table tr.row-5 { background: #381a1a; }
+  .pgcr-table tr.row-6 { background: #2a1a30; }
+  .pgcr-table tr.row-7 { background: #30282a; }
+
+  /* Team header row */
+  .pgcr-table tr.team-header-row td {
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .pgcr-table tr.selected {
+    outline: 2px solid rgba(255,255,255,0.7);
+    outline-offset: -2px;
+  }
+  .pgcr-table tr[data-clickable]:hover {
+    cursor: pointer;
+    filter: brightness(1.2);
+  }
+
+  /* PvP hint */
+  .pvp-hint {
+    text-align: center;
+    padding: 8px;
+    color: #5a7a9a;
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  /* Medal images */
+  .medal-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .medal-img {
+    height: 38px;
+    width: 38px;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.9));
+    cursor: default;
+  }
+  /* Text fallback for medals with no image */
+  .medal-chip {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 3px;
+    white-space: nowrap;
+    background: #2a3a50;
+    color: #90b8d8;
+  }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+  }
+  .btn {
+    background: #1a2a4a;
+    color: #8ab4d8;
+    border: 1px solid #2a4a6a;
+    padding: 6px 16px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.15s;
+  }
+  .btn:hover { background: #2a3a5a; }
+  .timestamp { color: #4a6080; font-size: 13px; }
+  .btn-disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+  .btn-primary { background: #1a3a6a; border-color: #3060a0; color: #a0c8f0; }
+  .btn-primary:hover { background: #1e4478; }
+
+  /* ── Game list checkboxes & toolbar ── */
+  .game-list-table .cb-col {
+    width: 36px;
+    text-align: center;
+    padding: 8px 0;
+  }
+  .game-list-table input[type="checkbox"] {
+    accent-color: #4a8ad4;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+  }
+  .list-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0 14px 0;
+    gap: 10px;
+  }
+  .sel-count {
+    color: #5a7a9a;
+    font-size: 14px;
+    flex: 1;
+  }
+
+  /* ── Leaderboard screen ── */
+  #leaderboard-screen {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .lb-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .lb-header-left { display: flex; align-items: center; gap: 14px; }
+  .lb-subtitle { color: #4a6a8a; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; }
+  #lb-content { overflow-x: visible; }
+  .lb-table { width: 100%; font-size: 12px; table-layout: auto; }
+  .lb-table td { padding: 5px 8px; }
+  .lb-table th {
+    padding: 6px 8px;
+    font-size: 11px;
+    letter-spacing: 0;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  .lb-table th:hover { background: #181d2c; color: #c0d0e8; }
+  .lb-table th.sorted { color: #8ab4d8; }
+  .lb-table th.sorted::after { content: " ▼"; font-size: 10px; }
+  .lb-table th.sorted.asc::after { content: " ▲"; font-size: 10px; }
+  .lb-table td.player-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; font-weight: 600; max-width: 160px; }
+  .lb-table th.player-name { width: 160px; }
+  #lb-search {
+    background: #111520;
+    border: 1px solid #1e2d45;
+    color: #d0d4dc;
+    padding: 5px 11px;
+    font-family: inherit;
+    font-size: 14px;
+    border-radius: 4px;
+    width: 200px;
+    outline: none;
+  }
+  #lb-search::placeholder { color: #3a5070; }
+  #lb-search:focus { border-color: #3a6a9a; background: #141828; }
+
+  /* ── Leaderboard view tabs ── */
+  .lb-view-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #1a2a40;
+  }
+  .lb-view-tab {
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #4a6a8a;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .lb-view-tab:hover { color: #8ab4d8; }
+  .lb-view-tab.active { color: #a0c8f0; border-bottom-color: #4a8ad4; }
+  .lb-view-tab.disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* ── Series banner (leaderboard) ── */
+  .series-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 18px 24px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #0d1628 0%, #111828 100%);
+    border: 1px solid #1a2a40;
+    border-radius: 6px;
+  }
+  .series-team-block { text-align: center; flex: 1; }
+  .series-team-block.left { text-align: right; }
+  .series-team-block.right { text-align: left; }
+  .series-team-name {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .series-kd {
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.6;
+    margin-top: 2px;
+  }
+  .series-score-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .series-score-num {
+    font-size: 40px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .series-score-dash {
+    font-size: 30px;
+    color: #3a5070;
+    font-weight: 300;
+    line-height: 1;
+  }
+  .lb-team-header-row td {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 7px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-top: 2px solid rgba(255,255,255,0.08);
+    color: #a0c8f0;
+  }
+  .lb-team-header-row td.player-name {
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  #export-toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #1a3a6a; color: #a0c8f0; border: 1px solid #3060a0;
+    padding: 10px 22px; border-radius: 6px; font-size: 14px; font-weight: 600;
+    z-index: 1000; pointer-events: none; opacity: 0;
+    transition: opacity 0.3s ease; white-space: nowrap;
+  }
+  .player-link {
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+  .player-link:hover {
+    color: #c0d8f0;
+    text-decoration: underline;
+  }
+  .player-link:focus {
+    outline: 1px solid #4a8ad4;
+    outline-offset: 2px;
+  }
+
+  /* ── Player Profile screen ── */
+  #player-profile-screen {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .profile-nav {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .nav-button {
+    background: #1a2a40;
+    border: 1px solid #2a4a60;
+    color: #8ab4d8;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .nav-button:hover {
+    background: #2a4a60;
+    color: #a0c8f0;
+  }
+  .profile-content {
+    min-height: 400px;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .stats-section {
+    background: #111520;
+    border: 1px solid #1e2d45;
+    border-radius: 6px;
+    padding: 16px;
+  }
+  .stats-section.full-width {
+    grid-column: 1 / -1;
+  }
+  .stats-section h3 {
+    color: #8ab4d8;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #1e2d45;
+    padding-bottom: 8px;
+  }
+  .stats-section h4 {
+    color: #6a8aa8;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .stats-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .stat-item {
+    text-align: center;
+    flex: 1;
+  }
+  .stat-value {
+    display: block;
+    color: #a0c8f0;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .stat-label {
+    display: block;
+    color: #6a8aa8;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+  }
+  .performance-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .performance-item {
+    padding: 12px;
+    background: #0a0e1a;
+    border-radius: 4px;
+  }
+  .performance-item > div {
+    color: #d0d4dc;
+    font-size: 14px;
+  }
+  .pvp-table {
+    width: 100%;
+    font-size: 13px;
+    margin-top: 8px;
+  }
+  .pvp-table th {
+    background: #0a0e1a;
+    padding: 8px 10px;
+    text-align: left;
+    color: #8ab4d8;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 11px;
+  }
+  .pvp-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .pvp-table .player-name {
+    font-weight: 600;
+    color: #a0c8f0;
+    cursor: pointer;
+  }
+  .pvp-table .player-name:hover {
+    color: #c0d8f0;
+    text-decoration: underline;
+  }
+  .pvp-table .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .pvp-table .positive {
+    color: #4a8a4a;
+  }
+  .pvp-table .negative {
+    color: #8a4a4a;
+  }
+  .recent-games-table {
+    width: 100%;
+    font-size: 13px;
+    margin-top: 8px;
+  }
+  .recent-games-table th {
+    background: #0a0e1a;
+    padding: 8px 10px;
+    text-align: left;
+    color: #8ab4d8;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 11px;
+  }
+  .recent-games-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .recent-games-table .game-link {
+    color: #6a9aaa;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .recent-games-table .game-link:hover {
+    color: #8ab4d8;
+    text-decoration: underline;
+  }
+  .profile-error {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .error-message h3 {
+    color: #8a6a6a;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+  .error-message p {
+    color: #6a6a8a;
+    font-size: 14px;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    /* ── 1. Global layout ── */
+    #game-list-screen,
+    #viewer,
+    #leaderboard-screen,
+    #player-profile-screen {
+      padding: 12px 8px;
+    }
+
+    /* ── 2. Game list checkboxes ── */
+    .game-list-table .cb-col {
+      width: 48px;
+      padding: 10px 0;
+    }
+    .game-list-table input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* ── 3. Game list table ── */
+    #game-list-content {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .game-list-table th {
+      padding: 8px 6px;
+      font-size: 11px;
+    }
+    .game-list-table td {
+      padding: 8px 6px;
+      font-size: 13px;
+    }
+
+    /* ── 4. List toolbar ── */
+    .list-toolbar {
+      flex-wrap: wrap;
+    }
+    .list-toolbar > div {
+      flex-wrap: wrap;
+    }
+    .list-toolbar .btn {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    /* ── 5. Viewer header banner ── */
+    .header-banner {
+      flex-wrap: wrap;
+      padding: 12px;
+      gap: 8px;
+    }
+    .header-title {
+      font-size: 16px;
+      letter-spacing: 1.5px;
+    }
+    .tab-name {
+      min-width: 120px;
+      font-size: 16px;
+    }
+    .tab-arrow {
+      font-size: 24px;
+      padding: 4px;
+    }
+
+    /* ── 6. Game info bar ── */
+    .game-info {
+      flex-wrap: wrap;
+      padding: 8px 12px;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    /* ── 7. PGCR data tables ── */
+    #tab-content {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .pgcr-table {
+      table-layout: auto;
+    }
+    .pgcr-table th {
+      padding: 6px 6px;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+    .pgcr-table td {
+      padding: 6px 6px;
+      font-size: 13px;
+    }
+    .pgcr-table td.player-name {
+      font-size: 14px;
+      max-width: 90px;
+    }
+
+    /* ── 8. Leaderboard ── */
+    #lb-content {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .lb-header {
+      gap: 8px;
+    }
+    #lb-search {
+      width: 140px;
+    }
+    .lb-table {
+      font-size: 11px;
+    }
+    .lb-table th,
+    .lb-table td {
+      padding: 4px 4px;
+    }
+    .lb-table td.player-name {
+      max-width: 100px;
+    }
+    .lb-view-tab {
+      padding: 8px 12px;
+      font-size: 11px;
+    }
+
+    /* ── 9. Viewer toolbar ── */
+    .toolbar {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .timestamp {
+      font-size: 11px;
+    }
+
+    /* ── 10. Player profile ── */
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+    .stats-row {
+      flex-direction: column;
+      gap: 8px;
+    }
+    .performance-grid {
+      grid-template-columns: 1fr;
+    }
+    .profile-nav {
+      flex-direction: column;
+    }
+  }
+
+
+  /* ── Weapon breakdown styles ── */
+  .weapons-summary {
+    margin-bottom: 16px;
+    padding: 16px;
+    background: #0f1420;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .weapons-summary h3 {
+    color: #8ab4d8;
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .weapon-totals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .weapon-pill {
+    background: #1a2040;
+    color: #a0c8f0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    border: 1px solid rgba(160, 200, 240, 0.2);
+  }
+  .weapon-stat {
+    background: #0a0e1a;
+    color: #d0d4dc;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    margin-right: 8px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Game List (served mode) ── -->
+<div id="game-list-screen" style="display:none">
+  <div class="page-header">
+    <h1>Postgame Carnage Report</h1>
+    <div class="header-sub">Halo 2 — Game History</div>
+  </div>
+  <div class="game-count" id="game-count"></div>
+  <div id="game-list-content">
+    <table class="game-list-table">
+      <thead><tr>
+        <th style="width:22%">Date</th>
+        <th style="width:15%">Gametype</th>
+        <th style="width:10%">Players</th>
+        <th>Result</th>
+      </tr></thead>
+      <tbody id="game-list-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── Drop fallback (local file mode) ── -->
+<div id="drop-fallback">
+  <h1>Postgame Carnage Report</h1>
+  <div id="drop-zone" tabindex="0">
+    <p>Drop a JSON file here</p>
+    <small>or click to browse — loads halo2_stats.py output</small>
+  </div>
+  <input type="file" id="file-input" accept=".json">
+</div>
+
+<!-- ── Leaderboard ── -->
+<div id="leaderboard-screen" style="display:none">
+  <div class="page-header">
+    <div class="lb-header">
+      <div class="lb-header-left">
+        <button class="btn" id="btn-lb-back">&#9664; Back</button>
+        <div>
+          <h1 style="padding-top:0;margin-bottom:2px">Leaderboard</h1>
+          <div class="lb-subtitle" id="lb-subtitle"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="exportToExcel()" style="font-size:12px;padding:5px 12px">&#8659;&nbsp;Excel</button>
+        <button class="btn" onclick="exportToSheets()" style="font-size:12px;padding:5px 12px">&#8659;&nbsp;Sheets</button>
+        <input type="text" id="lb-search" placeholder="Filter players..." autocomplete="off">
+      </div>
+    </div>
+  </div>
+  <div class="lb-view-tabs">
+    <button class="lb-view-tab" id="lb-tab-series">Series</button>
+    <button class="lb-view-tab" id="lb-tab-individual">Individual</button>
+  </div>
+  <div id="lb-content"></div>
+</div>
+<!-- ── Player Profile Screen ── -->
+<div id="player-profile-screen" style="display:none">
+  <div class="page-header">
+    <h1 id="profile-player-name">Player Profile</h1>
+    <div class="header-sub">Career statistics and recent games</div>
+  </div>
+
+  <div class="profile-nav">
+    <button class="nav-button" onclick="showGameList()">← Back to Games</button>
+    <button class="nav-button" onclick="showLeaderboard()">View Leaderboard</button>
+  </div>
+
+  <div class="profile-content">
+    <div class="profile-loading" id="profile-loading" style="display:none">
+      <div class="loading-wrap">
+        <div class="spinner"></div>
+        <span>Loading player stats...</span>
+      </div>
+    </div>
+
+    <div class="profile-data" id="profile-data" style="display:none">
+      <div class="stats-grid">
+        <!-- Career Summary -->
+        <div class="stats-section">
+          <h3>Career Summary</h3>
+          <div class="stats-row">
+            <div class="stat-item">
+              <span class="stat-value" id="profile-games-played">-</span>
+              <span class="stat-label">Games Played</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="profile-win-rate">-</span>
+              <span class="stat-label">Win Rate</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="profile-kd-ratio">-</span>
+              <span class="stat-label">K/D Ratio</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Combat Stats -->
+        <div class="stats-section">
+          <h3>Combat Stats</h3>
+          <div class="stats-row">
+            <div class="stat-item">
+              <span class="stat-value" id="profile-total-kills">-</span>
+              <span class="stat-label">Total Kills</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="profile-total-deaths">-</span>
+              <span class="stat-label">Total Deaths</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="profile-total-assists">-</span>
+              <span class="stat-label">Total Assists</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accuracy -->
+        <div class="stats-section">
+          <h3>Accuracy</h3>
+          <div class="stats-row">
+            <div class="stat-item">
+              <span class="stat-value" id="profile-accuracy">-</span>
+              <span class="stat-label">Accuracy %</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="profile-headshots">-</span>
+              <span class="stat-label">Headshots</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="profile-shots-fired">-</span>
+              <span class="stat-label">Shots Fired</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Best/Worst Games -->
+        <div class="stats-section full-width">
+          <h3>Performance</h3>
+          <div class="performance-grid">
+            <div class="performance-item">
+              <h4>Best Game</h4>
+              <div id="profile-best-game">-</div>
+            </div>
+            <div class="performance-item">
+              <h4>Worst Game</h4>
+              <div id="profile-worst-game">-</div>
+            </div>
+            <div class="performance-item">
+              <h4>Favorite Gametype</h4>
+              <div id="profile-favorite-gametype">-</div>
+            </div>
+            <div class="performance-item">
+              <h4>Nemesis</h4>
+              <div id="profile-nemesis">-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PvP Stats -->
+        <div class="stats-section full-width">
+          <h3>Head-to-Head Record</h3>
+          <div id="profile-pvp-content">Loading PvP stats...</div>
+        </div>
+
+        <!-- Recent Games -->
+        <div class="stats-section full-width">
+          <h3>Recent Games (Last 10)</h3>
+          <div id="profile-recent-games">Loading recent games...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-error" id="profile-error" style="display:none">
+      <div class="error-message">
+        <h3>Player Not Found</h3>
+        <p>No statistics found for this player.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="export-toast"></div>
+
+<!-- ── Viewer ── -->
+<div id="viewer">
+  <div class="toolbar">
+    <div style="display:flex;gap:6px;align-items:center">
+      <button class="btn" id="btn-back">&#9664; Games</button>
+      <button class="btn" id="btn-prev-game" style="display:none">&#9664; Prev</button>
+      <button class="btn" id="btn-next-game" style="display:none">Next &#9654;</button>
+    </div>
+    <span class="timestamp" id="timestamp"></span>
+  </div>
+  <div class="header-banner">
+    <span class="header-title">Postgame Carnage Report</span>
+    <div class="tab-nav">
+      <span class="tab-arrow" id="tab-left">&#9664;</span>
+      <span class="tab-name" id="tab-name"></span>
+      <span class="tab-arrow" id="tab-right">&#9654;</span>
+    </div>
+  </div>
+  <div class="game-info">
+    <span id="game-players"></span>
+    <span class="gametype-badge" id="game-type"></span>
+    <span id="game-map" style="opacity:0.7"></span>
+    <span id="game-source"></span>
+  </div>
+  <div id="team-banner" class="team-banner" style="display:none"></div>
+  <div id="tab-content"></div>
+</div>
+
+<script>
+// ─── Utilities ───
+function safe(obj) {
+  for (let i = 1; i < arguments.length; i++) {
+    if (obj == null) return 0;
+    obj = obj[arguments[i]];
+  }
+  return obj != null ? obj : 0;
+}
+
+function esc(s) {
+  if (s == null) return "";
+  const d = document.createElement("div");
+  d.textContent = String(s);
+  return d.innerHTML;
+}
+
+// "slayer (MLG FFA 2007)" → { base: "slayer", variant: "MLG FFA 2007" }
+function splitGametype(gt) {
+  var m = (gt || "").match(/^(\S+)\s*\((.+)\)$/);
+  if (m) return { base: m[1], variant: m[2] };
+  return { base: gt || "", variant: "" };
+}
+
+function formatTime(seconds) {
+  if (seconds == null) return "0:00";
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return m + ":" + String(s).padStart(2, "0");
+}
+
+function formatDate(ts) {
+  if (!ts) return "";
+  return ts.replace("T", "  ").split(".")[0];
+}
+
+// ─── Medal definitions ───
+const MEDALS = [
+  { name: "Double Kill",       img: "medals/double_kill.gif" },
+  { name: "Triple Kill",       img: "medals/triple_kill.gif" },
+  { name: "Overkill",          img: "medals/overkill.gif" },
+  { name: "Killtacular",       img: "medals/killtacular.gif" },
+  { name: "Killtrocity",       img: "medals/killtrocity.gif" },
+  { name: "Killimanjaro+",     img: "medals/killimanjaro.gif" },
+  { name: "Sniper Kill",       img: "medals/sniper_kill.gif" },
+  { name: "Splatter",          img: "medals/splatter.gif" },
+  { name: "Beat Down",         img: "medals/beat_down.gif" },
+  { name: "Assassination",     img: "medals/assassination.gif" },
+  { name: "Destroyed Vehicle", img: null },
+  { name: "Carjack",           img: "medals/carjack.gif" },
+  { name: "Stick",             img: "medals/stick.gif" },
+  { name: "Killing Spree",     img: "medals/killing_spree.gif" },
+  { name: "Killing Frenzy",    img: "medals/killing_frenzy.gif" },
+  { name: "Running Riot",      img: "medals/running_riot.gif" },
+  { name: "Rampage",           img: "medals/rampage.gif" },
+  { name: "Untouchable",       img: null },
+  { name: "Flag Grab",         img: "medals/flag_grab.gif" },
+  { name: "Flag Carrier Kill", img: "medals/flag_carrier_kill.svg" },
+  { name: "Flag Returned",     img: "medals/flag_returned.gif" },
+  { name: "Bomb Planted",      img: "medals/bomb_planted.gif" },
+  { name: "Bomb Carrier Kill", img: "medals/bomb_carrier_kill.gif" },
+  { name: "Bomb Defused",      img: null }
+];
+
+function decodeMedals(bitmask) {
+  const medals = [];
+  if (!bitmask) return medals;
+  for (let i = 0; i < 24; i++) {
+    if (bitmask & (1 << i)) medals.push(MEDALS[i]);
+  }
+  return medals;
+}
+
+// ─── Team color system ───
+const TEAM_COLORS = {
+  0: { name: "Red",    bg: "#4a1a1a", border: "#8a3030", text: "#ff6666", dot: "#ff4444" },
+  1: { name: "Blue",   bg: "#1a2a5a", border: "#3050a0", text: "#6699ff", dot: "#4488ff" },
+  2: { name: "Yellow", bg: "#4a4a1a", border: "#8a8a30", text: "#ffff66", dot: "#ffff44" },
+  3: { name: "Green",  bg: "#1a4a1a", border: "#308a30", text: "#66ff66", dot: "#44ff44" },
+  4: { name: "Purple", bg: "#3a1a4a", border: "#6030a0", text: "#bb66ff", dot: "#aa44ff" },
+  5: { name: "Orange", bg: "#4a3a1a", border: "#a07030", text: "#ffaa44", dot: "#ff9922" },
+  6: { name: "Brown",  bg: "#3a2a1a", border: "#6a5030", text: "#cc9966", dot: "#bb8855" },
+  7: { name: "Pink",   bg: "#4a1a3a", border: "#a03060", text: "#ff66bb", dot: "#ff44aa" },
+};
+
+function getTeamColor(teamId) {
+  return TEAM_COLORS[teamId] || { name: "Unknown", bg: "#2a2a30", border: "#4a4a50", text: "#aaaaaa", dot: "#888888" };
+}
+
+function isTeamGame() {
+  return data && data.teams && data.teams.length > 0 &&
+         data.players.some(function(p) { return p.team !== 65535 && p.team != null; });
+}
+
+function getTeamsSorted() {
+  if (!data || !data.teams) return [];
+  return data.teams.slice().sort(function(a, b) { return (a.place || 0) - (b.place || 0); });
+}
+
+function getTeamPlayers(teamId) {
+  if (!data || !data.players) return [];
+  return data.players.filter(function(p) { return p.team === teamId; });
+}
+
+// ─── Gametype labels ───
+const GT_LABELS = {
+  ctf: ["Flag Saves", "Flag Steals"],
+  slayer: ["Avg Life", "Best Spree"],
+  oddball: ["Ball Carrier Kills", "Kills As Carrier"],
+  koth: ["Control Time", "Time On Hill"],
+  juggernaut: ["Juggernaut Kills", "Kills As Juggernaut"],
+  territories: ["Territories Taken", "Territories Lost"],
+  assault: ["Bomb Grabs", "Bomb Carrier Kills"],
+};
+
+// ─── State ───
+let data = null;
+let currentTab = 0;
+let pvpSelected = 0;
+let servedMode = false;
+let selectedGames = new Set();
+let gameListCache = null;
+let currentGameIndex = -1;
+let lbSortCol = "kills";
+let lbSortAsc = false;
+let lbData = null;
+let lbTeamStats = null;
+let lbIsSeriesView = false;
+let lbWarningHtml = "";
+let lbFilter = "";
+let lbViewMode = "series"; // "series" | "individual"
+
+const gameListScreen = document.getElementById("game-list-screen");
+const dropFallback = document.getElementById("drop-fallback");
+const viewer = document.getElementById("viewer");
+const leaderboardScreen = document.getElementById("leaderboard-screen");
+const playerProfileScreen = document.getElementById("player-profile-screen");
+let currentProfilePlayer = null;
+
+// ─── Dynamic tabs ───
+function getTabNames() {
+  if (isTeamGame()) {
+    return ["TEAM STATS", "PLAYER STATS", "KILLS", "WEAPONS", "PLAYER VS. PLAYER", "MEDALS", "HIT STATS"];
+  }
+  return ["PLAYER STATS", "KILLS", "WEAPONS", "PLAYER VS. PLAYER", "MEDALS", "HIT STATS"];
+}
+
+function escAttr(s) {
+  return esc(s).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+function playerLinkHtml(name) {
+  if (!name) return "";
+  return '<button type="button" class="player-link" data-player="' + escAttr(name) + '">' + esc(name) + '</button>';
+}
+
+function bindPlayerLinks(root) {
+  if (!root || !root.querySelectorAll) return;
+  root.querySelectorAll('.player-link[data-player]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      showPlayerProfile(btn.dataset.player);
+    });
+  });
+}
+
+function updatePlayerRoute(name) {
+  if (!window.history || !window.history.replaceState) return;
+  var url = new URL(window.location.href);
+  if (name) url.searchParams.set('player', name);
+  else url.searchParams.delete('player');
+  window.history.replaceState({}, '', url.pathname + url.search);
+}
+
+function gameLinkHtml(file, label) {
+  if (!file) return esc(label || '—');
+  return '<button type="button" class="player-link game-link" data-game-file="' + escAttr(file) + '">' + esc(label || file) + '</button>';
+}
+
+function bindGameLinks(root) {
+  if (!root || !root.querySelectorAll) return;
+  root.querySelectorAll('[data-game-file]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      loadFromServer(btn.dataset.gameFile);
+    });
+  });
+}
+
+async function showPlayerProfile(name) {
+  if (!name) return;
+  currentProfilePlayer = name;
+  gameListScreen.style.display = 'none';
+  dropFallback.style.display = 'none';
+  viewer.classList.remove('active');
+  leaderboardScreen.style.display = 'none';
+  playerProfileScreen.style.display = 'block';
+  updatePlayerRoute(name);
+
+  document.getElementById('profile-player-name').textContent = name;
+  document.getElementById('profile-loading').style.display = 'block';
+  document.getElementById('profile-data').style.display = 'none';
+  document.getElementById('profile-error').style.display = 'none';
+
+  try {
+    var playerRes = await fetch('/api/players?name=' + encodeURIComponent(name));
+    if (!playerRes.ok) throw new Error('Player not found');
+    var player = await playerRes.json();
+
+    var pvp = null;
+    try {
+      var pvpRes = await fetch('/api/pvp?player=' + encodeURIComponent(name));
+      if (pvpRes.ok) pvp = await pvpRes.json();
+    } catch (_) {}
+
+    renderPlayerProfile(player, pvp);
+    document.getElementById('profile-loading').style.display = 'none';
+    document.getElementById('profile-data').style.display = 'block';
+  } catch (err) {
+    document.getElementById('profile-loading').style.display = 'none';
+    document.getElementById('profile-error').style.display = 'block';
+  }
+}
+
+function renderPlayerProfile(player, pvp) {
+  document.getElementById('profile-player-name').textContent = player.name || currentProfilePlayer || 'Player Profile';
+  document.getElementById('profile-games-played').textContent = player.games_played || '—';
+  document.getElementById('profile-win-rate').textContent = typeof player.win_rate === 'number' ? player.win_rate.toFixed(1) + '%' : '—';
+  document.getElementById('profile-kd-ratio').textContent = typeof player.kd_ratio === 'number' ? player.kd_ratio.toFixed(2) : '—';
+  document.getElementById('profile-total-kills').textContent = player.total_kills || 0;
+  document.getElementById('profile-total-deaths').textContent = player.total_deaths || 0;
+  document.getElementById('profile-total-assists').textContent = player.total_assists || 0;
+  document.getElementById('profile-accuracy').textContent = typeof player.accuracy === 'number' ? player.accuracy.toFixed(1) + '%' : '—';
+  document.getElementById('profile-headshots').textContent = player.total_headshots || 0;
+  document.getElementById('profile-shots-fired').textContent = player.total_shots || 0;
+
+  var best = player.best_game || null;
+  var worst = player.worst_game || null;
+  document.getElementById('profile-best-game').innerHTML = best
+    ? gameLinkHtml(best.filename, (best.gametype || 'Game') + ' — ' + (typeof best.kd_ratio === 'number' ? best.kd_ratio.toFixed(2) + ' K/D' : 'view'))
+    : '—';
+  document.getElementById('profile-worst-game').innerHTML = worst
+    ? gameLinkHtml(worst.filename, (worst.gametype || 'Game') + ' — ' + (typeof worst.kd_ratio === 'number' ? worst.kd_ratio.toFixed(2) + ' K/D' : 'view'))
+    : '—';
+  document.getElementById('profile-favorite-gametype').textContent = player.favorite_gametype && player.favorite_gametype.gametype
+    ? player.favorite_gametype.gametype + ' (' + player.favorite_gametype.count + ')'
+    : '—';
+  document.getElementById('profile-nemesis').innerHTML = player.nemesis && player.nemesis.name
+    ? playerLinkHtml(player.nemesis.name) + ' <span style="color:#6a8aa8">(' + esc(player.nemesis.times_beaten) + ' times)</span>'
+    : '—';
+
+  var pvpHtml = '<div style="color:#6a8aa8">No rivalry data yet.</div>';
+  if (pvp && pvp.opponents && pvp.opponents.length) {
+    pvpHtml = '<table class="pvp-table"><thead><tr><th>Opponent</th><th class="num">You Killed</th><th class="num">They Killed</th><th class="num">Net</th></tr></thead><tbody>' +
+      pvp.opponents.slice(0, 10).map(function(row) {
+        var netCls = row.net > 0 ? 'positive' : (row.net < 0 ? 'negative' : '');
+        return '<tr><td class="player-name">' + playerLinkHtml(row.name) + '</td><td class="num">' + row.kills + '</td><td class="num">' + row.deaths + '</td><td class="num ' + netCls + '">' + (row.net > 0 ? '+' : '') + row.net + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+  document.getElementById('profile-pvp-content').innerHTML = pvpHtml;
+
+  var recent = player.recent_games || [];
+  var recentHtml = '<div style="color:#6a8aa8">No recent games found.</div>';
+  if (recent.length) {
+    recentHtml = '<table class="recent-games-table"><thead><tr><th>Date</th><th>Game</th><th class="num">K</th><th class="num">D</th><th class="num">A</th><th>Result</th></tr></thead><tbody>' +
+      recent.map(function(game) {
+        return '<tr>' +
+          '<td>' + esc(formatDate(game.timestamp)) + '</td>' +
+          '<td>' + gameLinkHtml(game.filename, game.gametype || game.filename) + '</td>' +
+          '<td class="num">' + (game.kills || 0) + '</td>' +
+          '<td class="num">' + (game.deaths || 0) + '</td>' +
+          '<td class="num">' + (game.assists || 0) + '</td>' +
+          '<td>' + esc(game.place_string || '') + '</td>' +
+        '</tr>';
+      }).join('') + '</tbody></table>';
+  }
+  document.getElementById('profile-recent-games').innerHTML = recentHtml;
+
+  bindPlayerLinks(playerProfileScreen);
+  bindGameLinks(playerProfileScreen);
+}
+
+// ─── Init: try server API, fall back to drag-drop ───
+(async function init() {
+  var content = document.getElementById("game-list-content");
+  content.innerHTML = '<div class="loading-wrap"><div class="spinner"></div><span>Loading games...</span></div>';
+  gameListScreen.style.display = "block";
+  try {
+    var res = await fetch("/api/games");
+    if (!res.ok) throw new Error("Server returned " + res.status);
+    var games = await res.json();
+    servedMode = true;
+    showGameList(games);
+    var routedPlayer = new URLSearchParams(window.location.search).get("player");
+    if (routedPlayer) showPlayerProfile(routedPlayer);
+  } catch (e) {
+    gameListScreen.style.display = "none";
+    dropFallback.style.display = "flex";
+    initDropZone();
+  }
+})();
+
+// ─── Live updates via SSE ───
+if (servedMode && typeof EventSource !== "undefined") {
+  var evtSource = new EventSource("/api/events");
+  evtSource.onmessage = async function(e) {
+    try {
+      var data = JSON.parse(e.data);
+      if (data.type === "new_game") {
+        var res = await fetch("/api/games");
+        if (res.ok) showGameList(await res.json());
+      }
+    } catch (err) { /* silent */ }
+  };
+}
+
+// ─── Fallback: auto-refresh game list every 15s when visible ───
+setInterval(async function() {
+  if (!servedMode || gameListScreen.style.display === "none") return;
+  try {
+    var res = await fetch("/api/games");
+    if (res.ok) showGameList(await res.json());
+  } catch (e) { /* silent */ }
+}, 15000);
+
+// ─── Game list (served mode) ───
+function showGameList(games) {
+  games = games || gameListCache || [];
+  gameListScreen.style.display = "block";
+  dropFallback.style.display = "none";
+  viewer.classList.remove("active");
+  leaderboardScreen.style.display = "none";
+  playerProfileScreen.style.display = "none";
+  updatePlayerRoute(null);
+  gameListCache = games;
+
+  var content = document.getElementById("game-list-content");
+  document.getElementById("game-count").textContent = "";
+
+  if (!games || games.length === 0) {
+    content.innerHTML = '<div class="empty-state">No games recorded yet. Play a game in Halo 2 with watch mode running.</div>';
+    return;
+  }
+
+  content.innerHTML =
+    '<div class="list-toolbar">' +
+      '<span id="sel-count" class="sel-count"></span>' +
+      '<div style="display:flex;gap:8px">' +
+        '<button class="btn" id="btn-select-all">Select All</button>' +
+        '<button class="btn" id="btn-clear-sel">Clear</button>' +
+        '<button class="btn btn-disabled" id="btn-leaderboard">View Leaderboard</button>' +
+        '<button class="btn btn-primary" id="btn-all-time">All-Time Stats</button>' +
+      '</div>' +
+    '</div>' +
+    '<table class="game-list-table"><thead><tr>' +
+      '<th class="cb-col"><input type="checkbox" id="cb-all"></th>' +
+      '<th style="width:18%">Date</th>' +
+      '<th style="width:10%">Gametype</th>' +
+      '<th style="width:14%">Variant</th>' +
+      '<th style="width:11%">Map</th>' +
+      '<th style="width:7%">Players</th>' +
+      '<th>Result</th>' +
+    '</tr></thead><tbody id="game-list-body"></tbody></table>';
+
+  var tbody = document.getElementById("game-list-body");
+  tbody.innerHTML = games.map(function(g) {
+    var result = "";
+    if (g.teams && g.teams.length > 0) {
+      result = g.teams.map(function(t) {
+        var tc = getTeamColor(t.team_id);
+        return '<span class="team-dot" style="background:' + tc.dot + '"></span>' +
+               esc(t.name || tc.name) + ' ' + esc(t.score_string || "0");
+      }).join(' <span style="color:#4a6080;margin:0 4px">vs</span> ');
+    } else {
+      result = playerLinkHtml(g.winner || "");
+    }
+    var checked = selectedGames.has(g.filename) ? ' checked' : '';
+    var gtParts = splitGametype(g.gametype || "");
+    var variantStr = gtParts.variant || g.variant || "";
+    return '<tr data-file="' + esc(g.filename) + '">' +
+      '<td class="cb-col"><input type="checkbox" class="cb-game" value="' + esc(g.filename) + '"' + checked + '></td>' +
+      '<td>' + formatDate(g.timestamp) + '</td>' +
+      '<td><span class="gt-badge">' + esc(gtParts.base) + '</span></td>' +
+      '<td>' + esc(variantStr) + '</td>' +
+      '<td>' + esc(g.map || "") + '</td>' +
+      '<td>' + (g.player_count || 0) + '</td>' +
+      '<td>' + result + '</td>' +
+    '</tr>';
+  }).join("");
+
+  tbody.querySelectorAll("tr").forEach(function(row) {
+    row.querySelectorAll("td:not(.cb-col)").forEach(function(td) {
+      td.style.cursor = "pointer";
+      td.addEventListener("click", function() { loadFromServer(row.dataset.file); });
+    });
+  });
+
+  bindGameListControls();
+  bindPlayerLinks(tbody);
+  updateSelectionUI();
+}
+
+async function loadFromServer(filename) {
+  var container = document.getElementById("tab-content");
+  // Show loading state in viewer immediately
+  currentTab = 0;
+  pvpSelected = 0;
+  try {
+    var res = await fetch("/history/" + filename);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    data = await res.json();
+    if (!data.players || !data.players.length) throw new Error("No players in game data");
+    if (gameListCache) {
+      currentGameIndex = gameListCache.findIndex(function(g) { return g.filename === filename; });
+    }
+    showViewer();
+  } catch (err) {
+    data = null;
+    gameListScreen.style.display = "block";
+    var content = document.getElementById("game-list-content");
+    content.innerHTML = '<div class="error-msg"><p>Failed to load game: ' + esc(err.message) + '</p>' +
+      '<button class="btn" onclick="location.reload()">Retry</button></div>';
+  }
+}
+
+// ─── Game list controls ───
+function bindGameListControls() {
+  document.querySelectorAll(".cb-game").forEach(function(cb) {
+    cb.addEventListener("change", function() {
+      if (cb.checked) selectedGames.add(cb.value);
+      else selectedGames.delete(cb.value);
+      updateSelectionUI();
+    });
+  });
+  var cbAll = document.getElementById("cb-all");
+  if (cbAll) {
+    cbAll.addEventListener("change", function() {
+      document.querySelectorAll(".cb-game").forEach(function(cb) {
+        cb.checked = cbAll.checked;
+        if (cbAll.checked) selectedGames.add(cb.value);
+        else selectedGames.delete(cb.value);
+      });
+      updateSelectionUI();
+    });
+  }
+  var btnSelectAll = document.getElementById("btn-select-all");
+  if (btnSelectAll) {
+    btnSelectAll.addEventListener("click", function() {
+      document.querySelectorAll(".cb-game").forEach(function(cb) {
+        cb.checked = true;
+        selectedGames.add(cb.value);
+      });
+      updateSelectionUI();
+    });
+  }
+  var btnClear = document.getElementById("btn-clear-sel");
+  if (btnClear) {
+    btnClear.addEventListener("click", function() {
+      document.querySelectorAll(".cb-game").forEach(function(cb) { cb.checked = false; });
+      selectedGames.clear();
+      updateSelectionUI();
+    });
+  }
+  var btnLb = document.getElementById("btn-leaderboard");
+  if (btnLb) {
+    btnLb.addEventListener("click", function() { if (selectedGames.size > 0) showLeaderboard(); });
+  }
+  var btnAllTime = document.getElementById("btn-all-time");
+  if (btnAllTime) {
+    btnAllTime.addEventListener("click", function() {
+      if (!gameListCache) return;
+      gameListCache.forEach(function(g) { selectedGames.add(g.filename); });
+      updateSelectionUI();
+      showLeaderboard();
+    });
+  }
+}
+
+function updateSelectionUI() {
+  var n = selectedGames.size;
+  var total = gameListCache ? gameListCache.length : 0;
+  var selCount = document.getElementById("sel-count");
+  if (selCount) selCount.textContent = n + " of " + total + " games selected";
+  var btnLb = document.getElementById("btn-leaderboard");
+  if (btnLb) {
+    if (n === 0) btnLb.classList.add("btn-disabled");
+    else btnLb.classList.remove("btn-disabled");
+  }
+  var cbAll = document.getElementById("cb-all");
+  if (cbAll) {
+    cbAll.indeterminate = n > 0 && n < total;
+    cbAll.checked = n === total && total > 0;
+  }
+}
+
+// ─── Leaderboard ───
+async function showLeaderboard() {
+  if (selectedGames.size === 0) return;
+  gameListScreen.style.display = "none";
+  playerProfileScreen.style.display = "none";
+  updatePlayerRoute(null);
+  leaderboardScreen.style.display = "block";
+  var subtitle = document.getElementById("lb-subtitle");
+  if (subtitle) subtitle.textContent = selectedGames.size + " game" + (selectedGames.size === 1 ? "" : "s") + " selected";
+  var content = document.getElementById("lb-content");
+  content.innerHTML = '<div class="loading-wrap"><div class="spinner"></div>' +
+    '<span>Loading ' + selectedGames.size + ' game' + (selectedGames.size === 1 ? "" : "s") + '...</span></div>';
+
+  var files = Array.from(selectedGames);
+  var promises = files.map(function(f) {
+    return fetch("/history/" + f).then(function(r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    });
+  });
+  var results = await Promise.allSettled(promises);
+  var games = results.filter(function(r) { return r.status === "fulfilled"; }).map(function(r) { return r.value; });
+  var failed = results.filter(function(r) { return r.status === "rejected"; }).length;
+
+  if (games.length === 0) {
+    content.innerHTML = '<div class="error-msg"><p>Failed to load any game files.</p></div>';
+    return;
+  }
+  lbWarningHtml = failed > 0
+    ? '<div style="color:#e8a060;padding:8px 0;font-size:13px">&#9888; ' + failed + ' game file(s) could not be loaded and are excluded.</div>'
+    : "";
+  var agg = aggregateLeaderboard(games);
+  lbData = agg.rows;
+  lbTeamStats = agg.teamStats;
+  lbIsSeriesView = agg.isSeriesView;
+  lbSortCol = "kills";
+  lbSortAsc = false;
+  lbFilter = "";
+  lbViewMode = lbIsSeriesView ? "series" : "individual";
+  renderLeaderboard();
+}
+
+function aggregateLeaderboard(games) {
+  var map = {};
+  var teamStats = {};    // teamId -> { name, teamId, wins, kills, deaths }
+  var teamGameCount = 0;
+  games.forEach(function(game) {
+    var isTeam = game.teams && game.teams.length > 0 &&
+      game.players.some(function(p) { return p.team !== 65535 && p.team != null; });
+    var teamPlaceById = {};
+    if (isTeam && game.teams) {
+      teamGameCount++;
+      game.teams.forEach(function(t) {
+        teamPlaceById[t.team_id] = t.place;
+        if (!teamStats[t.team_id]) {
+          teamStats[t.team_id] = { name: t.name, teamId: t.team_id, wins: 0, games: 0,
+            kills: 0, deaths: 0, assists: 0, suicides: 0,
+            headshots: 0, totalShots: 0, shotsHit: 0, medals: 0 };
+        }
+        teamStats[t.team_id].games++;
+        if (t.place === 0) teamStats[t.team_id].wins++;
+      });
+    }
+    game.players.forEach(function(p) {
+      var key = p.name;
+      if (!map[key]) {
+        map[key] = { name: p.name, games: 0, wins: 0, kills: 0, deaths: 0, assists: 0,
+          suicides: 0, headshots: 0, totalShots: 0, shotsHit: 0, medals: 0,
+          slayerGames: 0, slayerAvgLifeSum: 0, slayerBestSpreeMax: 0,
+          teamCounts: {} };
+      }
+      var row = map[key];
+      row.games++;
+      var won = isTeam ? (teamPlaceById[p.team] === 0) : (p.place === 0);
+      if (won) row.wins++;
+      row.kills    += (p.kills    || 0);
+      row.deaths   += (p.deaths   || 0);
+      row.assists  += (p.assists  || 0);
+      row.suicides += (p.suicides || 0);
+      row.headshots  += safe(p, "accuracy", "headshots");
+      row.totalShots += safe(p, "accuracy", "total_shots");
+      row.shotsHit   += safe(p, "accuracy", "shots_hit");
+      row.medals     += safe(p, "medals", "total");
+      if (isTeam && p.team != null && p.team !== 65535) {
+        var tid = p.team;  // p.team equals team_id in schema v3
+        row.teamCounts[tid] = (row.teamCounts[tid] || 0) + 1;
+        if (teamStats[tid]) {
+          teamStats[tid].kills     += (p.kills    || 0);
+          teamStats[tid].deaths    += (p.deaths   || 0);
+          teamStats[tid].assists   += (p.assists  || 0);
+          teamStats[tid].suicides  += (p.suicides || 0);
+          teamStats[tid].headshots += safe(p, "accuracy", "headshots");
+          teamStats[tid].totalShots+= safe(p, "accuracy", "total_shots");
+          teamStats[tid].shotsHit  += safe(p, "accuracy", "shots_hit");
+          teamStats[tid].medals    += safe(p, "medals", "total");
+        }
+      }
+      if (game.gametype === "slayer") {
+        row.slayerGames++;
+        var avgLife   = safe(p, "gametype_stats", "Avg Life");
+        var bestSpree = safe(p, "gametype_stats", "Best Spree");
+        row.slayerAvgLifeSum += (avgLife || 0);
+        if ((bestSpree || 0) > row.slayerBestSpreeMax) row.slayerBestSpreeMax = bestSpree;
+      }
+    });
+  });
+  var rows = Object.values(map).map(function(row) {
+    row.kd       = row.deaths === 0 ? (row.kills > 0 ? Infinity : 0) : Math.round((row.kills / row.deaths) * 100) / 100;
+    row.kda      = row.deaths === 0 ? (row.kills + row.assists > 0 ? Infinity : 0) : Math.round(((row.kills + row.assists) / row.deaths) * 100) / 100;
+    row.winRate  = row.games  === 0 ? 0 : Math.round((row.wins  / row.games)  * 1000) / 10;
+    row.accuracy    = row.totalShots === 0 ? 0 : Math.round((row.shotsHit / row.totalShots) * 1000) / 10;
+    row.hitsPerGame = row.games === 0 ? 0 : Math.round(row.shotsHit / row.games);
+    row.slayerAvgLife = row.slayerGames === 0 ? null : Math.round(row.slayerAvgLifeSum / row.slayerGames);
+    var primaryTeamId = null;
+    var maxCount = 0;
+    Object.keys(row.teamCounts).forEach(function(tid) {
+      if (row.teamCounts[tid] > maxCount) {
+        maxCount = row.teamCounts[tid];
+        primaryTeamId = parseInt(tid, 10);
+      }
+    });
+    row.primaryTeamId = primaryTeamId;
+    return row;
+  });
+  // Compute derived team stats
+  Object.values(teamStats).forEach(function(ts) {
+    ts.kd       = ts.deaths === 0 ? (ts.kills > 0 ? Infinity : 0) : Math.round((ts.kills / ts.deaths) * 100) / 100;
+    ts.kda      = ts.deaths === 0 ? (ts.kills + ts.assists > 0 ? Infinity : 0) : Math.round(((ts.kills + ts.assists) / ts.deaths) * 100) / 100;
+    ts.winRate  = ts.games  === 0 ? 0 : Math.round((ts.wins  / ts.games)  * 1000) / 10;
+    ts.accuracy    = ts.totalShots === 0 ? 0 : Math.round((ts.shotsHit / ts.totalShots) * 1000) / 10;
+    ts.hitsPerGame = ts.games === 0 ? 0 : Math.round(ts.shotsHit / ts.games);
+  });
+  // Derive slayer stats per team from player rows
+  Object.keys(teamStats).forEach(function(tid) {
+    var teamPlayers = rows.filter(function(r) { return r.primaryTeamId === parseInt(tid, 10); });
+    var maxSpree = 0, avgLifeSum = 0, avgLifeCount = 0;
+    teamPlayers.forEach(function(r) {
+      if (r.slayerBestSpreeMax > maxSpree) maxSpree = r.slayerBestSpreeMax;
+      if (r.slayerAvgLife !== null) { avgLifeSum += r.slayerAvgLife; avgLifeCount++; }
+    });
+    teamStats[tid].slayerBestSpreeMax = maxSpree;
+    teamStats[tid].slayerAvgLife = avgLifeCount === 0 ? null : Math.round(avgLifeSum / avgLifeCount);
+  });
+  return {
+    rows: rows,
+    teamStats: teamStats,
+    isSeriesView: teamGameCount > 0 && teamGameCount >= Math.ceil(games.length / 2)
+  };
+}
+
+var LB_COLS = [
+  { key: "name",               label: "Player",     align: "left",  fmt: function(v) { return playerLinkHtml(v); } },
+  { key: "games",              label: "GP",         align: "right", fmt: function(v) { return v; } },
+  { key: "wins",               label: "Wins",       align: "right", fmt: function(v) { return v; } },
+  { key: "winRate",            label: "Win%",       align: "right", fmt: function(v) { return v.toFixed(1) + "%"; } },
+  { key: "kills",              label: "Kills",      align: "right", fmt: function(v) { return v; } },
+  { key: "deaths",             label: "Deaths",     align: "right", fmt: function(v) { return v; } },
+  { key: "kd",                 label: "K/D",        align: "right", fmt: function(v) { return v === Infinity ? "&#8734;" : v.toFixed(2); } },
+  { key: "kda",                label: "KDA",        align: "right", fmt: function(v) { return v === Infinity ? "&#8734;" : v.toFixed(2); } },
+  { key: "assists",            label: "Assists",    align: "right", fmt: function(v) { return v; } },
+  { key: "suicides",           label: "Suicides",   align: "right", fmt: function(v) { return v; } },
+  { key: "headshots",          label: "HS",         align: "right", fmt: function(v) { return v; } },
+  { key: "accuracy",           label: "Acc%",       align: "right", fmt: function(v) { return v.toFixed(1) + "%"; } },
+  { key: "totalShots",         label: "Fired",      align: "right", fmt: function(v) { return v; } },
+  { key: "shotsHit",           label: "Hits",       align: "right", fmt: function(v) { return v; } },
+  { key: "hitsPerGame",        label: "Hits/G",     align: "right", fmt: function(v) { return v; } },
+  { key: "medals",             label: "Medals",     align: "right", fmt: function(v) { return v; } },
+  { key: "slayerBestSpreeMax", label: "Spree",      align: "right", fmt: function(v) { return v > 0 ? v : "&#8212;"; } },
+  { key: "slayerAvgLife",      label: "Avg Life",   align: "right", fmt: function(v) { return v === null ? "&#8212;" : formatTime(v); } },
+];
+
+function lbSortFn(a, b) {
+  var av = a[lbSortCol], bv = b[lbSortCol];
+  if (av === null || av === undefined) av = -1;
+  if (bv === null || bv === undefined) bv = -1;
+  if (av === Infinity) av = 99999;
+  if (bv === Infinity) bv = 99999;
+  if (typeof av === "string") return lbSortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+  return lbSortAsc ? av - bv : bv - av;
+}
+
+function renderSeriesBanner(teamIds) {
+  var html = '<div class="series-banner">';
+  if (teamIds.length === 2) {
+    var a = teamIds[0], b = teamIds[1];
+    var tca = getTeamColor(a), tcb = getTeamColor(b);
+    var tsa = lbTeamStats[a], tsb = lbTeamStats[b];
+    var kdA = tsa.deaths === 0 ? (tsa.kills > 0 ? "&#8734;" : "0") : (tsa.kills / tsa.deaths).toFixed(2);
+    var kdB = tsb.deaths === 0 ? (tsb.kills > 0 ? "&#8734;" : "0") : (tsb.kills / tsb.deaths).toFixed(2);
+    html +=
+      '<div class="series-team-block left">' +
+        '<div class="series-team-name" style="color:' + tca.text + '">' + esc(tsa.name || tca.name) + '</div>' +
+        '<div class="series-kd" style="color:' + tca.text + '">K/D ' + kdA + '</div>' +
+        '<div class="series-kd" style="color:' + tca.text + ';opacity:0.7;font-size:11px">' + tsa.assists + ' Ast &middot; ' + tsa.accuracy.toFixed(1) + '% Acc &middot; ' + tsa.medals + ' Mdl</div>' +
+      '</div>' +
+      '<div class="series-score-block">' +
+        '<span class="series-score-num" style="color:' + tca.text + '">' + tsa.wins + '</span>' +
+        '<span class="series-score-dash">—</span>' +
+        '<span class="series-score-num" style="color:' + tcb.text + '">' + tsb.wins + '</span>' +
+      '</div>' +
+      '<div class="series-team-block right">' +
+        '<div class="series-team-name" style="color:' + tcb.text + '">' + esc(tsb.name || tcb.name) + '</div>' +
+        '<div class="series-kd" style="color:' + tcb.text + '">K/D ' + kdB + '</div>' +
+        '<div class="series-kd" style="color:' + tcb.text + ';opacity:0.7;font-size:11px">' + tsb.assists + ' Ast &middot; ' + tsb.accuracy.toFixed(1) + '% Acc &middot; ' + tsb.medals + ' Mdl</div>' +
+      '</div>';
+  } else {
+    teamIds.forEach(function(tid) {
+      var tc = getTeamColor(tid);
+      var ts = lbTeamStats[tid];
+      var kd = ts.deaths === 0 ? (ts.kills > 0 ? "&#8734;" : "0") : (ts.kills / ts.deaths).toFixed(2);
+      html += '<div class="series-team-block" style="text-align:center;padding:0 12px">' +
+        '<div class="series-team-name" style="color:' + tc.text + '">&#9679; ' + esc(ts.name || tc.name) + '</div>' +
+        '<div class="series-score-num" style="color:' + tc.text + '">' + ts.wins + 'W</div>' +
+        '<div class="series-kd" style="color:' + tc.text + '">K/D ' + kd + '</div>' +
+        '<div class="series-kd" style="color:' + tc.text + ';opacity:0.7;font-size:11px">' + ts.assists + ' Ast &middot; ' + ts.accuracy.toFixed(1) + '% Acc</div>' +
+      '</div>';
+    });
+  }
+  return html + '</div>';
+}
+
+function renderLeaderboard() {
+  var filtered = lbFilter
+    ? lbData.filter(function(r) { return r.name.toLowerCase().indexOf(lbFilter) >= 0; })
+    : lbData;
+
+  var header = LB_COLS.map(function(col) {
+    var cls = col.align === "right" ? "num" : "player-name";
+    if (col.key === lbSortCol) cls += " sorted" + (lbSortAsc ? " asc" : "");
+    return '<th class="' + cls + '" data-col="' + col.key + '">' + col.label + '</th>';
+  }).join("");
+
+  // Sync tab active state
+  var tabSeries = document.getElementById("lb-tab-series");
+  var tabIndividual = document.getElementById("lb-tab-individual");
+  var hasTeamData = lbIsSeriesView && lbTeamStats && Object.keys(lbTeamStats).length > 0;
+  if (tabSeries) {
+    tabSeries.classList.toggle("active", lbViewMode === "series");
+    tabSeries.classList.toggle("disabled", !hasTeamData);
+  }
+  if (tabIndividual) tabIndividual.classList.toggle("active", lbViewMode === "individual");
+
+  var colCount = LB_COLS.length;
+  var seriesBannerHtml = "";
+  var tbody = "";
+
+  if (lbViewMode === "series" && hasTeamData) {
+    // Sort teams: most wins first
+    var teamIds = Object.keys(lbTeamStats).map(Number).sort(function(a, b) {
+      return lbTeamStats[b].wins - lbTeamStats[a].wins;
+    });
+    seriesBannerHtml = renderSeriesBanner(teamIds);
+
+    teamIds.forEach(function(teamId) {
+      var tc = getTeamColor(teamId);
+      var ts = lbTeamStats[teamId];
+      var rawName = ts.name || tc.name;
+      var teamLabel = rawName.toLowerCase().replace(/\s+/g, "").endsWith("team") ? rawName : rawName + " Team";
+      // Team header row with inline aggregate stats using LB_COLS
+      var headerCells = LB_COLS.map(function(col) {
+        var cls = col.align === "right" ? ' class="num"' : ' class="player-name"';
+        var val;
+        if (col.key === "name") val = '<span style="color:' + tc.text + '">&#9679;&nbsp;' + esc(teamLabel.toUpperCase()) + '</span>';
+        else if (ts[col.key] !== undefined) val = col.fmt(ts[col.key]);
+        else val = "&#8212;";
+        return '<td' + cls + '>' + val + '</td>';
+      }).join("");
+      tbody += '<tr class="lb-team-header-row" style="background:' + tc.bg + ';border-left:3px solid ' + tc.border + '">' + headerCells + '</tr>';
+      var teamRows = filtered.filter(function(r) { return r.primaryTeamId === teamId; });
+      teamRows.sort(lbSortFn);
+      teamRows.forEach(function(row) {
+        var cells = LB_COLS.map(function(col) {
+          var cls = col.align === "right" ? ' class="num"' : ' class="player-name"';
+          return '<td' + cls + '>' + col.fmt(row[col.key]) + '</td>';
+        }).join("");
+        tbody += '<tr style="background:' + tc.bg + '">' + cells + '</tr>';
+      });
+    });
+
+    // Players with no team affiliation (FFA players in a mixed selection)
+    var unaffiliated = filtered.filter(function(r) { return r.primaryTeamId === null; });
+    if (unaffiliated.length > 0) {
+      tbody +=
+        '<tr class="lb-team-header-row" style="background:#111520;border-left:3px solid #2a2e3a">' +
+          '<td class="player-name" colspan="' + colCount + '">' +
+            '<span style="color:#6a7a9a">&#9679;&nbsp;UNAFFILIATED</span>' +
+          '</td>' +
+        '</tr>';
+      unaffiliated.sort(lbSortFn);
+      unaffiliated.forEach(function(row, i) {
+        var cells = LB_COLS.map(function(col) {
+          var cls = col.align === "right" ? ' class="num"' : ' class="player-name"';
+          return '<td' + cls + '>' + col.fmt(row[col.key]) + '</td>';
+        }).join("");
+        tbody += '<tr class="' + rowClass(i) + '">' + cells + '</tr>';
+      });
+    }
+  } else {
+    // Flat sorted view (FFA or no team data)
+    var rows = filtered.slice().sort(lbSortFn);
+    tbody = rows.map(function(row, i) {
+      var cells = LB_COLS.map(function(col) {
+        var cls = col.align === "right" ? ' class="num"' : ' class="player-name"';
+        return '<td' + cls + '>' + col.fmt(row[col.key]) + '</td>';
+      }).join("");
+      return '<tr class="' + rowClass(i) + '">' + cells + '</tr>';
+    }).join("");
+  }
+
+  var content = document.getElementById("lb-content");
+  content.innerHTML = lbWarningHtml + seriesBannerHtml +
+    '<table class="pgcr-table lb-table"><thead><tr>' + header + '</tr></thead>' +
+    '<tbody>' + tbody + '</tbody></table>';
+  bindPlayerLinks(content);
+
+  content.querySelectorAll("th[data-col]").forEach(function(th) {
+    th.addEventListener("click", function() {
+      var col = th.dataset.col;
+      if (lbSortCol === col) lbSortAsc = !lbSortAsc;
+      else { lbSortCol = col; lbSortAsc = col === "name"; }
+      renderLeaderboard();
+    });
+  });
+  var searchEl = document.getElementById("lb-search");
+  if (searchEl) {
+    searchEl.value = lbFilter;
+    searchEl.addEventListener("input", function() {
+      lbFilter = searchEl.value.toLowerCase().trim();
+      renderLeaderboard();
+    });
+  }
+}
+
+// ─── Drag-drop fallback (local file mode) ───
+function initDropZone() {
+  var dropZone = document.getElementById("drop-zone");
+  var fileInput = document.getElementById("file-input");
+  dropZone.addEventListener("click", function() { fileInput.click(); });
+  dropZone.addEventListener("dragover", function(e) { e.preventDefault(); dropZone.classList.add("dragover"); });
+  dropZone.addEventListener("dragleave", function() { dropZone.classList.remove("dragover"); });
+  dropZone.addEventListener("drop", function(e) {
+    e.preventDefault();
+    dropZone.classList.remove("dragover");
+    if (e.dataTransfer.files.length) loadLocalFile(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener("change", function() { if (fileInput.files.length) loadLocalFile(fileInput.files[0]); });
+}
+
+function loadLocalFile(file) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      data = JSON.parse(e.target.result);
+      if (!data.players || !data.players.length) throw new Error("No players found");
+      currentTab = 0;
+      pvpSelected = 0;
+      showViewer();
+    } catch (err) {
+      data = null;
+      dropFallback.style.display = "flex";
+      document.getElementById("drop-zone").innerHTML =
+        '<p style="color:#aa6666">Failed to load: ' + esc(err.message) + '</p>' +
+        '<small>Try dropping another JSON file</small>';
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ─── Viewer ───
+function showViewer() {
+  gameListScreen.style.display = "none";
+  dropFallback.style.display = "none";
+  leaderboardScreen.style.display = "none";
+  playerProfileScreen.style.display = "none";
+  updatePlayerRoute(null);
+  viewer.classList.add("active");
+  document.getElementById("timestamp").textContent = data.timestamp ? formatDate(data.timestamp) : "";
+  var gtParts = splitGametype(data.gametype || "unknown");
+  var detailVariant = gtParts.variant || data.variant || "";
+  document.getElementById("game-type").textContent = (detailVariant ? gtParts.base + ' — ' + detailVariant : gtParts.base).toUpperCase();
+  document.getElementById("game-map").textContent = data.map || "";
+  document.getElementById("game-players").textContent = (data.player_count || data.players.length) + " Players";
+  document.getElementById("game-source").textContent = data.source === "pgcr_display" ? "PGCR Display" : (data.source || "");
+
+  // Team score banner
+  var banner = document.getElementById("team-banner");
+  if (isTeamGame()) {
+    var teams = getTeamsSorted();
+    banner.style.display = "flex";
+    banner.innerHTML = teams.map(function(t, i) {
+      var tc = getTeamColor(t.team_id);
+      var winStar = (t.place === 0) ? '<span class="win-star">&#9733;</span>' : '';
+      var side = '<div class="team-banner-side">' +
+        '<span style="color:' + tc.text + '">' + esc(t.name || tc.name) + '</span>' +
+        winStar +
+        '<span class="team-banner-score" style="color:' + tc.text + '">' + esc(t.score_string || "0") + '</span>' +
+        '</div>';
+      return (i > 0 ? '<span class="team-banner-vs">VS</span>' : '') + side;
+    }).join("");
+  } else {
+    banner.style.display = "none";
+    banner.innerHTML = "";
+  }
+
+  var btnPrev = document.getElementById("btn-prev-game");
+  var btnNext = document.getElementById("btn-next-game");
+  if (btnPrev && btnNext && servedMode && gameListCache && gameListCache.length > 1) {
+    btnPrev.style.display = "";
+    btnNext.style.display = "";
+    btnPrev.disabled = currentGameIndex <= 0;
+    btnNext.disabled = currentGameIndex < 0 || currentGameIndex >= gameListCache.length - 1;
+  } else {
+    if (btnPrev) btnPrev.style.display = "none";
+    if (btnNext) btnNext.style.display = "none";
+  }
+
+  renderTab();
+}
+
+document.getElementById("btn-prev-game").addEventListener("click", function() {
+  if (gameListCache && currentGameIndex > 0) {
+    loadFromServer(gameListCache[currentGameIndex - 1].filename);
+  }
+});
+
+document.getElementById("btn-next-game").addEventListener("click", function() {
+  if (gameListCache && currentGameIndex >= 0 && currentGameIndex < gameListCache.length - 1) {
+    loadFromServer(gameListCache[currentGameIndex + 1].filename);
+  }
+});
+
+document.getElementById("btn-back").addEventListener("click", async function() {
+  viewer.classList.remove("active");
+  data = null;
+  if (servedMode) {
+    var content = document.getElementById("game-list-content");
+    content.innerHTML = '<div class="loading-wrap"><div class="spinner"></div><span>Loading games...</span></div>';
+    gameListScreen.style.display = "block";
+    try {
+      var res = await fetch("/api/games");
+      var games = await res.json();
+      showGameList(games);
+    } catch (e) {
+      content.innerHTML = '<div class="error-msg"><p>Failed to load game list</p>' +
+        '<button class="btn" onclick="location.reload()">Retry</button></div>';
+    }
+  } else {
+    dropFallback.style.display = "flex";
+  }
+});
+
+// ─── Tab navigation ───
+document.getElementById("tab-left").addEventListener("click", function() {
+  var tabs = getTabNames();
+  currentTab = (currentTab - 1 + tabs.length) % tabs.length;
+  renderTab();
+});
+document.getElementById("tab-right").addEventListener("click", function() {
+  var tabs = getTabNames();
+  currentTab = (currentTab + 1) % tabs.length;
+  renderTab();
+});
+document.addEventListener("keydown", function(e) {
+  if (!data) return;
+  var tabs = getTabNames();
+  if (e.key === "ArrowLeft") { currentTab = (currentTab - 1 + tabs.length) % tabs.length; renderTab(); }
+  if (e.key === "ArrowRight") { currentTab = (currentTab + 1) % tabs.length; renderTab(); }
+});
+
+function renderTab() {
+  var tabs = getTabNames();
+  if (currentTab >= tabs.length) currentTab = 0;
+  document.getElementById("tab-name").textContent = tabs[currentTab];
+  var container = document.getElementById("tab-content");
+  var tabName = tabs[currentTab];
+
+  switch (tabName) {
+    case "TEAM STATS":         container.innerHTML = renderTeamStats(); break;
+    case "PLAYER STATS":       container.innerHTML = renderPlayerStats(); break;
+    case "KILLS":              container.innerHTML = renderKills(); break;
+    case "WEAPONS":           container.innerHTML = renderWeapons(); break;
+    case "PLAYER VS. PLAYER":  container.innerHTML = renderPvP(); bindPvPClicks(); break;
+    case "MEDALS":             container.innerHTML = renderMedals(); break;
+    case "HIT STATS":          container.innerHTML = renderHitStats(); break;
+  }
+  bindPlayerLinks(container);
+}
+
+function rowClass(i) { return "row-" + (i % 8); }
+
+document.getElementById("btn-lb-back").addEventListener("click", function() {
+  leaderboardScreen.style.display = "none";
+  showGameList(gameListCache);
+});
+
+document.getElementById("lb-tab-series").addEventListener("click", function() {
+  if (!lbData) return;
+  lbViewMode = "series";
+  renderLeaderboard();
+});
+document.getElementById("lb-tab-individual").addEventListener("click", function() {
+  if (!lbData) return;
+  lbViewMode = "individual";
+  renderLeaderboard();
+});
+
+// ─── Team-grouped table helper ───
+function renderPlayerTable(headerHtml, colCount, rowFn) {
+  if (isTeamGame()) {
+    var html = '<table class="pgcr-table"><tr>' + headerHtml + '</tr>';
+    var teams = getTeamsSorted();
+    for (var t = 0; t < teams.length; t++) {
+      var team = teams[t];
+      var tc = getTeamColor(team.team_id);
+      var players = getTeamPlayers(team.team_id);
+      html += '<tr class="team-header-row" style="background:' + tc.bg + ';border-left:3px solid ' + tc.border + '">' +
+        '<td colspan="' + colCount + '" style="color:' + tc.text + '">' +
+        esc(team.name || tc.name) + ' — ' + esc(team.score_string || "") + '</td></tr>';
+      for (var i = 0; i < players.length; i++) {
+        html += rowFn(players[i], i, tc);
+      }
+    }
+    return html + '</table>';
+  } else {
+    var html = '<table class="pgcr-table"><tr>' + headerHtml + '</tr>';
+    var p = data.players;
+    for (var i = 0; i < p.length; i++) {
+      html += rowFn(p[i], i, null);
+    }
+    return html + '</table>';
+  }
+}
+
+// ─── Tab: Team Stats (team games only) ───
+function renderTeamStats() {
+  var teams = getTeamsSorted();
+  var html = '<table class="pgcr-table">' +
+    '<tr><th style="width:40%">Team</th><th class="num" style="width:20%">Place</th>' +
+    '<th class="num" style="width:20%">Score</th><th class="num" style="width:20%">Players</th></tr>';
+  for (var i = 0; i < teams.length; i++) {
+    var t = teams[i];
+    var tc = getTeamColor(t.team_id);
+    var playerCount = getTeamPlayers(t.team_id).length;
+    var winStar = (t.place === 0) ? ' <span class="win-star">&#9733;</span>' : '';
+    html += '<tr style="background:' + tc.bg + ';border-left:3px solid ' + tc.border + '">' +
+      '<td class="player-name" style="color:' + tc.text + '">' + esc(t.name || tc.name) + winStar + '</td>' +
+      '<td class="num">' + esc(t.place_string || ("#" + ((t.place || 0) + 1))) + '</td>' +
+      '<td class="num" style="color:' + tc.text + ';font-weight:700;font-size:18px">' + esc(t.score_string || "0") + '</td>' +
+      '<td class="num">' + playerCount + '</td></tr>';
+  }
+  return html + '</table>';
+}
+
+// ─── Tab: Player Stats ───
+function renderPlayerStats() {
+  var p = data.players;
+  var gtKeys = (p[0] && p[0].gametype_stats) ? Object.keys(p[0].gametype_stats) : [];
+  var gtLookup = data.gametype ? GT_LABELS[data.gametype] : null;
+  var col0 = gtKeys[0] || (gtLookup && gtLookup[0]) || "Value 0";
+  var col1 = gtKeys[1] || (gtLookup && gtLookup[1]) || "Value 1";
+  var isTimeCol0 = col0.toLowerCase().indexOf("life") >= 0 || col0.toLowerCase().indexOf("time") >= 0;
+  var isTimeCol1 = col1.toLowerCase().indexOf("life") >= 0 || col1.toLowerCase().indexOf("time") >= 0;
+
+  var header = '<th style="width:30%">Player</th><th class="num" style="width:12%">Place</th>' +
+    '<th class="num" style="width:18%">' + esc(col0) + '</th>' +
+    '<th class="num" style="width:18%">' + esc(col1) + '</th>' +
+    '<th class="num" style="width:15%">Score</th>';
+
+  return renderPlayerTable(header, 5, function(player, i, tc) {
+    var vals = player.gametype_values || [0, 0];
+    var v0 = isTimeCol0 ? formatTime(vals[0]) : vals[0];
+    var v1 = isTimeCol1 ? formatTime(vals[1]) : vals[1];
+    var bg = tc ? 'style="background:' + tc.bg + '"' : 'class="' + rowClass(i) + '"';
+    return '<tr ' + bg + '>' +
+      '<td class="player-name">' + playerLinkHtml(player.name) + '</td>' +
+      '<td class="num">' + esc(player.place_string) + '</td>' +
+      '<td class="num">' + v0 + '</td><td class="num">' + v1 + '</td>' +
+      '<td class="num">' + esc(player.score_string) + '</td></tr>';
+  });
+}
+
+// ─── Tab: Kills ───
+function renderKills() {
+  var header = '<th style="width:30%">Player</th><th class="num">Kills</th>' +
+    '<th class="num">Assists</th><th class="num">Deaths</th><th class="num">Suicides</th>';
+
+  return renderPlayerTable(header, 5, function(player, i, tc) {
+    var bg = tc ? 'style="background:' + tc.bg + '"' : 'class="' + rowClass(i) + '"';
+    return '<tr ' + bg + '>' +
+      '<td class="player-name">' + playerLinkHtml(player.name) + '</td>' +
+      '<td class="num">' + (player.kills || 0) + '</td>' +
+      '<td class="num">' + (player.assists || 0) + '</td>' +
+      '<td class="num">' + (player.deaths || 0) + '</td>' +
+      '<td class="num">' + (player.suicides || 0) + '</td></tr>';
+  });
+}
+
+
+// ─── Tab: Weapons ───
+function renderWeapons() {
+  var p = data.players;
+  if (!p || p.length === 0) return "";
+
+  // Create weapon summary across all players
+  var weaponTotals = {};
+  p.forEach(function(player) {
+    if (player.weapon_stats) {
+      Object.keys(player.weapon_stats).forEach(function(weapon) {
+        weaponTotals[weapon] = (weaponTotals[weapon] || 0) + player.weapon_stats[weapon];
+      });
+    }
+  });
+
+  var html = "<div class=\"weapons-summary\">";
+  if (Object.keys(weaponTotals).length === 0) {
+    html += "<p style=\"text-align:center;color:#6a8aa8;padding:40px;\">No weapon data available for this game</p>";
+  } else {
+    html += "<h3>Weapon Summary</h3>";
+    html += "<div class=\"weapon-totals\">";
+    var sortedWeapons = Object.keys(weaponTotals).sort(function(a, b) {
+      return weaponTotals[b] - weaponTotals[a];
+    });
+    sortedWeapons.forEach(function(weapon) {
+      var displayName = weapon.replace(/_/g, " ").replace(/\b\w/g, function(l) { return l.toUpperCase(); });
+      html += "<span class=\"weapon-pill\">"+ esc(displayName) + ": "+ weaponTotals[weapon] + "</span>";
+    });
+    html += "</div>";
+  }
+  html += "</div>";
+
+  // Player weapon breakdowns
+  var header = "<th style=\"width:25%\">Player</th><th style=\"width:75%\">Weapon Breakdown</th>";
+  html += renderPlayerTable(header, 2, function(player, i, tc) {
+    var bg = tc ? "style=\"background:" + tc.bg + "\"" : "class=\"" + rowClass(i) + "\"";
+    var weaponHtml = "";
+    if (player.weapon_stats && Object.keys(player.weapon_stats).length > 0) {
+      var playerWeapons = Object.keys(player.weapon_stats).sort(function(a, b) {
+        return player.weapon_stats[b] - player.weapon_stats[a];
+      });
+      weaponHtml = playerWeapons.map(function(weapon) {
+        var displayName = weapon.replace(/_/g, " ").replace(/\b\w/g, function(l) { return l.toUpperCase(); });
+        return "<span class=\"weapon-stat\">"+ esc(displayName) + ": "+ player.weapon_stats[weapon] + "</span>";
+      }).join(" ");
+    } else {
+      weaponHtml = "<span style=\"color:#6a8aa8;\">No weapon data</span>";
+    }
+    return "<tr " + bg + "><td class=\"player-name\">"+ playerLinkHtml(player.name) + "</td><td>"+ weaponHtml + "</td></tr>";
+  });
+
+  return html;
+}
+// ─── Tab: Player vs Player ───
+function renderPvP() {
+  var p = data.players;
+  if (!p || p.length === 0) return "";
+  var sel = Math.min(pvpSelected, p.length - 1);
+
+  var html = '<div class="pvp-hint">Viewing from <strong>' + esc(p[sel].name) + '</strong>\'s perspective — click a row to change</div>';
+
+  if (isTeamGame()) {
+    html += '<table class="pgcr-table"><tr><th style="width:40%">Player</th>' +
+      '<th class="num" style="width:30%">Killed</th><th class="num" style="width:30%">Killed By</th></tr>';
+    var teams = getTeamsSorted();
+    for (var t = 0; t < teams.length; t++) {
+      var team = teams[t];
+      var tc = getTeamColor(team.team_id);
+      var players = getTeamPlayers(team.team_id);
+      html += '<tr class="team-header-row" style="background:' + tc.bg + ';border-left:3px solid ' + tc.border + '">' +
+        '<td colspan="3" style="color:' + tc.text + '">' + esc(team.name || tc.name) + '</td></tr>';
+      for (var i = 0; i < players.length; i++) {
+        var pi = data.players.indexOf(players[i]);
+        var killed = (p[sel].killed || [])[pi] || 0;
+        var killedBy = ((players[i].killed || [])[sel]) || 0;
+        var selClass = pi === sel ? " selected" : "";
+        html += '<tr style="background:' + tc.bg + '"' + selClass + ' data-clickable data-idx="' + pi + '">' +
+          '<td class="player-name">' + playerLinkHtml(players[i].name) + '</td>' +
+          '<td class="num">' + killed + '</td><td class="num">' + killedBy + '</td></tr>';
+      }
+    }
+    html += '</table>';
+  } else {
+    html += '<table class="pgcr-table"><tr><th style="width:40%">Player</th>' +
+      '<th class="num" style="width:30%">Killed</th><th class="num" style="width:30%">Killed By</th></tr>';
+    for (var i = 0; i < p.length; i++) {
+      var killed = (p[sel].killed || [])[i] || 0;
+      var killedBy = (p[i].killed || [])[sel] || 0;
+      var selClass = i === sel ? " selected" : "";
+      html += '<tr class="' + rowClass(i) + selClass + '" data-clickable data-idx="' + i + '">' +
+        '<td class="player-name">' + playerLinkHtml(p[i].name) + '</td>' +
+        '<td class="num">' + killed + '</td><td class="num">' + killedBy + '</td></tr>';
+    }
+    html += '</table>';
+  }
+  return html;
+}
+
+function bindPvPClicks() {
+  document.querySelectorAll("[data-clickable]").forEach(function(row) {
+    row.addEventListener("click", function() {
+      pvpSelected = parseInt(row.dataset.idx);
+      document.getElementById("tab-content").innerHTML = renderPvP();
+      bindPvPClicks();
+    });
+  });
+}
+
+// ─── Tab: Medals ───
+function renderMedals() {
+  var header = '<th style="width:30%">Player</th><th class="num" style="width:15%">Total</th>' +
+    '<th style="width:55%">Medals Earned</th>';
+
+  return renderPlayerTable(header, 3, function(player, i, tc) {
+    var bitmask = safe(player, "medals", "by_type");
+    var total = safe(player, "medals", "total");
+    var medals = decodeMedals(bitmask);
+    var chips = medals.map(function(m) {
+      if (m.img) {
+        return '<img class="medal-img" src="' + m.img + '" title="' + m.name + '" alt="' + m.name + '">';
+      }
+      return '<span class="medal-chip">' + m.name + '</span>';
+    }).join("");
+    var bg = tc ? 'style="background:' + tc.bg + '"' : 'class="' + rowClass(i) + '"';
+    return '<tr ' + bg + '>' +
+      '<td class="player-name">' + playerLinkHtml(player.name) + '</td>' +
+      '<td class="num">' + total + '</td>' +
+      '<td><div class="medal-list">' + chips + '</div></td></tr>';
+  });
+}
+
+// ─── Export ───
+function buildExportTable() {
+  var rowColors = ["#2a2a30","#1a2050","#1e2858","#1a3828","#3a3820","#381a1a","#2a1a30","#30282a"];
+  var filtered = lbFilter
+    ? lbData.filter(function(r) { return r.name.toLowerCase().indexOf(lbFilter) >= 0; })
+    : lbData;
+
+  var html = '<table border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:12px;background:#0a0e1a;color:#d0d4dc">';
+  html += '<tr>';
+  LB_COLS.forEach(function(col) {
+    var align = col.align === "right" ? "right" : "left";
+    html += '<th style="background:#1a1e2a;color:#8a8e9a;padding:7px 8px;text-align:' + align + ';white-space:nowrap;border-bottom:1px solid #2a2e3a">' + col.label + '</th>';
+  });
+  html += '</tr>';
+
+  function dataRow(row, bg) {
+    var cells = LB_COLS.map(function(col) {
+      var align = col.align === "right" ? "right" : "left";
+      var val = col.fmt(row[col.key]).replace(/&#8734;/g, "\u221e").replace(/&#8212;/g, "\u2014");
+      return '<td style="background:' + bg + ';color:#d0d4dc;padding:5px 8px;text-align:' + align + '">' + val + '</td>';
+    }).join("");
+    return '<tr>' + cells + '</tr>';
+  }
+
+  if (lbIsSeriesView && lbTeamStats && Object.keys(lbTeamStats).length > 0) {
+    var teamIds = Object.keys(lbTeamStats).map(Number).sort(function(a, b) {
+      return lbTeamStats[b].wins - lbTeamStats[a].wins;
+    });
+    teamIds.forEach(function(teamId) {
+      var tc = getTeamColor(teamId);
+      var ts = lbTeamStats[teamId];
+      var rawName = ts.name || tc.name;
+      var teamLabel = rawName.toLowerCase().replace(/\s+/g, "").endsWith("team") ? rawName : rawName + " Team";
+      // Team header row with inline aggregate stats
+      html += '<tr>' + LB_COLS.map(function(col) {
+        var align = col.align === "right" ? "right" : "left";
+        var val;
+        if (col.key === "name") val = "\u25cf\u00a0" + teamLabel.toUpperCase();
+        else if (ts[col.key] !== undefined) val = col.fmt(ts[col.key]).replace(/&#8734;/g, "\u221e").replace(/&#8212;/g, "\u2014");
+        else val = "\u2014";
+        return '<td style="background:' + tc.bg + ';color:#a0c8f0;padding:5px 8px;text-align:' + align + ';font-weight:700;border-top:2px solid rgba(255,255,255,0.08)">' + val + '</td>';
+      }).join("") + '</tr>';
+      var teamRows = filtered.filter(function(r) { return r.primaryTeamId === teamId; });
+      teamRows.sort(lbSortFn);
+      teamRows.forEach(function(row) { html += dataRow(row, tc.bg); });
+    });
+    var unaffiliated = filtered.filter(function(r) { return r.primaryTeamId === null; });
+    if (unaffiliated.length > 0) {
+      html += '<tr><td colspan="' + LB_COLS.length + '" style="background:#111520;color:#6a7a9a;font-weight:700;padding:6px 10px">\u25cf\u00a0UNAFFILIATED</td></tr>';
+      unaffiliated.sort(lbSortFn);
+      unaffiliated.forEach(function(row, i) { html += dataRow(row, rowColors[i % 8]); });
+    }
+  } else {
+    var rows = filtered.slice().sort(lbSortFn);
+    rows.forEach(function(row, i) { html += dataRow(row, rowColors[i % 8]); });
+  }
+  return html + '</table>';
+}
+
+
+function exportToExcel() {
+  if (!lbData) { showExportToast("No data loaded"); return; }
+  try {
+    var html = '<html><head><meta charset="UTF-8"><style>body{background:#0a0e1a;margin:0;padding:8px}</style></head><body>' + buildExportTable() + '</body></html>';
+    var blob = new Blob([html], { type: "application/vnd.ms-excel;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "halo2_leaderboard.xls";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch(e) { showExportToast("Export failed: " + e.message); console.error(e); }
+}
+
+function csvField(val) {
+  var s = String(val).replace(/&#8734;/g, "\u221e").replace(/&#8212;/g, "\u2014").replace(/<[^>]*>/g, "");
+  // RFC 4180: wrap in quotes if contains comma, quote, or newline
+  if (s.indexOf(",") >= 0 || s.indexOf('"') >= 0 || s.indexOf("\n") >= 0) {
+    s = '"' + s.replace(/"/g, '""') + '"';
+  }
+  return s;
+}
+
+function buildExportCsv() {
+  var filtered = lbFilter
+    ? lbData.filter(function(r) { return r.name.toLowerCase().indexOf(lbFilter) >= 0; })
+    : lbData;
+  var lines = [LB_COLS.map(function(c) { return csvField(c.label); }).join(",")];
+  function addRow(obj) {
+    lines.push(LB_COLS.map(function(col) {
+      var val;
+      if (col.key === "name" && obj._isTotals) val = obj.name.toUpperCase();
+      else if (obj[col.key] !== undefined) val = col.fmt(obj[col.key]);
+      else val = "\u2014";
+      return csvField(val);
+    }).join(","));
+  }
+  var hasTeamData = lbIsSeriesView && lbTeamStats && Object.keys(lbTeamStats).length > 0;
+  if (hasTeamData) {
+    var teamIds = Object.keys(lbTeamStats).map(Number).sort(function(a, b) {
+      return lbTeamStats[b].wins - lbTeamStats[a].wins;
+    });
+    teamIds.forEach(function(teamId) {
+      var ts = Object.assign({ _isTotals: true }, lbTeamStats[teamId]);
+      var rawName = lbTeamStats[teamId].name || getTeamColor(teamId).name;
+      ts.name = rawName.toLowerCase().replace(/\s+/g, "").endsWith("team") ? rawName : rawName + " Team";
+      addRow(ts);
+      var teamRows = filtered.filter(function(r) { return r.primaryTeamId === teamId; });
+      teamRows.sort(lbSortFn);
+      teamRows.forEach(addRow);
+    });
+    var unaffiliated = filtered.filter(function(r) { return r.primaryTeamId === null; });
+    unaffiliated.sort(lbSortFn);
+    unaffiliated.forEach(addRow);
+  } else {
+    var rows = filtered.slice().sort(lbSortFn);
+    rows.forEach(addRow);
+  }
+  return lines.join("\r\n");
+}
+
+function exportToSheets() {
+  if (!lbData) { showExportToast("No data loaded"); return; }
+  try {
+    var tableHtml = buildExportTable();
+    var el = document.createElement("div");
+    el.setAttribute("contenteditable", "true");
+    el.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;overflow:hidden;opacity:0;";
+    el.innerHTML = tableHtml;
+    document.body.appendChild(el);
+    el.focus();
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    sel.addRange(range);
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) {}
+    sel.removeAllRanges();
+    document.body.removeChild(el);
+    if (ok) {
+      showExportToast("Copied! Paste into Google Sheets");
+    } else {
+      var bom = "\uFEFF";
+      var blob = new Blob([bom + buildExportCsv()], { type: "text/csv;charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url; a.download = "halo2_leaderboard.csv";
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a); URL.revokeObjectURL(url);
+    }
+  } catch(e) { showExportToast("Export failed: " + e.message); console.error(e); }
+}
+
+var _exportToastTimer = null;
+function showExportToast(msg) {
+  var el = document.getElementById("export-toast");
+  if (!el) return;
+  el.textContent = msg;
+  el.style.opacity = "1";
+  if (_exportToastTimer) clearTimeout(_exportToastTimer);
+  _exportToastTimer = setTimeout(function() { el.style.opacity = "0"; }, 2500);
+}
+
+// ─── Tab: Hit Stats ───
+function renderHitStats() {
+  var header = '<th style="width:30%">Player</th><th class="num">Shots Hit</th>' +
+    '<th class="num">Shots Fired</th><th class="num">Hit %</th><th class="num">Head Shots</th>';
+
+  return renderPlayerTable(header, 5, function(player, i, tc) {
+    var shotsHit = safe(player, "accuracy", "shots_hit");
+    var totalShots = safe(player, "accuracy", "total_shots");
+    var pct = safe(player, "accuracy", "percentage");
+    var pctFmt = (typeof pct === 'number') ? pct.toFixed(1) + '%' : pct;
+    var headshots = safe(player, "accuracy", "headshots");
+    var bg = tc ? 'style="background:' + tc.bg + '"' : 'class="' + rowClass(i) + '"';
+    return '<tr ' + bg + '>' +
+      '<td class="player-name">' + playerLinkHtml(player.name) + '</td>' +
+      '<td class="num">' + shotsHit + '</td><td class="num">' + totalShots + '</td>' +
+      '<td class="num">' + pctFmt + '</td><td class="num">' + headshots + '</td></tr>';
+  });
+}
+</script>
+</body>
+</html>

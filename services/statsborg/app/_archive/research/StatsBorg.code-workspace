@@ -1,0 +1,23 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../HaloCaster"
+		},
+		{
+			"path": "../../yelo-neighborhood"
+		},
+		{
+			"path": "../../YeloDebugTools"
+		},
+		{
+			"path": "../../xemu"
+		},
+		{
+			"path": "../../Assembly"
+		}
+	],
+	"settings": {}
+}

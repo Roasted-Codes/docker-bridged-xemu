@@ -1,0 +1,15 @@
+{
+  "label": "territories",
+  "timestamp": "2026-02-12 02:08:26",
+  "regions": {
+    "data_section": {
+      "phys_start": 56022752,
+      "va_start": 4642528,
+      "size": 1073528
+    },
+    "haloc_region": {
+      "phys_start": 55574528,
+      "size": 2097152
+    }
+  }
+}

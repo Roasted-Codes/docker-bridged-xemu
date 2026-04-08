@@ -1,3 +1,0 @@
-[submodule "services/statsborg/app"]
-	path = services/statsborg/app
-	url = https://github.com/Roasted-Codes/StatsBorg.git

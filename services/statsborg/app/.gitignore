@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+*.pkl
+*.xlsx
+*.bak
+*.xbe.orig.map
+exports/bungie/
+exports/rampant/
+documentation/
+.claude/settings.local.json
+.claude/
+.vscode/
+HaloCaster/
+
+# Runtime data
+data/history/
+data/*.db
+logs/
+*.png

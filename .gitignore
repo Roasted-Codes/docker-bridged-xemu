@@ -33,7 +33,10 @@ services/xemu/data/Desktop/
 services/xlinkkai/*
 !services/xlinkkai/user.sh
 
-# Derived artifacts (raw data in database)
+# StatsBorg runtime data
+services/statsborg/app/data/
+services/statsborg/app/logs/
+services/statsborg/app/__pycache__/
 services/statsborg/history/*_memdump.txt
 services/statsborg/history/*_pgcr_annotated.txt
 
