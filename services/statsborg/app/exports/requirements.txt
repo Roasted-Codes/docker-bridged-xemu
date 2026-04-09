@@ -1,3 +1,0 @@
-# Optional dependencies for export scripts (core tool has zero dependencies)
-psycopg2-binary>=2.9    # db_export.py — PostgreSQL export
-openpyxl>=3.1           # xlsx_export.py — Excel export

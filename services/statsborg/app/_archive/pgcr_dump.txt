@@ -1,2 +1,0 @@
-
-Dumped 0 players to pgcr_dump.txt

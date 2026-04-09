@@ -218,6 +218,26 @@ services:
   #       ipv4_address: 172.20.0.10
   #   restart: unless-stopped
 
+  statsborg:
+    build: ./services/statsborg
+    container_name: statsborg
+    environment:
+      - WATCH_MODE=qmp
+      - QMP_HOST=172.20.0.49
+      - QMP_PORT=4444
+      - WEB_PORT=8080
+    volumes:
+      - ./services/statsborg/history:/app/data/history
+      - ./services/statsborg/data:/app/data
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      xemu_lan:
+        ipv4_address: 172.20.0.47
+    depends_on:
+      - xemu
+    restart: unless-stopped
+
   xbdm:
     image: alpine/socat
     container_name: xbdm
